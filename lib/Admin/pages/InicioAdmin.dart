@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sivigila/Admin/dashboard_widget.dart';
+import 'package:sivigila/Admin/pages/dashboard_widget.dart';
 import 'package:sivigila/Admin/Widgets/Drawer.dart';
 
 class Pagina02 extends StatefulWidget {

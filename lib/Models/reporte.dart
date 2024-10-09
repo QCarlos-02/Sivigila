@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class Reporte {
+  final String id;
   final String seccion;
   final String categoria;
   final String evento;
@@ -11,19 +13,21 @@ class Reporte {
   final String barrio;
   final String direccion;
   final String descripcion;
+  final String estado;
 
-  Reporte({
-    required this.seccion,
-    required this.categoria,
-    required this.evento,
-    required this.fecha,
-    required this.persona,
-    required this.zona,
-    required this.comuna,
-    required this.barrio,
-    required this.direccion,
-    required this.descripcion,
-  });
+  Reporte(
+      {required this.id,
+      required this.seccion,
+      required this.categoria,
+      required this.evento,
+      required this.fecha,
+      required this.persona,
+      required this.zona,
+      required this.comuna,
+      required this.barrio,
+      required this.direccion,
+      required this.descripcion,
+      required this.estado});
 
   // Convertir el objeto Reporte a un mapa para Firestore
   Map<String, dynamic> toMap() {
@@ -38,7 +42,28 @@ class Reporte {
       'barrio': barrio,
       'direccion': direccion,
       'descripcion': descripcion,
+      'estado': estado,
     };
+  }
+
+  factory Reporte.desdeDoc(String id, Map<String, dynamic> json) {
+    return Reporte(
+        id: id,
+        seccion: json['seccion'] ?? '',
+        categoria: json['categoria'] ?? '',
+        evento: json['evento'] ?? '',
+        fecha: json['fecha'] ?? '',
+        persona: json['persona'] ?? '',
+        zona: json['zona'] ?? '',
+        comuna: json['comuna'] ?? '',
+        barrio: json['barrio'] ?? '',
+        direccion: json['direccion'] ?? '',
+        descripcion: json['descripcion'] ?? '',
+        estado: json['estado'] ?? '');
+  }
+
+  toJson() {
+    throw UnimplementedError();
   }
 }
 

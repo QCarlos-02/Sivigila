@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sivigila/Admin/data/services/reportesServices.dart';
 import 'package:sivigila/Models/reporte.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -98,7 +99,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    _enviarReporte();
+                    guardarReporte(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -116,68 +117,84 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
-  Future<void> _enviarReporte() async {
-    // Validar campos antes de enviar
-    if (_personaController.text.isEmpty ||
-        _zonaSeleccionada == null ||
-        _comunaSeleccionada == null ||
-        _barrioController.text.isEmpty ||
-        _direccionController.text.isEmpty ||
-        _descripcionController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Por favor, completa todos los campos.';
-      });
-      return; // Salir si hay campos vacíos
-    }
-
-    // Crear nuevo reporte
-    final nuevoReporte = Reporte(
-      seccion: widget.seccion,
-      categoria: widget.categoria,
-      evento: widget.evento,
-      fecha: DateTime.now().toString(),
-      persona: _personaController.text,
-      zona: _zonaSeleccionada!,
-      comuna: _comunaSeleccionada!,
-      barrio: _barrioController.text,
-      direccion: _direccionController.text,
-      descripcion: _descripcionController.text,
-    );
-
-    try {
-      // Guardar en Firestore
-      await FirebaseFirestore.instance.collection('reportes').add({
-        'seccion': nuevoReporte.seccion,
-        'categoria': nuevoReporte.categoria,
-        'evento': nuevoReporte.evento,
-        'fecha': nuevoReporte.fecha,
-        'persona': nuevoReporte.persona,
-        'zona': nuevoReporte.zona,
-        'comuna': nuevoReporte.comuna,
-        'barrio': nuevoReporte.barrio,
-        'direccion': nuevoReporte.direccion,
-        'descripcion': nuevoReporte.descripcion,
-      });
-
-      // Limpiar los campos después de enviar el reporte
-      _personaController.clear();
-      _barrioController.clear();
-      _direccionController.clear();
-      _descripcionController.clear();
-      _zonaSeleccionada = null;
-      _comunaSeleccionada = null;
-      setState(() {
-        _errorMessage = null; // Limpiar el mensaje de error
-      });
-
-      Navigator.pop(context, 'Reporte enviado');
-    } catch (e) {
-      // Manejar error al guardar en Firestore
-      setState(() {
-        _errorMessage = 'Error al enviar el reporte. Intente nuevamente.';
-      });
-    }
+  void guardarReporte(BuildContext context) async {
+    await Reportesservices().guardarReporte(
+        widget.seccion,
+        widget.categoria,
+        widget.evento,
+        DateTime.now().toString(),
+        _personaController.text,
+        _zonaSeleccionada!,
+        _comunaSeleccionada!,
+        _barrioController.text,
+        _direccionController.text,
+        _descripcionController.text,
+        'Pendiente');
   }
+
+  // Future<void> _enviarReporte() async {
+  //   // Validar campos antes de enviar
+  //   if (_personaController.text.isEmpty ||
+  //       _zonaSeleccionada == null ||
+  //       _comunaSeleccionada == null ||
+  //       _barrioController.text.isEmpty ||
+  //       _direccionController.text.isEmpty ||
+  //       _descripcionController.text.isEmpty) {
+  //     setState(() {
+  //       _errorMessage = 'Por favor, completa todos los campos.';
+  //     });
+  //     return; // Salir si hay campos vacíos
+  //   }
+
+  //   // Crear nuevo reporte
+  //   final nuevoReporte = Reporte(
+  //       seccion: widget.seccion,
+  //       categoria: widget.categoria,
+  //       evento: widget.evento,
+  //       fecha: DateTime.now().toString(),
+  //       persona: _personaController.text,
+  //       zona: _zonaSeleccionada!,
+  //       comuna: _comunaSeleccionada!,
+  //       barrio: _barrioController.text,
+  //       direccion: _direccionController.text,
+  //       descripcion: _descripcionController.text,
+  //       estado: "Pendiente");
+
+  //   try {
+  //     // Guardar en Firestore
+  //     await FirebaseFirestore.instance.collection('reportes').add({
+  //       'seccion': nuevoReporte.seccion,
+  //       'categoria': nuevoReporte.categoria,
+  //       'evento': nuevoReporte.evento,
+  //       'fecha': nuevoReporte.fecha,
+  //       'persona': nuevoReporte.persona,
+  //       'zona': nuevoReporte.zona,
+  //       'comuna': nuevoReporte.comuna,
+  //       'barrio': nuevoReporte.barrio,
+  //       'direccion': nuevoReporte.direccion,
+  //       'descripcion': nuevoReporte.descripcion,
+  //       'estado': nuevoReporte.estado
+  //     });
+
+  //     // Limpiar los campos después de enviar el reporte
+  //     _personaController.clear();
+  //     _barrioController.clear();
+  //     _direccionController.clear();
+  //     _descripcionController.clear();
+  //     _zonaSeleccionada = null;
+  //     _comunaSeleccionada = null;
+  //     setState(() {
+  //       _errorMessage = null; // Limpiar el mensaje de error
+  //     });
+
+  //     Navigator.pop(context, 'Reporte enviado');
+  //   } catch (e) {
+  //     // Manejar error al guardar en Firestore
+  //     setState(() {
+  //       _errorMessage = 'Error al enviar el reporte. Intente nuevamente.';
+  //     });
+  //   }
+  // }
 
   Widget _buildInfoText(String text) {
     return Text(

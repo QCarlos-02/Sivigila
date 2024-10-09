@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sivigila/Admin/CasosEnProceso.dart';
-import 'package:sivigila/Admin/CasosFallidos.dart';
-import 'package:sivigila/Admin/Casosexitosos.dart';
-import 'package:sivigila/Admin/Casospendientes.dart';
+import 'package:sivigila/Admin/pages/CasosEnProceso.dart';
+import 'package:sivigila/Admin/pages/CasosFallidos.dart';
+import 'package:sivigila/Admin/pages/Casosexitosos.dart';
+import 'package:sivigila/Admin/pages/Casospendientes.dart';
 import 'package:sivigila/Pagina/RegistroUsuario.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 

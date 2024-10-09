@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sivigila/Admin/Widgets/categorias.dart';
+import 'package:sivigila/Admin/Widgets/listaReportes.dart';
+import 'package:sivigila/Admin/controllers/reporteController.dart';
 
 class Casospendientes extends StatefulWidget {
   const Casospendientes({super.key});
@@ -11,6 +14,9 @@ class Casospendientes extends StatefulWidget {
 class _CasospendientesState extends State<Casospendientes> {
   @override
   Widget build(BuildContext context) {
+    Reportecontroller rp = Get.find();
+    rp.consultarReportesgeneral();
+    print(rp.listgeneral!.length);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -39,7 +45,7 @@ class _CasospendientesState extends State<Casospendientes> {
             const SizedBox(
               height: 30,
             ),
-            const Text("LISTA DE CASOS"),
+            const Expanded(child: Reportes()),
           ],
         ),
       ),

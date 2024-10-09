@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Pagina/Inicio.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 import 'package:get_storage/get_storage.dart';
@@ -25,6 +26,7 @@ void main() async {
     await Firebase
         .initializeApp(); // Inicializa Firebase para otras plataformas
   }
+  Get.put(Reportecontroller());
   runApp(MyApp());
 }
 

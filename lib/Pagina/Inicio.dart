@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/widgets/widgets.dart';
 
 class LeftSection extends StatelessWidget {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sivigila/Admin/InicioAdmin.dart';
+import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/reporteController.dart';
+import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'Inicio.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,6 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Reportecontroller rp = Get.find();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
