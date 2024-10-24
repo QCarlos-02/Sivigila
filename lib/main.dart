@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
+import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/Inicio.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 import 'package:get_storage/get_storage.dart';
@@ -26,6 +29,8 @@ void main() async {
     await Firebase
         .initializeApp(); // Inicializa Firebase para otras plataformas
   }
+  Get.put(Controlperfil());
+  Get.put(ControlUserAuth());
   Get.put(Reportecontroller());
   runApp(MyApp());
 }
@@ -62,7 +67,7 @@ class AuthenticationWrapper extends StatelessWidget {
           if (user == null) {
             return LoginPage(); // Si no está autenticado, mostrar el login
           } else {
-            return LeftSection(); // Si está autenticado, redirigir a la página de inicio
+            return Pagina02(); // Si está autenticado, redirigir a la página de inicio
           }
         }
 

@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         // Navegar a la página de inicio
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LeftSection()),
+          MaterialPageRoute(builder: (context) => Pagina02()),
         );
       } on FirebaseAuthException catch (e) {
         setState(() {

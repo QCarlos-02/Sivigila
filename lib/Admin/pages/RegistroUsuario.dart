@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/controlPerfil.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
 
 class Registrousuario extends StatefulWidget {
   const Registrousuario({super.key});
@@ -21,15 +26,20 @@ class _RegistrousuarioState extends State<Registrousuario> {
   }
 }
 
-class UsuarioListScreen extends StatelessWidget {
+class UsuarioListScreen extends StatefulWidget {
+  UsuarioListScreen({super.key});
+  @override
+  State<UsuarioListScreen> createState() => _UsuarioListScreenState();
+}
+
+class _UsuarioListScreenState extends State<UsuarioListScreen> {
   final List<String> usuarios = [
     "Usuario 1",
     "Usuario 2",
     "Usuario 3",
   ];
 
-  UsuarioListScreen({super.key}); // Lista de usuarios registrados
-
+  // Lista de usuarios registrados
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,13 +71,15 @@ class UsuarioListScreen extends StatelessWidget {
                           leading: const Icon(Icons.delete, color: Colors.red),
                           title: const Text("Eliminar Usuario"),
                           onTap: () {
-                            // Lógica para eliminar usuario
+                            //  Lógica para eliminar usuario
+
                             Navigator.pop(context); // Cerrar el submenú
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text("${usuarios[index]} eliminado"),
                               ),
                             );
+                            usuarios.remove(usuarios[index]);
                           },
                         ),
                       ],
@@ -112,6 +124,8 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ControlUserAuth cua = Get.find();
+    Controlperfil cup = Get.find();
     return Scaffold(
       appBar: AppBar(title: const Text("Registro de Usuario")),
       body: Padding(
@@ -182,6 +196,20 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // Lógica para registrar usuario
+                    cua.crearUsuario(email, password).then((value) {
+                      if (cua.estadoUser == null) {
+                        print("ERROR, REGISTRO INVALIDO");
+                      } else {
+                        var datos = {
+                          'correo': email,
+                          'nombre': nombre,
+                          'telefono': '',
+                          'rol': 'Usuario'
+                        };
+                        guardarDatosAdicionales(cua.userValido!.user!, datos);
+                        cup.crearCatalogo(datos);
+                      }
+                    });
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Usuario registrado')),
                     );
@@ -195,4 +223,11 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
       ),
     );
   }
+}
+
+Future<void> guardarDatosAdicionales(
+    User user, Map<String, dynamic> datos) async {
+  CollectionReference usuariosCollection =
+      FirebaseFirestore.instance.collection('perfiles');
+  await usuariosCollection.doc(user.uid).set(datos);
 }

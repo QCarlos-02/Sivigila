@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Admin/pages/CasosEnProceso.dart';
 import 'package:sivigila/Admin/pages/CasosFallidos.dart';
 import 'package:sivigila/Admin/pages/Casosexitosos.dart';
 import 'package:sivigila/Admin/pages/Casospendientes.dart';
-import 'package:sivigila/Pagina/RegistroUsuario.dart';
+import 'package:sivigila/Admin/pages/RegistroUsuario.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 
 Widget drawer(BuildContext context) {
+  ControlUserAuth cua = Get.find();
   return Drawer(
     backgroundColor: const Color.fromARGB(255, 0, 44, 81),
     child: Column(
@@ -94,6 +97,7 @@ Widget drawer(BuildContext context) {
           ),
           title: const Text("Salir", style: TextStyle(color: Colors.white)),
           onTap: () {
+            cua.cerrarSesion();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => LoginPage()));
           },
