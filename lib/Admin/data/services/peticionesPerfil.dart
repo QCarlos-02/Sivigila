@@ -16,4 +16,17 @@ class Peticionesperfil {
       print(e);
     });
   }
+
+  static Future<String> validarUser(String correo) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('perfiles')
+        .where('correo', isEqualTo: correo)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first['rol'];
+    } else {
+      return "Usuario no encontrado";
+    }
+  }
 }

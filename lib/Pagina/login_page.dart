@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Admin/pages/InicioAdmin.dart';
+import 'package:sivigila/Pagina/desicion.dart';
 import 'Inicio.dart';
 
 class GlobalVariables {
@@ -30,6 +33,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   Reportecontroller rp = Get.find();
   ControlUserAuth cu = Get.find();
+  Controlperfil cp = Get.find();
+  late UserCredential userCredential;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -46,17 +51,18 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       try {
         // Intentar iniciar sesión con Firebase
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
+        userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        GlobalVariables().adminPassword = _passwordController.text;
-        // Navegar a la página de inicio
+        // cu.validarUser(_emailController.text);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Pagina02()),
+          MaterialPageRoute(builder: (context) => Desicion()),
         );
+
+        //GlobalVariables().adminPassword = _passwordController.text;
+        // Navegar a la página de inicio
       } on FirebaseAuthException catch (e) {
         setState(() {
           // Mostrar error si la autenticación falla
@@ -212,4 +218,15 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+Future<String> validarUser(String correo) async {
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection('perfiles')
+      .where('correo', isEqualTo: correo)
+      .get();
+
+  var validar = querySnapshot.docs.first['rol'];
+  print(validar);
+  return validar;
 }

@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AuthenticationWrapper(),
+      home: const LoginPage(),
     );
   }
 }
@@ -67,7 +67,8 @@ class AuthenticationWrapper extends StatelessWidget {
           if (user == null) {
             return const LoginPage(); // Si no está autenticado, mostrar el login
           } else {
-            return const Pagina02(); // Si está autenticado, redirigir a la página de inicio
+            return const Pagina02();
+            // Si está autenticado, redirigir a la página de inicio
           }
         }
 

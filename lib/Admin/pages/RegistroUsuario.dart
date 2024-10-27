@@ -178,7 +178,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       try {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        var datos = {""};
+        var datos = {"correo": email, "rol": "Admin"};
+        print(
+            "Registro de datos del perfil codigo: ${FirebaseAuth.instance.currentUser!.uid}");
+        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Admin creado exitosamente')));
       } catch (e) {
@@ -239,6 +242,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           //"contraseña": password,
           "rol": "Lider"
         };
+        print(
+            "Registro de datos del perfil codigo: ${FirebaseAuth.instance.currentUser!.uid}");
         guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
         // await _auth.signOut();
         // if (currentUser != null){
