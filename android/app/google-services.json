@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "865111821241",
+    "project_id": "sivigila-23d08",
+    "storage_bucket": "sivigila-23d08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865111821241:android:cddeeaad7a14df0ef48468",
+        "android_client_info": {
+          "package_name": "com.company.Sivigila1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-7Mp-8xONkqbTMe_D_vn7h8JZIx6AbDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

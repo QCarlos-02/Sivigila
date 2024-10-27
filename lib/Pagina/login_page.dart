@@ -34,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   Reportecontroller rp = Get.find();
   ControlUserAuth cu = Get.find();
   Controlperfil cp = Get.find();
-  late UserCredential userCredential;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -51,21 +50,19 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       try {
         // Intentar iniciar sesión con Firebase
-        userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        // cu.validarUser(_emailController.text);
+
+        // Navegar a la pantalla de decisión después de la autenticación
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Desicion()),
         );
-
-        //GlobalVariables().adminPassword = _passwordController.text;
-        // Navegar a la página de inicio
       } on FirebaseAuthException catch (e) {
         setState(() {
-          // Mostrar error si la autenticación falla
           _errorMessage = e.message;
         });
       }
@@ -74,17 +71,23 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double logoSize =
+        screenWidth * 0.15; // Ajuste responsivo para el tamaño de los logos
+
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.blue.shade600,
-              Colors.blue.shade400,
-              Colors.blue.shade200,
+              Colors.blue.shade300, // Azul más fuerte en la parte superior
+              Colors.blue.shade200, // Azul intermedio
+              Colors.blue.shade50, // Azul claro hacia el final
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SingleChildScrollView(
@@ -94,10 +97,38 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo de la aplicación
-                  Image.asset(
-                    'assets/logo.png',
-                    height: 100,
+                  // Fila de logos en la parte superior
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Image.asset(
+                            'assets/logo_left.png',
+                            width: logoSize,
+                            height: logoSize,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Image.asset(
+                            'assets/logo_right.png',
+                            width: logoSize,
+                            height: logoSize,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 30),
                   const Text(
@@ -105,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -189,24 +220,6 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Pagina02()));
-                            },
-                            child: const Text("ADMIN")),
-                        TextButton(
-                          onPressed: () {
-                            // Lógica para registro o recuperación de contraseña
-                          },
-                          child: const Text(
-                            '¿Olvidaste tu contraseña?',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -220,6 +233,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+// Función para validar usuario basada en el rol
 Future<String> validarUser(String correo) async {
   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
       .collection('perfiles')

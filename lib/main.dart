@@ -11,27 +11,28 @@ import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
 void main() async {
-  await GetStorage.init(); // Inicializa GetStorage
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init(); // Inicializa GetStorage
 
   // Inicializa Firebase
-  if (GetPlatform.isWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyBagMvpkLEWK_w2-Pw2FLxQJbqkbyGilmU",
-          authDomain: "sivigila-23d08.firebaseapp.com",
-          projectId: "sivigila-23d08",
-          storageBucket: "sivigila-23d08.appspot.com",
-          messagingSenderId: "865111821241",
-          appId: "1:865111821241:web:0e7c0d0fe48e1b16f48468"),
-    );
-  } else {
-    await Firebase
-        .initializeApp(); // Inicializa Firebase para otras plataformas
-  }
+  await Firebase.initializeApp(
+    options: GetPlatform.isWeb
+        ? const FirebaseOptions(
+            apiKey: "AIzaSyBagMvpkLEWK_w2-Pw2FLxQJbqkbyGilmU",
+            authDomain: "sivigila-23d08.firebaseapp.com",
+            projectId: "sivigila-23d08",
+            storageBucket: "sivigila-23d08.appspot.com",
+            messagingSenderId: "865111821241",
+            appId: "1:865111821241:web:0e7c0d0fe48e1b16f48468",
+          )
+        : null, // Inicializa Firebase para otras plataformas
+  );
+
+  // Registro de controladores con GetX
   Get.put(Controlperfil());
   Get.put(ControlUserAuth());
   Get.put(Reportecontroller());
+
   runApp(const MyApp());
 }
 
@@ -40,44 +41,51 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SIVIGILA',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const AuthenticationWrapper(),
     );
   }
 }
 
-// Widget para manejar la autenticación
+// Wrapper para manejar la autenticación
 class AuthenticationWrapper extends StatelessWidget {
   const AuthenticationWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance
-          .authStateChanges(), // Escucha el estado de autenticación
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Si el usuario está autenticado, redirigir a la página principal
-        if (snapshot.connectionState == ConnectionState.active) {
-          final User? user = snapshot.data;
-          if (user == null) {
-            return const LoginPage(); // Si no está autenticado, mostrar el login
-          } else {
-            return const Pagina02();
-            // Si está autenticado, redirigir a la página de inicio
-          }
+        // Muestra pantalla de carga mientras se verifica el estado
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LoadingScreen();
+        } else if (snapshot.hasData) {
+          // Si el usuario está autenticado, redirigir a la página principal
+          return const Pagina02();
+        } else {
+          // Si no está autenticado, mostrar la pantalla de login
+          return const LoginPage();
         }
-
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
       },
+    );
+  }
+}
+
+// Pantalla de carga
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
