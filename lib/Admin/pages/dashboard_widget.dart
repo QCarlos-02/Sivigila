@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DashboardWidget extends StatelessWidget {
@@ -5,13 +6,14 @@ class DashboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    FirebaseAuth auth = FirebaseAuth.instance;
+    return Center(
       child: Column(
         children: [
-          SizedBox(height: 18),
-          Text("INICIO"),
+          const SizedBox(height: 18),
+          Text("${auth.currentUser!.email}, Uid: ${auth.currentUser!.uid}"),
           // const HeaderWidget(),
-          SizedBox(height: 18),
+          const SizedBox(height: 18),
         ],
       ),
     );

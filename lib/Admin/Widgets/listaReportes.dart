@@ -13,12 +13,12 @@ class Reportes extends StatelessWidget {
     return Container(
       child: Obx(() {
         if (rp.listgeneral!.isEmpty == true) {
-          return Center(
+          return const Center(
             child: Text("NO HAY REPORTES"),
           );
         } else {
           return ListView.builder(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             itemCount: rp.listgeneral!.length,
             itemBuilder: (BuildContext context, int index) {
               return Row(

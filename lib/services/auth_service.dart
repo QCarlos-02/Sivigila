@@ -11,7 +11,7 @@ class AuthService {
         email: email,
         password: password,
       );
-      return UserModel.fromFirebase(result.user!);
+      return UserModel.fromFirebase(result.user!.uid, result.user!);
     } catch (e) {
       throw Exception("Error al iniciar sesión: $e");
     }
@@ -25,7 +25,7 @@ class AuthService {
         email: email,
         password: password,
       );
-      return UserModel.fromFirebase(result.user!);
+      return UserModel.fromFirebase(result.user!.uid, result.user!);
     } catch (e) {
       throw Exception("Error al registrarse: $e");
     }
@@ -39,6 +39,6 @@ class AuthService {
   // Obtener el usuario actual
   UserModel? getCurrentUser() {
     final user = _firebaseAuth.currentUser;
-    return user != null ? UserModel.fromFirebase(user) : null;
+    return user != null ? UserModel.fromFirebase(user.uid, user) : null;
   }
 }

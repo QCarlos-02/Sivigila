@@ -32,7 +32,7 @@ void main() async {
   Get.put(Controlperfil());
   Get.put(ControlUserAuth());
   Get.put(Reportecontroller());
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AuthenticationWrapper(),
+      home: const AuthenticationWrapper(),
     );
   }
 }
@@ -65,9 +65,9 @@ class AuthenticationWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           final User? user = snapshot.data;
           if (user == null) {
-            return LoginPage(); // Si no está autenticado, mostrar el login
+            return const LoginPage(); // Si no está autenticado, mostrar el login
           } else {
-            return Pagina02(); // Si está autenticado, redirigir a la página de inicio
+            return const Pagina02(); // Si está autenticado, redirigir a la página de inicio
           }
         }
 

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sivigila/Admin/data/services/reportesServices.dart';
-import 'package:sivigila/Models/reporte.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FormularioReporte extends StatefulWidget {
   final String seccion;

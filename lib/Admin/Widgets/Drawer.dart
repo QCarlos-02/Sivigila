@@ -81,10 +81,8 @@ Widget drawer(BuildContext context) {
           title: const Text("Registro de usuarios",
               style: TextStyle(color: Colors.white)),
           onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Registrousuario()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Registro()));
           },
         ),
         const SizedBox(
@@ -98,8 +96,8 @@ Widget drawer(BuildContext context) {
           title: const Text("Salir", style: TextStyle(color: Colors.white)),
           onTap: () {
             cua.cerrarSesion();
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const LoginPage()));
           },
         ),
       ],

@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'Inicio.dart';
+
+class GlobalVariables {
+  // Hacer esta clase singleton
+  static final GlobalVariables _instance = GlobalVariables._internal();
+
+  factory GlobalVariables() {
+    return _instance;
+  }
+
+  GlobalVariables._internal();
+
+  // Aquí almacenas la contraseña del admin
+  String? adminPassword;
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +29,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   Reportecontroller rp = Get.find();
+  ControlUserAuth cu = Get.find();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -35,11 +51,11 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-
+        GlobalVariables().adminPassword = _passwordController.text;
         // Navegar a la página de inicio
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Pagina02()),
+          MaterialPageRoute(builder: (context) => const Pagina02()),
         );
       } on FirebaseAuthException catch (e) {
         setState(() {

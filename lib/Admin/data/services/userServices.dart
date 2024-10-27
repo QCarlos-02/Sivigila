@@ -9,7 +9,7 @@ class Userservices {
     try {
       UserCredential user = await auth.createUserWithEmailAndPassword(
           email: email, password: pass);
-      print("funcion" + user.toString());
+      print("funcion$user");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print("contraseña debil");
