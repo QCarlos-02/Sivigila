@@ -21,12 +21,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.health_and_safety,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades de Transmisión Sexual',
-<<<<<<< HEAD
-              evento: 'VIH',
-=======
               subcategoria: 'ETS',
               subsubcategoria: 'VIH',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
@@ -34,12 +30,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.health_and_safety,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades de Transmisión Sexual',
-<<<<<<< HEAD
-              evento: 'Sífilis',
-=======
               subcategoria: 'ETS',
               subsubcategoria: 'Sífilis',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
           ],
         ),
@@ -55,12 +47,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.sick,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades Infecciosas Respiratorias',
-<<<<<<< HEAD
-              evento: 'Covid-19',
-=======
               subcategoria: 'Infección',
               subsubcategoria: 'Covid-19',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
           ],
         ),
@@ -76,12 +64,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.bug_report,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades Transmitidas por Vectores',
-<<<<<<< HEAD
-              evento: 'Malaria',
-=======
               subcategoria: 'Vector',
               subsubcategoria: 'Malaria',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
@@ -89,12 +73,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.bug_report,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades Transmitidas por Vectores',
-<<<<<<< HEAD
-              evento: 'Leishmaniasis',
-=======
               subcategoria: 'Vector',
               subsubcategoria: 'Leishmaniasis',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
@@ -102,12 +82,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.bug_report,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades Transmitidas por Vectores',
-<<<<<<< HEAD
-              evento: 'Dengue',
-=======
               subcategoria: 'Vector',
               subsubcategoria: 'Dengue',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
@@ -115,12 +91,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.bug_report,
               seccion: 'Casos Específicos',
               categoria: 'Enfermedades Transmitidas por Vectores',
-<<<<<<< HEAD
-              evento: 'Chagas',
-=======
               subcategoria: 'Vector',
               subsubcategoria: 'Chagas',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
           ],
         ),
@@ -136,12 +108,8 @@ class CasosEspecificos extends StatelessWidget {
               Icons.fastfood,
               seccion: 'Casos Específicos',
               categoria: 'Condiciones Nutricionales',
-<<<<<<< HEAD
-              evento: 'Desnutrición',
-=======
               subcategoria: 'Nutrición',
               subsubcategoria: 'Desnutrición',
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
           ],
         ),
@@ -192,12 +160,8 @@ class CasosEspecificos extends StatelessWidget {
     IconData icon, {
     required String seccion,
     required String categoria,
-<<<<<<< HEAD
-    required String evento,
-=======
     required String subcategoria,
     required String subsubcategoria,
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -214,12 +178,8 @@ class CasosEspecificos extends StatelessWidget {
             context,
             seccion: seccion,
             categoria: categoria,
-<<<<<<< HEAD
-            evento: evento,
-=======
             subcategoria: subcategoria,
             subsubcategoria: subsubcategoria,
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
           );
         },
       ),
@@ -230,12 +190,8 @@ class CasosEspecificos extends StatelessWidget {
     BuildContext context, {
     required String seccion,
     required String categoria,
-<<<<<<< HEAD
-    required String evento,
-=======
     required String subcategoria,
     required String subsubcategoria,
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }) {
     Navigator.push(
       context,
@@ -243,13 +199,9 @@ class CasosEspecificos extends StatelessWidget {
         builder: (context) => FormularioReporte(
           seccion: seccion,
           categoria: categoria,
-<<<<<<< HEAD
-          evento: evento,
-=======
           subcategoria: subcategoria,
           subsubcategoria: subsubcategoria,
           evento: subsubcategoria,
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ),
     );

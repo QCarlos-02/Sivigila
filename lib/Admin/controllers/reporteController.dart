@@ -1,19 +1,4 @@
 import 'package:get/get.dart';
-<<<<<<< HEAD
-import 'package:sivigila/Admin/data/services/reportesServices.dart';
-import 'package:sivigila/Models/reporte.dart';
-
-class Reportecontroller extends GetxController {
-  final Rxn<List<Reporte>> _reporteFirestore = Rxn<List<Reporte>>([]);
-
-  Future<void> consultarReportesgeneral() async {
-    // validar el usuario autenticado
-
-    _reporteFirestore.value = await Reportesservices.listaReportes();
-  }
-
-  List<Reporte>? get listgeneral => _reporteFirestore.value;
-=======
 import 'package:sivigila/Models/reporte.dart';
 import 'package:sivigila/Admin/data/services/reportesServices.dart';
 
@@ -65,5 +50,4 @@ class Reportecontroller extends GetxController {
     _reporteFiltrado.value = _reporteFirestore.value;
     update(); // Asegúrate de actualizar la vista
   }
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
 }

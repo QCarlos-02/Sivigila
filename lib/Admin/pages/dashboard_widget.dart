@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
-class DashboardWidget extends StatelessWidget {
-  const DashboardWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    FirebaseAuth auth = FirebaseAuth.instance;
-=======
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
@@ -23,16 +12,10 @@ class DashboardWidget extends StatelessWidget {
     // Llama a la función para consultar los reportes generales
     reporteController.consultarReportesgeneral();
 
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     return Center(
       child: Column(
         children: [
           const SizedBox(height: 18),
-<<<<<<< HEAD
-          Text("${auth.currentUser!.email}, Uid: ${auth.currentUser!.uid}"),
-          // const HeaderWidget(),
-          const SizedBox(height: 18),
-=======
           const Text(
             "Bienvenido, Administrador",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -69,13 +52,10 @@ class DashboardWidget extends StatelessWidget {
               ),
             );
           }),
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ],
       ),
     );
   }
-<<<<<<< HEAD
-=======
 
   Widget _buildCard(String title, int count, Color color) {
     return SizedBox(
@@ -108,5 +88,4 @@ class DashboardWidget extends StatelessWidget {
       ),
     );
   }
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
 }

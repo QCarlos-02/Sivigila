@@ -12,44 +12,6 @@ class Casospendientes extends StatefulWidget {
 }
 
 class _CasospendientesState extends State<Casospendientes> {
-<<<<<<< HEAD
-  @override
-  Widget build(BuildContext context) {
-    Reportecontroller rp = Get.find();
-    rp.consultarReportesgeneral();
-    print(rp.listgeneral!.length);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Casos pendientes",
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text("Tipos de casos"),
-            const SizedBox(
-              height: 20,
-            ),
-            CategoriaSubcategoriaWidget(
-              onSelectionChanged: (String? categoria, String? subcategoria) {
-                if (categoria == null && subcategoria == null) {
-                  // Mostrar todos los casos
-                } else {
-                  // Filtrar los casos por categoría y subcategoría
-                  print(categoria);
-                  print(subcategoria);
-                }
-              },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            const Expanded(child: Reportes()),
-          ],
-        ),
-=======
   final Reportecontroller reporteController = Get.find();
 
   String? categoriaSeleccionada;
@@ -118,7 +80,6 @@ class _CasospendientesState extends State<Casospendientes> {
             child: Reportes(), // Mostrar lista de reportes filtrados
           ),
         ],
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
       ),
     );
   }

@@ -39,11 +39,7 @@ class _Pagina02State extends State<Pagina02> {
       ),
       drawer: drawer(context),
       body: Container(
-<<<<<<< HEAD
-        child: const DashboardWidget(),
-=======
         child: DashboardWidget(),
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
       ),
     );
   }
