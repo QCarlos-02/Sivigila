@@ -20,7 +20,11 @@ class Sindromes extends StatelessWidget {
             {'title': 'Síndrome Febril Ictérico', 'icon': Icons.thermostat},
             {'title': 'Síndrome Febril Exantemático', 'icon': Icons.thermostat},
           ],
+<<<<<<< HEAD
           tileIcon: Icons.thermostat, // Icono para el título
+=======
+          tileIcon: Icons.thermostat,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
         _buildSyndromeTile(
           context,
@@ -35,7 +39,11 @@ class Sindromes extends StatelessWidget {
               'icon': Icons.health_and_safety
             },
           ],
+<<<<<<< HEAD
           tileIcon: Icons.health_and_safety, // Icono para el título
+=======
+          tileIcon: Icons.health_and_safety,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
         _buildSyndromeTile(
           context,
@@ -50,7 +58,11 @@ class Sindromes extends StatelessWidget {
               'icon': Icons.local_hospital
             },
           ],
+<<<<<<< HEAD
           tileIcon: Icons.local_hospital, // Icono para el título
+=======
+          tileIcon: Icons.local_hospital,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
         _buildSyndromeTile(
           context,
@@ -64,7 +76,11 @@ class Sindromes extends StatelessWidget {
               'icon': Icons.air
             },
           ],
+<<<<<<< HEAD
           tileIcon: Icons.air, // Icono para el título
+=======
+          tileIcon: Icons.air,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ],
     );
@@ -77,13 +93,22 @@ class Sindromes extends StatelessWidget {
     required String seccion,
     required String categoria,
     required List<Map<String, dynamic>> options,
+<<<<<<< HEAD
     required IconData tileIcon, // Icono para el título
+=======
+    required IconData tileIcon,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }) {
     return ListTile(
       title: Row(
         children: [
+<<<<<<< HEAD
           Icon(tileIcon), // Icono en el título
           const SizedBox(width: 8), // Espacio entre el icono y el texto
+=======
+          Icon(tileIcon),
+          const SizedBox(width: 8),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
           Text(title),
         ],
       ),
@@ -102,7 +127,12 @@ class Sindromes extends StatelessWidget {
                             option['title'],
                             seccion: seccion,
                             categoria: categoria,
+<<<<<<< HEAD
                             evento: option['title'],
+=======
+                            subcategoria: title,
+                            subsubcategoria: option['title'],
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                             icon: option['icon'],
                           ))
                       .toList(),
@@ -123,13 +153,21 @@ class Sindromes extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   // Método para construir cada `ListTile` dentro del `AlertDialog`
+=======
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   Widget buildDialogItem(
     BuildContext context,
     String title, {
     required String seccion,
     required String categoria,
+<<<<<<< HEAD
     required String evento,
+=======
+    required String subcategoria,
+    required String subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     required IconData icon,
   }) {
     return Container(
@@ -142,29 +180,54 @@ class Sindromes extends StatelessWidget {
         leading: Icon(icon),
         title: Text(title),
         onTap: () {
+<<<<<<< HEAD
           Navigator.of(context).pop(); // Cierra el diálogo
+=======
+          Navigator.of(context).pop();
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
           _navegarFormulario(
             context,
             seccion: seccion,
             categoria: categoria,
+<<<<<<< HEAD
             evento: evento,
+=======
+            subcategoria: subcategoria,
+            subsubcategoria: subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
           );
         },
       ),
     );
   }
 
+<<<<<<< HEAD
   void _navegarFormulario(BuildContext context,
       {required String seccion,
       required String categoria,
       required String evento}) {
+=======
+  void _navegarFormulario(
+    BuildContext context, {
+    required String seccion,
+    required String categoria,
+    required String subcategoria,
+    required String subsubcategoria,
+  }) {
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FormularioReporte(
           seccion: seccion,
           categoria: categoria,
+<<<<<<< HEAD
           evento: evento,
+=======
+          subcategoria: subcategoria,
+          subsubcategoria: subsubcategoria,
+          evento: subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ),
     );

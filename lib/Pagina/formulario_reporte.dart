@@ -4,12 +4,22 @@ import 'package:sivigila/Admin/data/services/reportesServices.dart';
 class FormularioReporte extends StatefulWidget {
   final String seccion;
   final String categoria;
+<<<<<<< HEAD
+=======
+  final String subcategoria;
+  final String subsubcategoria; // Agrega este parámetro
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   final String evento;
 
   const FormularioReporte({
     super.key,
     required this.seccion,
     required this.categoria,
+<<<<<<< HEAD
+=======
+    required this.subcategoria,
+    required this.subsubcategoria, // Asegúrate de recibir subsubcategoria
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     required this.evento,
   });
 
@@ -29,11 +39,16 @@ class _FormularioReporteState extends State<FormularioReporte> {
   final TextEditingController _direccionController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
 
+<<<<<<< HEAD
   String? _errorMessage; // Variable para almacenar mensajes de error
+=======
+  String? _errorMessage;
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -44,11 +59,18 @@ class _FormularioReporteState extends State<FormularioReporte> {
         ),
         width: double.infinity,
         height: double.infinity,
+=======
+      appBar: AppBar(
+        title: const Text('Formulario de Reporte'),
+      ),
+      body: Container(
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+<<<<<<< HEAD
               const Text(
                 'Formulario de Reporte',
                 style: TextStyle(
@@ -68,6 +90,13 @@ class _FormularioReporteState extends State<FormularioReporte> {
                 style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 20),
+=======
+              _buildInfoText('Sección: ${widget.seccion}'),
+              _buildInfoText('Categoría: ${widget.categoria}'),
+              _buildInfoText('Subcategoría: ${widget.subcategoria}'),
+              _buildInfoText('Evento: ${widget.evento}'),
+              const SizedBox(height: 20),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
               _buildTextField('Persona que notificó', _personaController),
               _buildDropdown('Zona', _zonas, (value) {
                 setState(() {
@@ -86,7 +115,10 @@ class _FormularioReporteState extends State<FormularioReporte> {
                   'Descripción de lo sucedido', _descripcionController,
                   maxLines: 3),
               if (_errorMessage != null) ...[
+<<<<<<< HEAD
                 // Muestra mensaje de error si existe
+=======
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 const SizedBox(height: 10),
                 Text(
                   _errorMessage!,
@@ -97,11 +129,17 @@ class _FormularioReporteState extends State<FormularioReporte> {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
+<<<<<<< HEAD
                     guardarReporte(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue[700],
+=======
+                    _guardarReporte(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
                   ),
@@ -115,6 +153,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
+<<<<<<< HEAD
   void guardarReporte(BuildContext context) async {
     await Reportesservices().guardarReporte(
         widget.seccion,
@@ -198,6 +237,56 @@ class _FormularioReporteState extends State<FormularioReporte> {
     return Text(
       text,
       style: const TextStyle(fontSize: 16, color: Colors.white),
+=======
+  void _guardarReporte(BuildContext context) async {
+    if (_validarCampos()) {
+      try {
+        await Reportesservices().guardarReporte(
+          widget.seccion,
+          widget.categoria,
+          widget.subcategoria,
+          widget
+              .subsubcategoria, // Incluye subsubcategoria en el orden correcto
+          widget.evento,
+          DateTime.now().toString(),
+          _personaController.text,
+          _zonaSeleccionada ?? '',
+          _comunaSeleccionada ?? '',
+          _barrioController.text,
+          _direccionController.text,
+          _descripcionController.text,
+          'Pendiente', // Este es el valor de 'estado'
+        );
+        Navigator.pop(context, 'Reporte enviado');
+      } catch (e) {
+        setState(() {
+          _errorMessage = 'Error al enviar el reporte. Intente nuevamente.';
+        });
+      }
+    } else {
+      setState(() {
+        _errorMessage = 'Por favor, completa todos los campos.';
+      });
+    }
+  }
+
+  bool _validarCampos() {
+    return _personaController.text.isNotEmpty &&
+        _zonaSeleccionada != null &&
+        _comunaSeleccionada != null &&
+        _barrioController.text.isNotEmpty &&
+        _direccionController.text.isNotEmpty &&
+        _descripcionController.text.isNotEmpty;
+  }
+
+  Widget _buildInfoText(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.black),
+      ),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     );
   }
 
@@ -210,6 +299,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
         maxLines: maxLines,
         decoration: InputDecoration(
           labelText: label,
+<<<<<<< HEAD
           labelStyle: const TextStyle(color: Colors.white),
           filled: true,
           fillColor: Colors.white.withOpacity(0.2),
@@ -217,6 +307,9 @@ class _FormularioReporteState extends State<FormularioReporte> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
+=======
+          border: OutlineInputBorder(),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ),
     );
@@ -229,6 +322,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
+<<<<<<< HEAD
           labelStyle: const TextStyle(color: Colors.white),
           filled: true,
           fillColor: Colors.white.withOpacity(0.2),
@@ -236,6 +330,9 @@ class _FormularioReporteState extends State<FormularioReporte> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
+=======
+          border: OutlineInputBorder(),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
         items: items.map((String value) {
           return DropdownMenuItem<String>(
@@ -244,8 +341,11 @@ class _FormularioReporteState extends State<FormularioReporte> {
           );
         }).toList(),
         onChanged: onChanged,
+<<<<<<< HEAD
         dropdownColor: Colors.white,
         style: TextStyle(color: Colors.blue[700]),
+=======
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
       ),
     );
   }

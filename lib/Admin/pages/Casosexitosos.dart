@@ -26,6 +26,7 @@ class _CasosexitososState extends State<Casosexitosos> {
               height: 20,
             ),
             CategoriaSubcategoriaWidget(
+<<<<<<< HEAD
               onSelectionChanged: (String? categoria, String? subcategoria) {
                 if (categoria == null && subcategoria == null) {
                   // Mostrar todos los casos
@@ -33,6 +34,19 @@ class _CasosexitososState extends State<Casosexitosos> {
                   // Filtrar los casos por categoría y subcategoría
                   print(categoria);
                   print(subcategoria);
+=======
+              onSelectionChanged: (String? categoria, String? subcategoria,
+                  String? subsubcategoria) {
+                if (categoria == null &&
+                    subcategoria == null &&
+                    subsubcategoria == null) {
+                  // Mostrar todos los casos
+                } else {
+                  // Filtrar los casos por categoría, subcategoría y sub-subcategoría
+                  print(categoria);
+                  print(subcategoria);
+                  print(subsubcategoria);
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 }
               },
             ),

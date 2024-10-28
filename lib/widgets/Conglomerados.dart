@@ -20,24 +20,42 @@ class Conglomerados extends StatelessWidget {
               'Conglomerado en centro penitenciario',
               seccion: 'Conglomerados',
               categoria: 'Centro Penitenciario',
+<<<<<<< HEAD
               evento: 'Conglomerado en centro penitenciario',
               itemIcon: Icons.lock, // Icono para el ítem
+=======
+              subcategoria: 'Tipo de Conglomerado',
+              subsubcategoria: 'Conglomerado en centro penitenciario',
+              itemIcon: Icons.lock,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
               'Conglomerado en institución educativa',
               seccion: 'Conglomerados',
               categoria: 'Institución Educativa',
+<<<<<<< HEAD
               evento: 'Conglomerado en institución educativa',
               itemIcon: Icons.school, // Icono para el ítem
+=======
+              subcategoria: 'Tipo de Conglomerado',
+              subsubcategoria: 'Conglomerado en institución educativa',
+              itemIcon: Icons.school,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
             _buildDialogItem(
               context,
               'Conglomerado en hogar de bienestar infantil',
               seccion: 'Conglomerados',
               categoria: 'Hogar de Bienestar Infantil',
+<<<<<<< HEAD
               evento: 'Conglomerado en hogar de bienestar infantil',
               itemIcon: Icons.child_care, // Icono para el ítem
+=======
+              subcategoria: 'Tipo de Conglomerado',
+              subsubcategoria: 'Conglomerado en hogar de bienestar infantil',
+              itemIcon: Icons.child_care,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             ),
           ],
         ),
@@ -91,8 +109,14 @@ class Conglomerados extends StatelessWidget {
     String title, {
     required String seccion,
     required String categoria,
+<<<<<<< HEAD
     required String evento,
     required IconData itemIcon, // Icono para el ítem
+=======
+    required String subcategoria,
+    required String subsubcategoria,
+    required IconData itemIcon,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -101,7 +125,11 @@ class Conglomerados extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
+<<<<<<< HEAD
         leading: Icon(itemIcon), // Icono en el ListTile
+=======
+        leading: Icon(itemIcon),
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         title: Text(title),
         onTap: () {
           Navigator.of(context).pop();
@@ -109,7 +137,12 @@ class Conglomerados extends StatelessWidget {
             context,
             seccion: seccion,
             categoria: categoria,
+<<<<<<< HEAD
             evento: evento,
+=======
+            subcategoria: subcategoria,
+            subsubcategoria: subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
           );
         },
       ),
@@ -120,7 +153,12 @@ class Conglomerados extends StatelessWidget {
     BuildContext context, {
     required String seccion,
     required String categoria,
+<<<<<<< HEAD
     required String evento,
+=======
+    required String subcategoria,
+    required String subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }) {
     Navigator.push(
       context,
@@ -128,7 +166,13 @@ class Conglomerados extends StatelessWidget {
         builder: (context) => FormularioReporte(
           seccion: seccion,
           categoria: categoria,
+<<<<<<< HEAD
           evento: evento,
+=======
+          subcategoria: subcategoria,
+          subsubcategoria: subsubcategoria,
+          evento: subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ),
     );

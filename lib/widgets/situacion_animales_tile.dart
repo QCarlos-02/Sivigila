@@ -44,7 +44,12 @@ class SituacionAnimalesTile extends StatelessWidget {
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Mordidas y arañazos',
+<<<<<<< HEAD
                   evento: 'Mordedura Por Perro, Zorro O Zarigueya',
+=======
+                  subcategoria: 'Mordeduras',
+                  subsubcategoria: 'Mordedura Por Perro, Zorro O Zarigueya',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
         _buildDialogListTile(
             context,
@@ -54,7 +59,12 @@ class SituacionAnimalesTile extends StatelessWidget {
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Mordidas y arañazos',
+<<<<<<< HEAD
                   evento: 'Mordedura De Serpiente',
+=======
+                  subcategoria: 'Mordeduras',
+                  subsubcategoria: 'Mordedura De Serpiente',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
         _buildDialogListTile(
             context,
@@ -64,7 +74,12 @@ class SituacionAnimalesTile extends StatelessWidget {
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Mordidas y arañazos',
+<<<<<<< HEAD
                   evento: 'Mordeduras De Arañas',
+=======
+                  subcategoria: 'Mordeduras',
+                  subsubcategoria: 'Mordeduras De Arañas',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
         _buildDialogListTile(
             context,
@@ -74,7 +89,12 @@ class SituacionAnimalesTile extends StatelessWidget {
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Mordidas y arañazos',
+<<<<<<< HEAD
                   evento: 'Arañazos De Gatos',
+=======
+                  subcategoria: 'Arañazos',
+                  subsubcategoria: 'Arañazos De Gatos',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
       ],
     );
@@ -93,17 +113,31 @@ class SituacionAnimalesTile extends StatelessWidget {
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Envenenamiento o picadura',
+<<<<<<< HEAD
                   evento: 'Picadura De Alacranes o Escorpiones',
                 )),
         _buildDialogListTile(
             context,
             'Contacto Con Animales Pozoñosos',
+=======
+                  subcategoria: 'Picaduras',
+                  subsubcategoria: 'Picadura De Alacranes o Escorpiones',
+                )),
+        _buildDialogListTile(
+            context,
+            'Contacto Con Animales Ponzoñosos',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             Icons.bug_report,
             () => _navegarFormulario(
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Envenenamiento o picadura',
+<<<<<<< HEAD
                   evento: 'Contacto Con Animales Pozoñosos',
+=======
+                  subcategoria: 'Contacto Ponzoñoso',
+                  subsubcategoria: 'Contacto Con Animales Ponzoñosos',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
       ],
     );
@@ -116,13 +150,23 @@ class SituacionAnimalesTile extends StatelessWidget {
       [
         _buildDialogListTile(
             context,
+<<<<<<< HEAD
             'Contacto Con Un Animal Que Posteriormente Fallecio Sin Razon Aparente',
+=======
+            'Contacto Con Un Animal Que Posteriormente Falleció Sin Razón Aparente',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
             Icons.report_problem,
             () => _navegarFormulario(
                   context,
                   seccion: 'Situación en Animales',
                   categoria: 'Muerte Extraña',
+<<<<<<< HEAD
                   evento: 'Contacto Con Un Animal Que Falleció Sin Razón',
+=======
+                  subcategoria: 'Muerte Inesperada',
+                  subsubcategoria:
+                      'Contacto Con Un Animal Que Falleció Sin Razón Aparente',
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
                 )),
       ],
     );
@@ -169,18 +213,34 @@ class SituacionAnimalesTile extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   // Método para navegar al formulario y pasar los datos
   void _navegarFormulario(BuildContext context,
       {required String seccion,
       required String categoria,
       required String evento}) {
+=======
+  void _navegarFormulario(
+    BuildContext context, {
+    required String seccion,
+    required String categoria,
+    required String subcategoria,
+    required String subsubcategoria,
+  }) {
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FormularioReporte(
           seccion: seccion,
           categoria: categoria,
+<<<<<<< HEAD
           evento: evento,
+=======
+          subcategoria: subcategoria,
+          subsubcategoria: subsubcategoria,
+          evento: subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
         ),
       ),
     );

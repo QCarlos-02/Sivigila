@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+<<<<<<< HEAD
 import 'package:sivigila/Models/reporte.dart';
 
 class Reportesservices {
@@ -14,6 +15,19 @@ class Reportesservices {
   Future<String> guardarReporte(
     String seccion,
     String categoria,
+=======
+import 'package:sivigila/Models/reporte.dart'; // Importa la clase Reporte
+
+class Reportesservices {
+  // Instancia de FirebaseFirestore para acceder a la base de datos
+  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  Future<String> guardarReporte(
+    String seccion,
+    String categoria,
+    String subcategoria,
+    String subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
     String evento,
     String fecha,
     String persona,
@@ -24,10 +38,19 @@ class Reportesservices {
     String descripcion,
     String estado,
   ) async {
+<<<<<<< HEAD
     var reference = FirebaseFirestore.instance.collection("reportes");
     var result = await reference.add({
       'seccion': seccion,
       'categoria': categoria,
+=======
+    var reference = _db.collection("reportes");
+    var result = await reference.add({
+      'seccion': seccion,
+      'categoria': categoria,
+      'subcategoria': subcategoria,
+      'subsubcategoria': subsubcategoria,
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
       'evento': evento,
       'fecha': fecha,
       'persona': persona,
@@ -39,6 +62,7 @@ class Reportesservices {
       'estado': estado
     });
 
+<<<<<<< HEAD
     return Future.value(result.id);
   }
 
@@ -50,5 +74,16 @@ class Reportesservices {
       lista.add(Reporte.desdeDoc(doc.id, data));
     }
     return lista;
+=======
+    return result.id;
+  }
+
+  // Método para obtener la lista de reportes desde Firestore
+  Future<List<Reporte>> listaReportes() async {
+    var snapshot = await _db.collection("reportes").get();
+    return snapshot.docs
+        .map((doc) => Reporte.desdeDoc(doc.id, doc.data()))
+        .toList();
+>>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   }
 }
