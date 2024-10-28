@@ -66,10 +66,7 @@ flutter:
   assets:
     - assets/logo_left.png
     - assets/logo_right.png
-<<<<<<< HEAD
-=======
     - assets/Comunas_y_Barrios_Valledupar.json
->>>>>>> b4b31af (Se le da funcionalidad a la parte de registro de usuarios y a casos pendientes)
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
