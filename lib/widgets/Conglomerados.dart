@@ -136,7 +136,6 @@ class Conglomerados extends StatelessWidget {
           categoria: categoria,
           subcategoria: subcategoria,
           subsubcategoria: subsubcategoria,
-          evento: subsubcategoria,
         ),
       ),
     );

@@ -178,7 +178,6 @@ class FactoresPotencialmenteRelacionados extends StatelessWidget {
           categoria: categoria,
           subcategoria: subcategoria,
           subsubcategoria: subsubcategoria,
-          evento: subsubcategoria,
         ),
       ),
     );
