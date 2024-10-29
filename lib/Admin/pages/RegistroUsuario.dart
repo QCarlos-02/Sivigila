@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:sivigila/Admin/Widgets/listaDesplegable.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/data/services/peticionesPerfil.dart';
 import 'package:sivigila/Pagina/login_page.dart';
@@ -145,6 +149,17 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   String _selectedPowerLevel = 'Bajo';
   String _selectedParticipationLevel = 'Bajo';
   String _selectedDocumentType = 'CC';
+
+  Map<String, List<String>> _comunasYBarrios = {};
+  String? _selectedComuna;
+  String? _selectedBarrio;
+  List<String> _barriosFiltrados = [];
+
+  Map<String, List<String>> _departmentsAndMunicipalities = {};
+  String? _selectedDepartment;
+  List<String> _filteredMunicipalities = [];
+  String? _selectedMunicipality;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool _obscureText = true;
@@ -168,6 +183,81 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     'CN',
     'PS'
   ];
+  String? _selectRole;
+  String? _selectedOption;
+
+  final Map<String, List<String>> _rolesOptions = {
+    'Vigía Comunitario': [
+      'Miembros de colectivos sociales (juveniles, mujeres, adulto mayor, deporte, cultura, LGBTIQ+, entre otros).',
+      'Miembros Juntas de Acción Comunal.',
+      'Líderes ambientales o animalistas.',
+      'Tenderos.',
+      'Transportadores.',
+      'Guardas de Seguridad.',
+      'Comerciantes.',
+      'Parteras',
+      'Miembros de la comunidad',
+      'Personas vinculadas a servicios de hotelería y turismo.'
+    ],
+    'Gestor Comunitario': [
+      'Docentes.',
+      'Regentes de farmacias.',
+      'Líderes religiosos.',
+      'Líderes de redes de organizaciones cooperantes.',
+      'Gestores de entidades gubernamentales que NO realizan acciones de salud.',
+      'Personal vinculado a funciones que realizan acciones en comunidad.',
+      'Personal vinculado a instituciones de protección integral de la primera infancia.',
+      'Personal que ejerce acciones comunitarias mediante proyectos de extensión vinculados a centros educativos.',
+      'Personal vinculado a fundaciones que realizan acciones en comunidad.'
+    ],
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadComunasYBarrios();
+    _loadDepartmentsAndMuncipalities();
+  }
+
+  Future<void> _loadComunasYBarrios() async {
+    final String jsonString =
+        await rootBundle.loadString('assets/Comunas_y_Barrios_Valledupar.json');
+    final Map<String, dynamic> jsonMap = json.decode(jsonString);
+
+    setState(() {
+      _comunasYBarrios =
+          jsonMap.map((key, value) => MapEntry(key, List<String>.from(value)));
+    });
+  }
+
+  Future<void> _loadDepartmentsAndMuncipalities() async {
+    final String jsonString =
+        await rootBundle.loadString('assets/departamentos_municipios.json');
+    final List<dynamic> jsonList = json.decode(jsonString);
+
+    // Transformar los datos a un mapa de departamentos y municipios
+    Map<String, List<String>> departmentsAndMunicipalities = {};
+    for (var item in jsonList) {
+      String department = item['departamento'];
+      String municipality = item['municipio'];
+      if (!departmentsAndMunicipalities.containsKey(department)) {
+        departmentsAndMunicipalities[department] = [];
+      }
+      departmentsAndMunicipalities[department]!.add(municipality);
+    }
+    departmentsAndMunicipalities.forEach((key, value) {
+      value.sort(); // Ordena los municipios alfabéticamente
+    });
+
+    // Ordenar los departamentos alfabéticamente
+    final sortedDepartments = Map.fromEntries(
+        departmentsAndMunicipalities.entries.toList()
+          ..sort((a, b) => a.key.compareTo(b.key)));
+
+    setState(() {
+      _departmentsAndMunicipalities = sortedDepartments;
+    });
+  }
 
   void _registerAdmin() async {
     String email = _adminEmailController.text;
@@ -207,8 +297,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     String telefono = _leaderPhoneController.text;
     String departamento = _leaderDepartmentController.text;
     String municipio = _leaderMunicipalityController.text;
-    String comuna = _leaderComunaController.text;
-    String barrio = _leaderBarrioController.text;
+    String comuna = _selectedComuna ?? '';
+    String barrio = _selectedBarrio ?? '';
+    // String comuna = _leaderComunaController.text;
+    // String barrio = _leaderBarrioController.text;
     String direccion = _leaderAddressController.text;
     String area = _selectedAreaOfInfluence.toString();
     String poder = _selectedPowerLevel.toString();
@@ -245,10 +337,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
         print(
             "Registro de datos del perfil codigo: ${FirebaseAuth.instance.currentUser!.uid}");
         guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
-        // await _auth.signOut();
-        // if (currentUser != null){
-        //   await _auth.signInWithEmailAndPassword(email: currentUser.email.toString(), password: GlobalVariables().adminPassword!);
-        // }
         print(FirebaseAuth.instance.currentUser!.uid);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Líder creado exitosamente')));
@@ -341,12 +429,75 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             keyboardType: TextInputType.number),
         _buildTextField(_leaderPhoneController, 'Teléfono',
             keyboardType: TextInputType.phone),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
         _buildSectionTitle('Información de Residencia'),
-        _buildTextField(_leaderDepartmentController, 'Departamento'),
-        _buildTextField(_leaderMunicipalityController, 'Municipio'),
-        _buildTextField(_leaderComunaController, 'Localidad o Comuna'),
-        _buildTextField(_leaderBarrioController, 'Barrio o Vereda'),
+        const SizedBox(height: 8),
+        buildDropdown(
+            labelText: "Departamento",
+            value: _selectedDepartment,
+            items: _departmentsAndMunicipalities,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedDepartment = newValue;
+                _filteredMunicipalities =
+                    _departmentsAndMunicipalities[_selectedDepartment] ?? [];
+                _selectedMunicipality = null;
+              });
+            }),
+        const SizedBox(height: 8),
+        if (_filteredMunicipalities.isNotEmpty)
+          buildDropdown(
+              labelText: "Municipio",
+              value: _selectedMunicipality,
+              items: {for (var i in _filteredMunicipalities) i: []},
+              onChanged: (String? newValue) {
+                setState(() {
+                  if (!_filteredMunicipalities
+                      .contains(_selectedMunicipality)) {
+                    _selectedMunicipality =
+                        null; // Reinicia el municipio si no está en la lista actual
+                  }
+                });
+                _selectedMunicipality = newValue;
+              }),
+        const SizedBox(height: 8),
+        // _buildTextField(_leaderDepartmentController, 'Departamento'),
+        // _buildTextField(_leaderMunicipalityController, 'Municipio'),
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+              labelText: 'Comuna', border: OutlineInputBorder()),
+          value: _selectedComuna,
+          items: _comunasYBarrios.keys.map((String comuna) {
+            return DropdownMenuItem<String>(
+              value: comuna,
+              child: Text(comuna),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedComuna = newValue;
+              _barriosFiltrados = _comunasYBarrios[_selectedComuna] ?? [];
+              _selectedBarrio = null;
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        DropdownButtonFormField<String>(
+          decoration: const InputDecoration(
+              labelText: 'Barrio', border: OutlineInputBorder()),
+          value: _selectedBarrio,
+          items: _barriosFiltrados.map((String barrio) {
+            return DropdownMenuItem<String>(
+              value: barrio,
+              child: Text(barrio),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedBarrio = newValue;
+            });
+          },
+        ),
         _buildTextField(_leaderAddressController, 'Dirección de residencia'),
         const SizedBox(height: 20),
         _buildSectionTitle('Áreas de Influencia y Participación'),
@@ -369,6 +520,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             _selectedParticipationLevel = value!;
           });
         }),
+
         _buildSectionTitle("Datos de Ingreso"),
         _buildTextField(_leaderEmailController, 'Correo'),
         _buildPassword(
