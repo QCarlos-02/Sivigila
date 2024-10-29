@@ -14,7 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init(); // Inicializa GetStorage
 
-  // Inicializa Firebase
+  // Inicializa Firebase asd
   await Firebase.initializeApp(
     options: GetPlatform.isWeb
         ? const FirebaseOptions(
