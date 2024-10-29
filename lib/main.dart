@@ -5,7 +5,6 @@ import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Admin/pages/InicioAdmin.dart';
-import 'package:sivigila/Pagina/Inicio.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';

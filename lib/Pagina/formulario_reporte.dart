@@ -32,11 +32,11 @@ class _FormularioReporteState extends State<FormularioReporte> {
   String? _barrioSeleccionado;
   List<String> _comunasFiltradas = [];
   List<String> _barriosFiltrados = [];
-  DateTime? _fechaIncidente; // Fecha del incidente
+  DateTime? _fechaIncidente;
 
   String? _nombres;
   String? _apellidos;
-  String? _comuna; // Comuna asignada al usuario
+  String? _comuna;
 
   final TextEditingController _personaController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
@@ -52,9 +52,9 @@ class _FormularioReporteState extends State<FormularioReporte> {
 
   Future<void> _fetchUserDetails() async {
     try {
-      User? user = FirebaseAuth.instance.currentUser; // Obtener el usuario autenticado
+      User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        String userId = user.uid; // Obtener el UID del usuario
+        String userId = user.uid;
 
         final DocumentSnapshot snapshot = await FirebaseFirestore.instance
             .collection('perfiles')
@@ -65,7 +65,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
           setState(() {
             _nombres = snapshot['nombres'];
             _apellidos = snapshot['apellidos'];
-            _comuna = snapshot['comuna']; // Obtener la comuna
+            _comuna = snapshot['comuna'];
           });
         } else {
           print("No se encontró el documento para el usuario con UID $userId");
@@ -176,7 +176,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
               _buildInfoText('Subcategoría: ${widget.subcategoria}'),
               _buildInfoText('Sub-Subcategoria: ${widget.subsubcategoria}'),
               const SizedBox(height: 20),
-              _buildFechaIncidenteField(), // Campo de fecha del incidente
+              _buildFechaIncidenteField(),
               const SizedBox(height: 20),
               _buildDropdown('Zona', _zonas, (value) {
                 setState(() {
@@ -206,7 +206,6 @@ class _FormularioReporteState extends State<FormularioReporte> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_zonaSeleccionada == null || _direccionController.text.isEmpty || _descripcionController.text.isEmpty || _fechaIncidente == null) {
-                      // Asegúrate de que se hayan completado los campos requeridos
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Por favor, complete todos los campos requeridos")),
                       );
@@ -214,43 +213,46 @@ class _FormularioReporteState extends State<FormularioReporte> {
                     }
 
                     try {
-                      // Construye el reporte con los datos
-                      final reporte = {
-                        'seccion': widget.seccion,
-                        'categoria': widget.categoria,
-                        'subcategoria': widget.subcategoria,
-                        'subsubcategoria': widget.subsubcategoria,
-                        'nombres': _nombres ?? '',
-                        'apellidos': _apellidos ?? '',
-                        'comuna': _comuna ?? '', // Incluye la comuna en el reporte
-                        'fecha_incidente': _fechaIncidente!.toIso8601String(),
-                        'zona': _zonaSeleccionada,
-                        'comuna_evento': _comunaSeleccionada, // Comuna seleccionada para el evento
-                        'barrio': _zonaSeleccionada == 'Urbana' ? _barrioSeleccionado : _barrioManualController.text,
-                        'direccion': _direccionController.text,
-                        'descripcion': _descripcionController.text,
-                        'timestamp': FieldValue.serverTimestamp(), // Marca de tiempo automática
-                      };
+                      User? user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        final reporte = {
+                          'seccion': widget.seccion,
+                          'categoria': widget.categoria,
+                          'subcategoria': widget.subcategoria,
+                          'subsubcategoria': widget.subsubcategoria,
+                          'nombres': _nombres ?? '',
+                          'apellidos': _apellidos ?? '',
+                          'comuna': _comuna ?? '',
+                          'fecha_incidente': _fechaIncidente!.toIso8601String(),
+                          'zona': _zonaSeleccionada,
+                          'comuna_evento': _comunaSeleccionada,
+                          'barrio': _zonaSeleccionada == 'Urbana' ? _barrioSeleccionado : _barrioManualController.text,
+                          'direccion': _direccionController.text,
+                          'descripcion': _descripcionController.text,
+                          'timestamp': FieldValue.serverTimestamp(),
+                          'userId': user.uid, // Guarda el UID del usuario
+                        };
 
-                      // Guarda el reporte en Firestore
-                      await FirebaseFirestore.instance.collection('reportes').add(reporte);
+                        await FirebaseFirestore.instance.collection('reportes').add(reporte);
 
-                      // Muestra un mensaje de confirmación
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Reporte enviado exitosamente")),
-                      );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Reporte enviado exitosamente")),
+                        );
 
-                      // Limpia los campos después de enviar
-                      _direccionController.clear();
-                      _descripcionController.clear();
-                      setState(() {
-                        _zonaSeleccionada = null;
-                        _comunaSeleccionada = null;
-                        _barrioSeleccionado = null;
-                        _fechaIncidente = null;
-                      });
+                        _direccionController.clear();
+                        _descripcionController.clear();
+                        setState(() {
+                          _zonaSeleccionada = null;
+                          _comunaSeleccionada = null;
+                          _barrioSeleccionado = null;
+                          _fechaIncidente = null;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Error: Usuario no autenticado")),
+                        );
+                      }
                     } catch (e) {
-                      // Manejo de errores
                       print("Error al enviar el reporte: $e");
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Error al enviar el reporte")),
