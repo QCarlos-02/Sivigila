@@ -38,67 +38,101 @@ class UsuarioListScreen extends StatefulWidget {
 }
 
 class _UsuarioListScreenState extends State<UsuarioListScreen> {
-  final List<String> usuarios = [
-    "Usuario 1",
-    "Usuario 2",
-    "Usuario 3",
-  ];
+  List<String> administradores = [];
+  List<String> lideres = [];
 
-  // Lista de usuarios registrados
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsuarios();
+  }
+
+  Future<void> _fetchUsuarios() async {
+    final CollectionReference perfilesCollection =
+        FirebaseFirestore.instance.collection('perfiles');
+
+    try {
+      final QuerySnapshot snapshot = await perfilesCollection.get();
+
+      List<String> adminList = [];
+      List<String> leaderList = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final nombre = data['nombres'] ?? 'Sin Nombre';
+
+        if (data['rol'] == 'Admin') {
+          adminList.add(nombre);
+        } else if (data['rol'] == 'Lider') {
+          leaderList.add(nombre);
+        }
+      }
+
+      setState(() {
+        administradores = adminList;
+        lideres = leaderList;
+      });
+    } catch (e) {
+      print("Error al obtener usuarios: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Registro de Usuarios"),
+        title: const Text(
+          "Registro de Usuarios",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.blueAccent,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(25),
-        itemCount: usuarios.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(usuarios[index]),
-            onTap: () {
-              // Submenú al seleccionar un usuario
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Opciones para ${usuarios[index]}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.delete, color: Colors.red),
-                          title: const Text("Eliminar Usuario"),
-                          onTap: () {
-                            //  Lógica para eliminar usuario
-
-                            Navigator.pop(context); // Cerrar el submenú
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("${usuarios[index]} eliminado"),
-                              ),
-                            );
-                            usuarios.remove(usuarios[index]);
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              "Administradores",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+            ),
+          ),
+          ...administradores.map((usuario) => ListTile(
+                leading: const Icon(Icons.person, color: Colors.blueAccent),
+                title: Text(
+                  usuario,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                tileColor: Colors.blue[50],
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                onTap: () => _showUserOptions(context, usuario, 'Admin'),
+              )),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              "Líderes",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+            ),
+          ),
+          ...lideres.map((usuario) => ListTile(
+                leading: const Icon(Icons.group, color: Colors.green),
+                title: Text(
+                  usuario,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                tileColor: Colors.green[50],
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                onTap: () => _showUserOptions(context, usuario, 'Lider'),
+              )),
+        ],
       ),
-      // Botón flotante para ir a la ventana de registro
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, size: 30),
+        backgroundColor: Colors.blueAccent,
         onPressed: () {
           Navigator.push(
             context,
@@ -108,6 +142,51 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _showUserOptions(BuildContext context, String usuario, String rol) {
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.grey[100],
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Opciones para $usuario ($rol)",
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.redAccent),
+                title: const Text("Eliminar Usuario"),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("$usuario eliminado"),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  setState(() {
+                    if (rol == 'Admin') {
+                      administradores.remove(usuario);
+                    } else {
+                      lideres.remove(usuario);
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -123,12 +202,11 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   String _selectedRole = 'Líder';
   Controlperfil cp = Get.find();
 
-  // Controllers para los datos del admin
+  final _adminNameController = TextEditingController();
   final _adminEmailController = TextEditingController();
   final _adminPasswordController = TextEditingController();
   final _adminConfirmPasswordController = TextEditingController();
 
-  // Controllers para los datos del líder
   final _leaderNameController = TextEditingController();
   final _leaderSurnameController = TextEditingController();
   final _leaderDocumentTypeController = TextEditingController();
@@ -161,10 +239,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   String? _selectedMunicipality;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   bool _obscureText = true;
 
-  // Listas de selección para algunos campos
   final List<String> _areasOfInfluence = [
     'Cabecera municipal',
     'Centro de poblado',
@@ -183,6 +259,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     'CN',
     'PS'
   ];
+
   String? _selectRole;
   String? _selectedOption;
 
@@ -235,7 +312,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
         await rootBundle.loadString('assets/departamentos_municipios.json');
     final List<dynamic> jsonList = json.decode(jsonString);
 
-    // Transformar los datos a un mapa de departamentos y municipios
     Map<String, List<String>> departmentsAndMunicipalities = {};
     for (var item in jsonList) {
       String department = item['departamento'];
@@ -246,10 +322,9 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       departmentsAndMunicipalities[department]!.add(municipality);
     }
     departmentsAndMunicipalities.forEach((key, value) {
-      value.sort(); // Ordena los municipios alfabéticamente
+      value.sort();
     });
 
-    // Ordenar los departamentos alfabéticamente
     final sortedDepartments = Map.fromEntries(
         departmentsAndMunicipalities.entries.toList()
           ..sort((a, b) => a.key.compareTo(b.key)));
@@ -260,6 +335,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   void _registerAdmin() async {
+    String nombres = _adminNameController.text;
     String email = _adminEmailController.text;
     String password = _adminPasswordController.text;
     String confirmPassword = _adminConfirmPasswordController.text;
@@ -268,10 +344,15 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       try {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        var datos = {"correo": email, "rol": "Admin"};
-        print(
-            "Registro de datos del perfil codigo: ${FirebaseAuth.instance.currentUser!.uid}");
+
+        var datos = {
+          "correo": email,
+          "rol": "Admin",
+          "nombres": nombres
+        };
+
         guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Admin creado exitosamente')));
       } catch (e) {
@@ -286,9 +367,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   void _registerLeader() async {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-
-    String name = _leaderNameController.text;
+    String nombres = _leaderNameController.text;
     String apellidos = _leaderSurnameController.text;
     String tipoDocumento = _selectedDocumentType.toString();
     String numeroDocumento = _leaderDocumentNumberController.text;
@@ -299,8 +378,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     String municipio = _leaderMunicipalityController.text;
     String comuna = _selectedComuna ?? '';
     String barrio = _selectedBarrio ?? '';
-    // String comuna = _leaderComunaController.text;
-    // String barrio = _leaderBarrioController.text;
     String direccion = _leaderAddressController.text;
     String area = _selectedAreaOfInfluence.toString();
     String poder = _selectedPowerLevel.toString();
@@ -313,9 +390,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       try {
         await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        // Aquí puedes añadir la lógica para guardar "name" y "comuna" en la base de datos
         var datos = {
-          "nombres": name,
+          "nombres": nombres,
           "apellidos": apellidos,
           "tipo documento": tipoDocumento,
           "numero documento": numeroDocumento,
@@ -331,13 +407,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "nivel de poder": poder,
           "nivel de participacion": participacion,
           "correo": email,
-          //"contraseña": password,
           "rol": "Lider"
         };
-        print(
-            "Registro de datos del perfil codigo: ${FirebaseAuth.instance.currentUser!.uid}");
         guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
-        print(FirebaseAuth.instance.currentUser!.uid);
+
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Líder creado exitosamente')));
       } catch (e) {
@@ -353,266 +426,392 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crear Usuario'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            children: [
-              DropdownButton<String>(
-                borderRadius: BorderRadius.circular(15),
-                value: _selectedRole,
-                items: ['Líder', 'Admin'].map((String role) {
-                  return DropdownMenuItem<String>(
-                    value: role,
-                    child: Text(
-                      role,
-                      textDirection: TextDirection.rtl,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRole = value!;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              _selectedRole == 'Admin' ? _buildAdminForm() : _buildLeaderForm(),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed:
-                    _selectedRole == 'Admin' ? _registerAdmin : _registerLeader,
-                child: Text('Registrar $_selectedRole'),
-              ),
-            ],
-          ),
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        "Crear Usuario",
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.blueAccent,
         ),
       ),
-    );
-  }
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      iconTheme: const IconThemeData(color: Colors.blueAccent),
+      elevation: 0, // Quita la sombra para un diseño plano
+    ),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          // Selección de Rol
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.blueAccent, width: 1),
+            ),
+            child: DropdownButton<String>(
+              isExpanded: true,
+              underline: const SizedBox(), // Quita la línea inferior
+              borderRadius: BorderRadius.circular(15),
+              value: _selectedRole,
+              items: ['Líder', 'Admin'].map((String role) {
+                return DropdownMenuItem<String>(
+                  value: role,
+                  child: Text(
+                    role,
+                    style: const TextStyle(color: Colors.blueAccent),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedRole = value!;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
 
+          // Formulario según el rol seleccionado
+          _selectedRole == 'Admin' ? _buildAdminForm() : _buildLeaderForm(),
+          const SizedBox(height: 20),
+
+          // Botón de Registro
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _selectedRole == 'Admin' ? _registerAdmin : _registerLeader,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                'Registrar $_selectedRole',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+//
   Widget _buildAdminForm() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTextField(_adminEmailController, 'Correo'),
-        _buildPassword(_adminPasswordController, 'Contraseña'),
-        _buildPassword(
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          child: Text(
+            "Información del Administrador",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildStyledTextField(_adminNameController, 'Nombres', Icons.person),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_adminEmailController, 'Correo', Icons.email),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(_adminPasswordController, 'Contraseña', Icons.lock),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(
           _adminConfirmPasswordController,
           'Confirmar Contraseña',
+          Icons.lock_outline,
         ),
       ],
     );
   }
+//
+  Widget _buildStyledTextField(
+      TextEditingController controller, String label, IconData icon,
+      {TextInputType keyboardType = TextInputType.text}) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
+        filled: true,
+        fillColor: Colors.blue[50],
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      ),
+    );
+  }
+//
+  Widget _buildStyledPasswordField(
+      TextEditingController controller, String label, IconData icon) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool _obscureText = true;
 
+        return TextField(
+          controller: controller,
+          obscureText: _obscureText,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(color: Colors.blueAccent),
+            filled: true,
+            fillColor: Colors.blue[50],
+            prefixIcon: Icon(icon, color: Colors.blueAccent),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureText ? Icons.visibility_off : Icons.visibility,
+                color: Colors.blueAccent,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          ),
+        );
+      },
+    );
+  }
+//
   Widget _buildLeaderForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle('Información Personal'),
-        _buildTextField(_leaderNameController, 'Nombres'),
-        _buildTextField(_leaderSurnameController, 'Apellidos'),
-        _buildDropdownField(
-            'Tipo de documento', _documentTypes, _selectedDocumentType,
-            (String? value) {
-          setState(() {
-            _selectedDocumentType = value!;
-          });
-        }),
-        _buildTextField(_leaderDocumentNumberController, 'Número de documento'),
-        _buildTextField(_leaderNationalityController, 'Nacionalidad'),
-        _buildTextField(_leaderAgeController, 'Edad',
-            keyboardType: TextInputType.number),
-        _buildTextField(_leaderPhoneController, 'Teléfono',
-            keyboardType: TextInputType.phone),
-        const SizedBox(height: 8),
+        _buildStyledTextField(_leaderNameController, 'Nombres', Icons.person),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_leaderSurnameController, 'Apellidos', Icons.person_outline),
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+          'Tipo de documento', 
+          _documentTypes, 
+          _selectedDocumentType, 
+          (String? value) {
+            setState(() {
+              _selectedDocumentType = value!;
+            });
+          },
+          Icons.article
+        ),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_leaderDocumentNumberController, 'Número de documento', Icons.badge),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_leaderNationalityController, 'Nacionalidad', Icons.public),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_leaderAgeController, 'Edad', Icons.calendar_today, keyboardType: TextInputType.number),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_leaderPhoneController, 'Teléfono', Icons.phone, keyboardType: TextInputType.phone),
+        
+        const SizedBox(height: 20),
         _buildSectionTitle('Información de Residencia'),
-        const SizedBox(height: 8),
-        buildDropdown(
-            labelText: "Departamento",
-            value: _selectedDepartment,
-            items: _departmentsAndMunicipalities,
+        
+        const SizedBox(height: 10),
+        buildStyledDropdown(
+          labelText: "Departamento",
+          value: _selectedDepartment,
+          items: _departmentsAndMunicipalities,
+          icon: Icons.location_city,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedDepartment = newValue;
+              _filteredMunicipalities = _departmentsAndMunicipalities[_selectedDepartment] ?? [];
+              _selectedMunicipality = null;
+            });
+          },
+        ),
+        const SizedBox(height: 15),
+        if (_filteredMunicipalities.isNotEmpty)
+          buildStyledDropdown(
+            labelText: "Municipio",
+            value: _selectedMunicipality,
+            items: {for (var i in _filteredMunicipalities) i: []},
+            icon: Icons.location_on,
             onChanged: (String? newValue) {
               setState(() {
-                _selectedDepartment = newValue;
-                _filteredMunicipalities =
-                    _departmentsAndMunicipalities[_selectedDepartment] ?? [];
-                _selectedMunicipality = null;
-              });
-            }),
-        const SizedBox(height: 8),
-        if (_filteredMunicipalities.isNotEmpty)
-          buildDropdown(
-              labelText: "Municipio",
-              value: _selectedMunicipality,
-              items: {for (var i in _filteredMunicipalities) i: []},
-              onChanged: (String? newValue) {
-                setState(() {
-                  if (!_filteredMunicipalities
-                      .contains(_selectedMunicipality)) {
-                    _selectedMunicipality =
-                        null; // Reinicia el municipio si no está en la lista actual
-                  }
-                });
                 _selectedMunicipality = newValue;
-              }),
-        const SizedBox(height: 8),
-        // _buildTextField(_leaderDepartmentController, 'Departamento'),
-        // _buildTextField(_leaderMunicipalityController, 'Municipio'),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-              labelText: 'Comuna', border: OutlineInputBorder()),
-          value: _selectedComuna,
-          items: _comunasYBarrios.keys.map((String comuna) {
-            return DropdownMenuItem<String>(
-              value: comuna,
-              child: Text(comuna),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
+              });
+            },
+          ),
+        
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+          'Comuna', 
+          _comunasYBarrios.keys.toList(), 
+          _selectedComuna, 
+          (String? newValue) {
             setState(() {
               _selectedComuna = newValue;
               _barriosFiltrados = _comunasYBarrios[_selectedComuna] ?? [];
               _selectedBarrio = null;
             });
           },
+          Icons.home
         ),
-        const SizedBox(height: 10),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-              labelText: 'Barrio', border: OutlineInputBorder()),
-          value: _selectedBarrio,
-          items: _barriosFiltrados.map((String barrio) {
-            return DropdownMenuItem<String>(
-              value: barrio,
-              child: Text(barrio),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+          'Barrio', 
+          _barriosFiltrados, 
+          _selectedBarrio, 
+          (String? newValue) {
             setState(() {
               _selectedBarrio = newValue;
             });
           },
+          Icons.home_outlined
         ),
-        _buildTextField(_leaderAddressController, 'Dirección de residencia'),
+        _buildStyledTextField(_leaderAddressController, 'Dirección de residencia', Icons.map),
+        
         const SizedBox(height: 20),
         _buildSectionTitle('Áreas de Influencia y Participación'),
-        _buildDropdownField(
-            'Área de influencia', _areasOfInfluence, _selectedAreaOfInfluence,
-            (String? value) {
-          setState(() {
-            _selectedAreaOfInfluence = value!;
-          });
-        }),
-        _buildDropdownField('Nivel de poder', _powerLevels, _selectedPowerLevel,
-            (String? value) {
-          setState(() {
-            _selectedPowerLevel = value!;
-          });
-        }),
-        _buildDropdownField('Nivel de participación', _participationLevels,
-            _selectedParticipationLevel, (String? value) {
-          setState(() {
-            _selectedParticipationLevel = value!;
-          });
-        }),
 
-        _buildSectionTitle("Datos de Ingreso"),
-        _buildTextField(_leaderEmailController, 'Correo'),
-        _buildPassword(
-          _leaderPasswordController,
-          'Contraseña',
+        _buildStyledDropdownField(
+          'Área de influencia', 
+          _areasOfInfluence, 
+          _selectedAreaOfInfluence, 
+          (String? value) {
+            setState(() {
+              _selectedAreaOfInfluence = value!;
+            });
+          },
+          Icons.info
         ),
-        _buildPassword(
-          _leaderConfirmPasswordController,
-          'Confirmar contraseña',
-        )
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+          'Nivel de poder', 
+          _powerLevels, 
+          _selectedPowerLevel, 
+          (String? value) {
+            setState(() {
+              _selectedPowerLevel = value!;
+            });
+          },
+          Icons.leaderboard
+        ),
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+          'Nivel de participación', 
+          _participationLevels, 
+          _selectedParticipationLevel, 
+          (String? value) {
+            setState(() {
+              _selectedParticipationLevel = value!;
+            });
+          },
+          Icons.group
+        ),
+        
+        _buildSectionTitle("Datos de Ingreso"),
+        _buildStyledTextField(_leaderEmailController, 'Correo', Icons.email),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(_leaderPasswordController, 'Contraseña', Icons.lock),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(_leaderConfirmPasswordController, 'Confirmar contraseña', Icons.lock_outline),
       ],
     );
   }
-
-  Widget _buildPassword(TextEditingController controller, String label) {
-    void togglePasswordVisibility() {
-      setState(() {
-        _obscureText = !_obscureText;
-      });
-    }
-
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: TextField(
-          obscureText: _obscureText,
-          controller: controller,
-          decoration: InputDecoration(
-              labelText: label,
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                  onPressed: togglePasswordVisibility,
-                  icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility))),
-        ));
-  }
-
-  Widget _buildTextField(TextEditingController controller, String label,
-      {bool obscureText = false,
-      TextInputType keyboardType = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
+//
+  Widget _buildStyledDropdownField(String label, List<String> items, String? selectedItem, ValueChanged<String?> onChanged, IconData icon) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
+        filled: true,
+        fillColor: Colors.blue[50],
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
         ),
-        obscureText: obscureText,
-        keyboardType: keyboardType,
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
+      value: selectedItem,
+      items: items.map((String item) {
+        return DropdownMenuItem<String>(
+          value: item,
+          child: Text(item),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 
-  Widget _buildDropdownField(String label, List<String> items,
-      String selectedItem, ValueChanged<String?> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
+  Widget buildStyledDropdown({
+    required String labelText,
+    required String? value,
+    required Map<String, List<String>> items,
+    required IconData icon,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
+        filled: true,
+        fillColor: Colors.blue[50],
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
         ),
-        value: selectedItem,
-        items: items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
-        onChanged: onChanged,
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
+      value: value,
+      items: items.keys.map((String key) {
+        return DropdownMenuItem<String>(
+          value: key,
+          child: Text(key),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 
   Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 20.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueAccent,
+          ),
         ),
-      ),
-    );
-  }
+        const SizedBox(height: 6),
+        Container(
+          height: 2,
+          width: double.infinity,
+          color: Colors.blueAccent.withOpacity(0.6),
+        ),
+      ],
+    ),
+  );
 }
 
-Future<void> guardarDatosAdicionales(
-    User user, Map<String, dynamic> datos) async {
-  CollectionReference usuariosCollection =
-      FirebaseFirestore.instance.collection('perfiles');
+
+}
+
+Future<void> guardarDatosAdicionales(User user, Map<String, dynamic> datos) async {
+  CollectionReference usuariosCollection = FirebaseFirestore.instance.collection('perfiles');
   await usuariosCollection.doc(user.uid).set(datos);
 }
-//dshsbc
