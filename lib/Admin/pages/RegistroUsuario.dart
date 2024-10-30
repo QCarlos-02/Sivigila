@@ -335,94 +335,98 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   void _registerAdmin() async {
-    String nombres = _adminNameController.text;
-    String email = _adminEmailController.text;
-    String password = _adminPasswordController.text;
-    String confirmPassword = _adminConfirmPasswordController.text;
+  String nombres = _adminNameController.text;
+  String email = _adminEmailController.text;
+  String password = _adminPasswordController.text;
+  String confirmPassword = _adminConfirmPasswordController.text;
 
-    if (password == confirmPassword) {
-      try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
+  if (password == confirmPassword) {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
 
-        var datos = {
-          "correo": email,
-          "rol": "Admin",
-          "nombres": nombres
-        };
+      var datos = {
+        "correo": email,
+        "rol": "Admin",
+        "nombres": nombres,
+        "password": password,
+      };
 
-        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Admin creado exitosamente')));
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al crear admin')));
-      }
-    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')));
+          const SnackBar(content: Text('Admin creado exitosamente')));
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al crear admin')));
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las contraseñas no coinciden')));
   }
+}
 
   void _registerLeader() async {
-    String nombres = _leaderNameController.text;
-    String apellidos = _leaderSurnameController.text;
-    String tipoDocumento = _selectedDocumentType.toString();
-    String numeroDocumento = _leaderDocumentNumberController.text;
-    String nacionalidad = _leaderNationalityController.text;
-    String edad = _leaderAgeController.text;
-    String telefono = _leaderPhoneController.text;
-    String departamento = _leaderDepartmentController.text;
-    String municipio = _leaderMunicipalityController.text;
-    String comuna = _selectedComuna ?? '';
-    String barrio = _selectedBarrio ?? '';
-    String direccion = _leaderAddressController.text;
-    String area = _selectedAreaOfInfluence.toString();
-    String poder = _selectedPowerLevel.toString();
-    String participacion = _selectedParticipationLevel.toString();
-    String email = _leaderEmailController.text;
-    String password = _leaderPasswordController.text;
-    String confirmPassword = _leaderConfirmPasswordController.text;
+  String nombres = _leaderNameController.text;
+  String apellidos = _leaderSurnameController.text;
+  String tipoDocumento = _selectedDocumentType.toString();
+  String numeroDocumento = _leaderDocumentNumberController.text;
+  String nacionalidad = _leaderNationalityController.text;
+  String edad = _leaderAgeController.text;
+  String telefono = _leaderPhoneController.text;
+  String departamento = _leaderDepartmentController.text;
+  String municipio = _leaderMunicipalityController.text;
+  String comuna = _selectedComuna ?? '';
+  String barrio = _selectedBarrio ?? '';
+  String direccion = _leaderAddressController.text;
+  String area = _selectedAreaOfInfluence.toString();
+  String poder = _selectedPowerLevel.toString();
+  String participacion = _selectedParticipationLevel.toString();
+  String email = _leaderEmailController.text;
+  String password = _leaderPasswordController.text;
+  String confirmPassword = _leaderConfirmPasswordController.text;
 
-    if (password == confirmPassword) {
-      try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        var datos = {
-          "nombres": nombres,
-          "apellidos": apellidos,
-          "tipo documento": tipoDocumento,
-          "numero documento": numeroDocumento,
-          "nacionalidad": nacionalidad,
-          "edad": edad,
-          "telefono": telefono,
-          "departamento": departamento,
-          "municipio": municipio,
-          "comuna": comuna,
-          "barrio": barrio,
-          "direccion": direccion,
-          "area de influencia": area,
-          "nivel de poder": poder,
-          "nivel de participacion": participacion,
-          "correo": email,
-          "rol": "Lider"
-        };
-        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+  if (password == confirmPassword) {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      var datos = {
+        "nombres": nombres,
+        "apellidos": apellidos,
+        "tipo documento": tipoDocumento,
+        "numero documento": numeroDocumento,
+        "nacionalidad": nacionalidad,
+        "edad": edad,
+        "telefono": telefono,
+        "departamento": departamento,
+        "municipio": municipio,
+        "comuna": comuna,
+        "barrio": barrio,
+        "direccion": direccion,
+        "area de influencia": area,
+        "nivel de poder": poder,
+        "nivel de participacion": participacion,
+        "correo": email,
+        "rol": "Lider",
+        "password": password
+      };
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Líder creado exitosamente')));
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al crear líder')));
-      }
-    } else {
+      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')));
+          const SnackBar(content: Text('Líder creado exitosamente')));
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al crear líder')));
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las contraseñas no coinciden')));
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
