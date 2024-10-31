@@ -95,7 +95,10 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
             padding: EdgeInsets.only(bottom: 8.0),
             child: Text(
               "Administradores",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent),
             ),
           ),
           ...administradores.map((usuario) => ListTile(
@@ -114,7 +117,10 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
             padding: EdgeInsets.only(bottom: 8.0),
             child: Text(
               "Líderes",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
             ),
           ),
           ...lideres.map((usuario) => ListTile(
@@ -161,7 +167,9 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
               Text(
                 "Opciones para $usuario ($rol)",
                 style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87),
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.redAccent),
@@ -335,178 +343,181 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   void _registerAdmin() async {
-  String nombres = _adminNameController.text;
-  String email = _adminEmailController.text;
-  String password = _adminPasswordController.text;
-  String confirmPassword = _adminConfirmPasswordController.text;
+    String nombres = _adminNameController.text;
+    String email = _adminEmailController.text;
+    String password = _adminPasswordController.text;
+    String confirmPassword = _adminConfirmPasswordController.text;
 
-  if (password == confirmPassword) {
-    try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+    if (password == confirmPassword) {
+      try {
+        await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
 
-      var datos = {
-        "correo": email,
-        "rol": "Admin",
-        "nombres": nombres,
-        "password": password,
-      };
+        var datos = {
+          "correo": email,
+          "rol": "Admin",
+          "nombres": nombres,
+          "password": password,
+        };
 
-      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
 
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Admin creado exitosamente')));
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error al crear admin')));
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Admin creado exitosamente')));
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al crear admin')));
+          const SnackBar(content: Text('Las contraseñas no coinciden')));
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')));
   }
-}
 
   void _registerLeader() async {
-  String nombres = _leaderNameController.text;
-  String apellidos = _leaderSurnameController.text;
-  String tipoDocumento = _selectedDocumentType.toString();
-  String numeroDocumento = _leaderDocumentNumberController.text;
-  String nacionalidad = _leaderNationalityController.text;
-  String edad = _leaderAgeController.text;
-  String telefono = _leaderPhoneController.text;
-  String departamento = _leaderDepartmentController.text;
-  String municipio = _leaderMunicipalityController.text;
-  String comuna = _selectedComuna ?? '';
-  String barrio = _selectedBarrio ?? '';
-  String direccion = _leaderAddressController.text;
-  String area = _selectedAreaOfInfluence.toString();
-  String poder = _selectedPowerLevel.toString();
-  String participacion = _selectedParticipationLevel.toString();
-  String email = _leaderEmailController.text;
-  String password = _leaderPasswordController.text;
-  String confirmPassword = _leaderConfirmPasswordController.text;
+    String nombres = _leaderNameController.text;
+    String apellidos = _leaderSurnameController.text;
+    String tipoDocumento = _selectedDocumentType.toString();
+    String numeroDocumento = _leaderDocumentNumberController.text;
+    String nacionalidad = _leaderNationalityController.text;
+    String edad = _leaderAgeController.text;
+    String telefono = _leaderPhoneController.text;
+    String departamento = _leaderDepartmentController.text;
+    String municipio = _leaderMunicipalityController.text;
+    String comuna = _selectedComuna ?? '';
+    String barrio = _selectedBarrio ?? '';
+    String direccion = _leaderAddressController.text;
+    String area = _selectedAreaOfInfluence.toString();
+    String poder = _selectedPowerLevel.toString();
+    String participacion = _selectedParticipationLevel.toString();
+    String email = _leaderEmailController.text;
+    String password = _leaderPasswordController.text;
+    String confirmPassword = _leaderConfirmPasswordController.text;
 
-  if (password == confirmPassword) {
-    try {
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      var datos = {
-        "nombres": nombres,
-        "apellidos": apellidos,
-        "tipo documento": tipoDocumento,
-        "numero documento": numeroDocumento,
-        "nacionalidad": nacionalidad,
-        "edad": edad,
-        "telefono": telefono,
-        "departamento": departamento,
-        "municipio": municipio,
-        "comuna": comuna,
-        "barrio": barrio,
-        "direccion": direccion,
-        "area de influencia": area,
-        "nivel de poder": poder,
-        "nivel de participacion": participacion,
-        "correo": email,
-        "rol": "Lider",
-        "password": password
-      };
+    if (password == confirmPassword) {
+      try {
+        await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+        var datos = {
+          "nombres": nombres,
+          "apellidos": apellidos,
+          "tipo documento": tipoDocumento,
+          "numero documento": numeroDocumento,
+          "nacionalidad": nacionalidad,
+          "edad": edad,
+          "telefono": telefono,
+          "departamento": departamento,
+          "municipio": municipio,
+          "comuna": comuna,
+          "barrio": barrio,
+          "direccion": direccion,
+          "area de influencia": area,
+          "nivel de poder": poder,
+          "nivel de participacion": participacion,
+          "correo": email,
+          "rol": "Lider",
+          "password": password
+        };
 
-      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
 
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Líder creado exitosamente')));
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error al crear líder')));
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Líder creado exitosamente')));
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al crear líder')));
+          const SnackBar(content: Text('Las contraseñas no coinciden')));
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')));
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text(
-        "Crear Usuario",
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.blueAccent,
-        ),
-      ),
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      iconTheme: const IconThemeData(color: Colors.blueAccent),
-      elevation: 0, // Quita la sombra para un diseño plano
-    ),
-    body: SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // Selección de Rol
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.blueAccent, width: 1),
-            ),
-            child: DropdownButton<String>(
-              isExpanded: true,
-              underline: const SizedBox(), // Quita la línea inferior
-              borderRadius: BorderRadius.circular(15),
-              value: _selectedRole,
-              items: ['Líder', 'Admin'].map((String role) {
-                return DropdownMenuItem<String>(
-                  value: role,
-                  child: Text(
-                    role,
-                    style: const TextStyle(color: Colors.blueAccent),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedRole = value!;
-                });
-              },
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Crear Usuario",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueAccent,
           ),
-          const SizedBox(height: 20),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.blueAccent),
+        elevation: 0, // Quita la sombra para un diseño plano
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Selección de Rol
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.blueAccent, width: 1),
+              ),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                underline: const SizedBox(), // Quita la línea inferior
+                borderRadius: BorderRadius.circular(15),
+                value: _selectedRole,
+                items: ['Líder', 'Admin'].map((String role) {
+                  return DropdownMenuItem<String>(
+                    value: role,
+                    child: Text(
+                      role,
+                      style: const TextStyle(color: Colors.blueAccent),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRole = value!;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
 
-          // Formulario según el rol seleccionado
-          _selectedRole == 'Admin' ? _buildAdminForm() : _buildLeaderForm(),
-          const SizedBox(height: 20),
+            // Formulario según el rol seleccionado
+            _selectedRole == 'Admin' ? _buildAdminForm() : _buildLeaderForm(),
+            const SizedBox(height: 20),
 
-          // Botón de Registro
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _selectedRole == 'Admin' ? _registerAdmin : _registerLeader,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            // Botón de Registro
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed:
+                    _selectedRole == 'Admin' ? _registerAdmin : _registerLeader,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Registrar $_selectedRole',
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
-              child: Text(
-                'Registrar $_selectedRole',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 //
   Widget _buildAdminForm() {
@@ -517,7 +528,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           padding: EdgeInsets.symmetric(vertical: 10.0),
           child: Text(
             "Información del Administrador",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent),
           ),
         ),
         const SizedBox(height: 10),
@@ -525,7 +539,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
         const SizedBox(height: 15),
         _buildStyledTextField(_adminEmailController, 'Correo', Icons.email),
         const SizedBox(height: 15),
-        _buildStyledPasswordField(_adminPasswordController, 'Contraseña', Icons.lock),
+        _buildStyledPasswordField(
+            _adminPasswordController, 'Contraseña', Icons.lock),
         const SizedBox(height: 15),
         _buildStyledPasswordField(
           _adminConfirmPasswordController,
@@ -535,6 +550,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       ],
     );
   }
+
 //
   Widget _buildStyledTextField(
       TextEditingController controller, String label, IconData icon,
@@ -552,10 +568,12 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
     );
   }
+
 //
   Widget _buildStyledPasswordField(
       TextEditingController controller, String label, IconData icon) {
@@ -587,12 +605,14 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
           ),
         );
       },
     );
   }
+
 //
   Widget _buildLeaderForm() {
     return Column(
@@ -601,31 +621,31 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
         _buildSectionTitle('Información Personal'),
         _buildStyledTextField(_leaderNameController, 'Nombres', Icons.person),
         const SizedBox(height: 15),
-        _buildStyledTextField(_leaderSurnameController, 'Apellidos', Icons.person_outline),
+        _buildStyledTextField(
+            _leaderSurnameController, 'Apellidos', Icons.person_outline),
         const SizedBox(height: 15),
         _buildStyledDropdownField(
-          'Tipo de documento', 
-          _documentTypes, 
-          _selectedDocumentType, 
-          (String? value) {
-            setState(() {
-              _selectedDocumentType = value!;
-            });
-          },
-          Icons.article
-        ),
+            'Tipo de documento', _documentTypes, _selectedDocumentType,
+            (String? value) {
+          setState(() {
+            _selectedDocumentType = value!;
+          });
+        }, Icons.article),
         const SizedBox(height: 15),
-        _buildStyledTextField(_leaderDocumentNumberController, 'Número de documento', Icons.badge),
+        _buildStyledTextField(_leaderDocumentNumberController,
+            'Número de documento', Icons.badge),
         const SizedBox(height: 15),
-        _buildStyledTextField(_leaderNationalityController, 'Nacionalidad', Icons.public),
+        _buildStyledTextField(
+            _leaderNationalityController, 'Nacionalidad', Icons.public),
         const SizedBox(height: 15),
-        _buildStyledTextField(_leaderAgeController, 'Edad', Icons.calendar_today, keyboardType: TextInputType.number),
+        _buildStyledTextField(
+            _leaderAgeController, 'Edad', Icons.calendar_today,
+            keyboardType: TextInputType.number),
         const SizedBox(height: 15),
-        _buildStyledTextField(_leaderPhoneController, 'Teléfono', Icons.phone, keyboardType: TextInputType.phone),
-        
+        _buildStyledTextField(_leaderPhoneController, 'Teléfono', Icons.phone,
+            keyboardType: TextInputType.phone),
         const SizedBox(height: 20),
         _buildSectionTitle('Información de Residencia'),
-        
         const SizedBox(height: 10),
         buildStyledDropdown(
           labelText: "Departamento",
@@ -635,7 +655,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           onChanged: (String? newValue) {
             setState(() {
               _selectedDepartment = newValue;
-              _filteredMunicipalities = _departmentsAndMunicipalities[_selectedDepartment] ?? [];
+              _filteredMunicipalities =
+                  _departmentsAndMunicipalities[_selectedDepartment] ?? [];
               _selectedMunicipality = null;
             });
           },
@@ -653,85 +674,65 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
               });
             },
           ),
-        
         const SizedBox(height: 15),
         _buildStyledDropdownField(
-          'Comuna', 
-          _comunasYBarrios.keys.toList(), 
-          _selectedComuna, 
-          (String? newValue) {
-            setState(() {
-              _selectedComuna = newValue;
-              _barriosFiltrados = _comunasYBarrios[_selectedComuna] ?? [];
-              _selectedBarrio = null;
-            });
-          },
-          Icons.home
-        ),
+            'Comuna', _comunasYBarrios.keys.toList(), _selectedComuna,
+            (String? newValue) {
+          setState(() {
+            _selectedComuna = newValue;
+            _barriosFiltrados = _comunasYBarrios[_selectedComuna] ?? [];
+            _selectedBarrio = null;
+          });
+        }, Icons.home),
         const SizedBox(height: 15),
-        _buildStyledDropdownField(
-          'Barrio', 
-          _barriosFiltrados, 
-          _selectedBarrio, 
-          (String? newValue) {
-            setState(() {
-              _selectedBarrio = newValue;
-            });
-          },
-          Icons.home_outlined
-        ),
-        _buildStyledTextField(_leaderAddressController, 'Dirección de residencia', Icons.map),
-        
+        _buildStyledDropdownField('Barrio', _barriosFiltrados, _selectedBarrio,
+            (String? newValue) {
+          setState(() {
+            _selectedBarrio = newValue;
+          });
+        }, Icons.home_outlined),
+        const SizedBox(height: 15),
+        _buildStyledTextField(
+            _leaderAddressController, 'Dirección de residencia', Icons.map),
         const SizedBox(height: 20),
         _buildSectionTitle('Áreas de Influencia y Participación'),
-
         _buildStyledDropdownField(
-          'Área de influencia', 
-          _areasOfInfluence, 
-          _selectedAreaOfInfluence, 
-          (String? value) {
-            setState(() {
-              _selectedAreaOfInfluence = value!;
-            });
-          },
-          Icons.info
-        ),
+            'Área de influencia', _areasOfInfluence, _selectedAreaOfInfluence,
+            (String? value) {
+          setState(() {
+            _selectedAreaOfInfluence = value!;
+          });
+        }, Icons.info),
         const SizedBox(height: 15),
         _buildStyledDropdownField(
-          'Nivel de poder', 
-          _powerLevels, 
-          _selectedPowerLevel, 
-          (String? value) {
-            setState(() {
-              _selectedPowerLevel = value!;
-            });
-          },
-          Icons.leaderboard
-        ),
+            'Nivel de poder', _powerLevels, _selectedPowerLevel,
+            (String? value) {
+          setState(() {
+            _selectedPowerLevel = value!;
+          });
+        }, Icons.leaderboard),
         const SizedBox(height: 15),
-        _buildStyledDropdownField(
-          'Nivel de participación', 
-          _participationLevels, 
-          _selectedParticipationLevel, 
-          (String? value) {
-            setState(() {
-              _selectedParticipationLevel = value!;
-            });
-          },
-          Icons.group
-        ),
-        
+        _buildStyledDropdownField('Nivel de participación',
+            _participationLevels, _selectedParticipationLevel, (String? value) {
+          setState(() {
+            _selectedParticipationLevel = value!;
+          });
+        }, Icons.group),
         _buildSectionTitle("Datos de Ingreso"),
         _buildStyledTextField(_leaderEmailController, 'Correo', Icons.email),
         const SizedBox(height: 15),
-        _buildStyledPasswordField(_leaderPasswordController, 'Contraseña', Icons.lock),
+        _buildStyledPasswordField(
+            _leaderPasswordController, 'Contraseña', Icons.lock),
         const SizedBox(height: 15),
-        _buildStyledPasswordField(_leaderConfirmPasswordController, 'Confirmar contraseña', Icons.lock_outline),
+        _buildStyledPasswordField(_leaderConfirmPasswordController,
+            'Confirmar contraseña', Icons.lock_outline),
       ],
     );
   }
+
 //
-  Widget _buildStyledDropdownField(String label, List<String> items, String? selectedItem, ValueChanged<String?> onChanged, IconData icon) {
+  Widget _buildStyledDropdownField(String label, List<String> items,
+      String? selectedItem, ValueChanged<String?> onChanged, IconData icon) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
@@ -743,7 +744,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
       value: selectedItem,
       items: items.map((String item) {
@@ -774,7 +776,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
       value: value,
       items: items.keys.map((String key) {
@@ -788,34 +791,34 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   Widget _buildSectionTitle(String title) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 20.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.blueAccent,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+            ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          height: 2,
-          width: double.infinity,
-          color: Colors.blueAccent.withOpacity(0.6),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 6),
+          Container(
+            height: 2,
+            width: double.infinity,
+            color: Colors.blueAccent.withOpacity(0.6),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-
-}
-
-Future<void> guardarDatosAdicionales(User user, Map<String, dynamic> datos) async {
-  CollectionReference usuariosCollection = FirebaseFirestore.instance.collection('perfiles');
+Future<void> guardarDatosAdicionales(
+    User user, Map<String, dynamic> datos) async {
+  CollectionReference usuariosCollection =
+      FirebaseFirestore.instance.collection('perfiles');
   await usuariosCollection.doc(user.uid).set(datos);
 }

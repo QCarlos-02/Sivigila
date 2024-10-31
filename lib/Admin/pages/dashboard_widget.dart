@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 
-class DashboardWidget extends StatelessWidget {
+class DashboardWidget extends StatefulWidget {
   DashboardWidget({super.key});
 
-  final Reportecontroller reporteController = Get.put(Reportecontroller());
+  @override
+  State<DashboardWidget> createState() => _DashboardWidgetState();
+}
+
+class _DashboardWidgetState extends State<DashboardWidget> {
+  final Reportecontroller reporteController = Get.find();
+
+  @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    super.setState(fn);
+    reporteController.consultarReportesgeneral();
+  }
 
   @override
   Widget build(BuildContext context) {

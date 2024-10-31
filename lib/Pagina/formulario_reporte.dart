@@ -78,11 +78,13 @@ class _FormularioReporteState extends State<FormularioReporte> {
 
   Future<void> _loadComunasYBarrios() async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/Comunas_y_Barrios_Valledupar.json');
+      final String jsonString = await rootBundle
+          .loadString('assets/Comunas_y_Barrios_Valledupar.json');
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
 
       setState(() {
-        _comunasYBarrios = jsonMap.map((key, value) => MapEntry(key, List<String>.from(value)));
+        _comunasYBarrios = jsonMap
+            .map((key, value) => MapEntry(key, List<String>.from(value)));
       });
     } catch (e) {
       print("Error al cargar el JSON: $e");
@@ -198,16 +200,24 @@ class _FormularioReporteState extends State<FormularioReporte> {
                   });
                 }),
               if (_zonaSeleccionada == 'Rural')
-                _buildTextField('Barrio (entrada manual)', _barrioManualController),
+                _buildTextField(
+                    'Barrio (entrada manual)', _barrioManualController),
               _buildTextField('Dirección del evento', _direccionController),
-              _buildTextField('Descripción de lo sucedido', _descripcionController, maxLines: 3),
+              _buildTextField(
+                  'Descripción de lo sucedido', _descripcionController,
+                  maxLines: 3),
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (_zonaSeleccionada == null || _direccionController.text.isEmpty || _descripcionController.text.isEmpty || _fechaIncidente == null) {
+                    if (_zonaSeleccionada == null ||
+                        _direccionController.text.isEmpty ||
+                        _descripcionController.text.isEmpty ||
+                        _fechaIncidente == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Por favor, complete todos los campos requeridos")),
+                        const SnackBar(
+                            content: Text(
+                                "Por favor, complete todos los campos requeridos")),
                       );
                       return;
                     }
@@ -226,17 +236,23 @@ class _FormularioReporteState extends State<FormularioReporte> {
                           'fecha_incidente': _fechaIncidente!.toIso8601String(),
                           'zona': _zonaSeleccionada,
                           'comuna_evento': _comunaSeleccionada,
-                          'barrio': _zonaSeleccionada == 'Urbana' ? _barrioSeleccionado : _barrioManualController.text,
+                          'barrio': _zonaSeleccionada == 'Urbana'
+                              ? _barrioSeleccionado
+                              : _barrioManualController.text,
                           'direccion': _direccionController.text,
                           'descripcion': _descripcionController.text,
                           'timestamp': FieldValue.serverTimestamp(),
                           'userId': user.uid, // Guarda el UID del usuario
+                          'estado': "Pendiente"
                         };
 
-                        await FirebaseFirestore.instance.collection('reportes').add(reporte);
+                        await FirebaseFirestore.instance
+                            .collection('reportes')
+                            .add(reporte);
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Reporte enviado exitosamente")),
+                          const SnackBar(
+                              content: Text("Reporte enviado exitosamente")),
                         );
 
                         _direccionController.clear();
@@ -249,20 +265,23 @@ class _FormularioReporteState extends State<FormularioReporte> {
                         });
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Error: Usuario no autenticado")),
+                          const SnackBar(
+                              content: Text("Error: Usuario no autenticado")),
                         );
                       }
                     } catch (e) {
                       print("Error al enviar el reporte: $e");
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Error al enviar el reporte")),
+                        const SnackBar(
+                            content: Text("Error al enviar el reporte")),
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -279,7 +298,8 @@ class _FormularioReporteState extends State<FormularioReporte> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -304,7 +324,8 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {int maxLines = 1}) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
@@ -325,11 +346,13 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
-  Widget _buildDropdown(String label, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _buildDropdown(
+      String label, List<String> items, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: DropdownButtonFormField<String>(
-        value: items.contains(label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado) 
+        value: items.contains(
+                label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado)
             ? (label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado)
             : null,
         decoration: InputDecoration(

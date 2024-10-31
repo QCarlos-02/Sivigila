@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:sivigila/Models/reporte.dart';
 import 'package:sivigila/Admin/data/services/reportesServices.dart';
+import 'package:sivigila/main.dart';
 
 class Reportecontroller extends GetxController {
   final Rxn<List<Reporte>> _reporteFirestore = Rxn<List<Reporte>>([]);
@@ -9,12 +10,24 @@ class Reportecontroller extends GetxController {
   List<Reporte>? get listgeneral =>
       _reporteFiltrado.value ?? _reporteFirestore.value;
 
+  List<Reporte>? get listReportes => _reporteFirestore.value;
+
   Future<void> consultarReportesgeneral() async {
     _reporteFirestore.value = await Reportesservices().listaReportes();
     _reporteFiltrado.value = _reporteFirestore.value;
 
     // Verificar si los datos se están cargando correctamente
     print('Total de reportes cargados: ${_reporteFirestore.value?.length}');
+  }
+
+  Future<void> consultarReportesPorEstado(String estado) async {
+    _reporteFirestore.value =
+        await Reportesservices().listaReportesPorRol(estado);
+    _reporteFiltrado.value = _reporteFirestore.value;
+  }
+
+  Future<void> actualizarReporte(String id, Map<String, dynamic> datos) async {
+    await Reportesservices().actualizarReporte(id, datos);
   }
 
   void filtrarReportes(

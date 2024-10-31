@@ -21,7 +21,7 @@ class _CasospendientesState extends State<Casospendientes> {
   @override
   void initState() {
     super.initState();
-    reporteController.consultarReportesgeneral();
+    reporteController.consultarReportesPorEstado("Pendiente");
   }
 
   void aplicarFiltros() {
@@ -77,7 +77,9 @@ class _CasospendientesState extends State<Casospendientes> {
           ),
           const SizedBox(height: 20),
           Expanded(
-            child: Reportes(), // Mostrar lista de reportes filtrados
+            child: Reportes(
+              estado: 'Pendiente',
+            ), // Mostrar lista de reportes filtrados
           ),
         ],
       ),

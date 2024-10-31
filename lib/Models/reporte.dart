@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reporte {
   final String id;
+  final String nombres;
+  final String apellidos;
   final String seccion;
   final String categoria;
   final String subcategoria;
@@ -14,10 +16,13 @@ class Reporte {
   final String barrio;
   final String direccion;
   final String descripcion;
+  final String observaciones;
   final String estado;
 
   Reporte({
     required this.id,
+    required this.nombres,
+    required this.apellidos,
     required this.seccion, // Asegúrate de que este campo esté definido
     required this.categoria,
     required this.subcategoria,
@@ -30,24 +35,28 @@ class Reporte {
     required this.barrio,
     required this.direccion,
     required this.descripcion,
+    required this.observaciones,
     required this.estado,
   });
 
   factory Reporte.desdeDoc(String id, Map<String, dynamic> json) {
     return Reporte(
       id: id,
+      nombres: json['nombres'] ?? '',
+      apellidos: json['apellidos'] ?? '',
       seccion: json['seccion'] ?? '',
       categoria: json['categoria'] ?? '',
       subcategoria: json['subcategoria'] ?? '',
       subsubcategoria: json['subsubcategoria'] ?? '',
       evento: json['evento'] ?? '',
-      fecha: json['fecha'] ?? '',
+      fecha: json['fecha_incidente'] ?? '',
       persona: json['persona'] ?? '',
       zona: json['zona'] ?? '',
       comuna: json['comuna'] ?? '',
       barrio: json['barrio'] ?? '',
       direccion: json['direccion'] ?? '',
       descripcion: json['descripcion'] ?? '',
+      observaciones: json['observaciones'] ?? '',
       estado: json['estado'] ?? '',
     );
   }
