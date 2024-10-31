@@ -24,7 +24,7 @@ class _ReportesState extends State<Reportes> {
 
   @override
   Widget build(BuildContext context) {
-    rp.consultarReportesPorEstado(widget.estado);
+    //rp.consultarReportesPorEstado(widget.estado);
     return Obx(() {
       if (rp.listReportes == null || rp.listReportes!.isEmpty) {
         return const Center(

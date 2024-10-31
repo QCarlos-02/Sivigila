@@ -10,7 +10,8 @@ class Reportecontroller extends GetxController {
   List<Reporte>? get listgeneral =>
       _reporteFiltrado.value ?? _reporteFirestore.value;
 
-  List<Reporte>? get listReportes => _reporteFirestore.value;
+  List<Reporte>? get listReportes =>
+      _reporteFiltrado.value ?? _reporteFirestore.value;
 
   Future<void> consultarReportesgeneral() async {
     _reporteFirestore.value = await Reportesservices().listaReportes();

@@ -166,7 +166,6 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
         "estado": estadoSeleccionado,
         "observaciones": observacionesController.text,
       });
-      rp.consultarReportesPorEstado(estadoSeleccionado!);
       print("Reporte actualizado correctamente");
     } catch (e) {
       print("Error al actualizar el reporte: $e");
