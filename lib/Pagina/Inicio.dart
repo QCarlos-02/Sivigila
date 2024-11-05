@@ -1,57 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import 'package:sivigila/Admin/controllers/reporteController.dart';
-import 'package:sivigila/widgets/widgets.dart';
+
+import '../widgets/widgets.dart';
 
 class LeftSection extends StatelessWidget {
   const LeftSection({super.key});
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmación'),
+          content: const Text('¿Está seguro de que desea cerrar sesión?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Cerrar el diálogo
+              child: const Text('Cancelar', style: TextStyle(color: Colors.blueAccent)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              child: const Text('Cerrar sesión', style: TextStyle(color: Colors.redAccent)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inicio'),
-        backgroundColor: Colors.blue,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/logo_left.png',
+              height: 30,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Inicio',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              // Lógica para cerrar sesión
-              await FirebaseAuth.instance.signOut();
-              // Redirigir al login después de cerrar sesión
-              Navigator.pushReplacementNamed(context, '/');
-            },
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
+            tooltip: 'Cerrar sesión',
+            onPressed: () => _confirmLogout(context),
           ),
         ],
       ),
-      backgroundColor: Colors.grey[200],
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.blue.shade900,
+              Colors.blue.shade600,
+              Colors.blue.shade400,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
                 _buildHeader(),
-                _buildTile(const ReportesEnviados()),
-                _buildTile(const FactoresPotencialmenteRelacionados()),
-                _buildTile(const SituacionAnimalesTile()),
-                _buildTile(const Sindromes()),
-                _buildTile(const CasosEspecificos()),
-                _buildTile(const MuertesComunidad()),
-                _buildTile(const Conglomerados()),
+                const SizedBox(height: 10),
+                _buildExpandableTile(
+                  title: 'Reportes Enviados',
+                  content: const ReportesEnviados(),
+                ),
+                _buildExpandableTile(
+                  title: 'Factores Potenciales',
+                  content: const FactoresPotencialmenteRelacionados(),
+                ),
+                _buildExpandableTile(
+                  title: 'Situación de Animales',
+                  content: const SituacionAnimalesTile(),
+                ),
+                _buildExpandableTile(
+                  title: 'Síndromes',
+                  content: const Sindromes(),
+                ),
+                _buildExpandableTile(
+                  title: 'Casos Específicos',
+                  content: const CasosEspecificos(),
+                ),
+                _buildExpandableTile(
+                  title: 'Muertes en la Comunidad',
+                  content: const MuertesComunidad(),
+                ),
+                _buildExpandableTile(
+                  title: 'Conglomerados',
+                  content: const Conglomerados(),
+                ),
               ],
             ),
           ),
@@ -96,22 +150,38 @@ class LeftSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(Widget child) {
+  Widget _buildExpandableTile({required String title, required Widget content}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Card(
+        color: Colors.white.withOpacity(0.85),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {},
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.blueAccent.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(16.0),
-            child: child,
+        ),
+        child: ExpansionTile(
+          title: Row(
+            children: [
+              Icon(Icons.chevron_right, color: Colors.blueAccent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            ],
           ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: content, // Aquí se despliega el contenido del widget
+            ),
+          ],
         ),
       ),
     );

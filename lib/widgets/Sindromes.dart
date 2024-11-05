@@ -6,8 +6,7 @@ class Sindromes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: const Text('Síndromes'),
+    return Column(
       children: [
         _buildSyndromeTile(
           context,
@@ -80,19 +79,28 @@ class Sindromes extends StatelessWidget {
     required IconData tileIcon,
   }) {
     return ListTile(
-      title: Row(
-        children: [
-          Icon(tileIcon),
-          const SizedBox(width: 8),
-          Text(title),
-        ],
+      leading: Icon(tileIcon, color: Colors.blueAccent),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
       ),
       onTap: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(dialogTitle),
+              title: Text(
+                dialogTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -114,7 +122,10 @@ class Sindromes extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                 ),
               ],
             );
@@ -135,13 +146,20 @@ class Sindromes extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.blueAccent),
         borderRadius: BorderRadius.circular(10),
       ),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
+        leading: Icon(icon, color: Colors.blueAccent),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         onTap: () {
           Navigator.of(context).pop();
           _navegarFormulario(

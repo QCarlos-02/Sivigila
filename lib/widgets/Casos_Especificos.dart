@@ -6,13 +6,12 @@ class CasosEspecificos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: const Text('Casos Específicos'),
+    return Column(
       children: [
         _buildListTile(
           context,
           icon: Icons.health_and_safety,
-          title: 'Enfermedades de Transmisión Sexual (ETS):',
+          title: 'Enfermedades de Transmisión Sexual (ETS)',
           dialogTitle: 'Tipos De Enfermedades de Transmisión Sexual (ETS)',
           items: [
             _buildDialogItem(
@@ -125,14 +124,28 @@ class CasosEspecificos extends StatelessWidget {
     required List<Widget> items,
   }) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
+      leading: Icon(icon, color: Colors.blueAccent),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
       onTap: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(dialogTitle),
+              title: Text(
+                dialogTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -144,7 +157,10 @@ class CasosEspecificos extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                 ),
               ],
             );
@@ -165,13 +181,20 @@ class CasosEspecificos extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.blueAccent),
         borderRadius: BorderRadius.circular(10),
       ),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
+        leading: Icon(icon, color: Colors.blueAccent),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         onTap: () {
           Navigator.of(context).pop();
           _navegarFormulario(

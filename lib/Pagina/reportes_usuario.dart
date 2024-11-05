@@ -20,84 +20,97 @@ class ReportesUsuario extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis Reportes Enviados'),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.blueAccent,
       ),
-      body: FutureBuilder<List<DocumentSnapshot>>(
-        future: obtenerReportesPorUID(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error al cargar los reportes'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No tienes reportes enviados'));
-          }
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.blue.shade900,
+              Colors.blue.shade600,
+              Colors.blue.shade400,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: FutureBuilder<List<DocumentSnapshot>>(
+          future: obtenerReportesPorUID(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error al cargar los reportes'));
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No tienes reportes enviados'));
+            }
 
-          // Muestra la lista de reportes con estilo minimalista
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              DocumentSnapshot reporte = snapshot.data![index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ExpansionTile(
-                    tilePadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    title: Text(
-                      reporte['categoria'] ?? 'Sin categoría',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[700],
-                      ),
+            // Muestra la lista de reportes con estilo minimalista y diseño coherente
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot reporte = snapshot.data![index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    subtitle: Text(
-                      'Fecha del incidente: ${reporte['fecha_incidente'] ?? 'Sin fecha'}',
-                      style: TextStyle(color: Colors.blue[300]),
-                    ),
-                    iconColor: Colors.blue[700],
-                    collapsedIconColor: Colors.blue[700],
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildDetailRow('Subcategoría', reporte['subcategoria']),
-                            _buildDetailRow('Zona', reporte['zona']),
-                            _buildDetailRow('Comuna del evento', reporte['comuna_evento']),
-                            _buildDetailRow('Barrio', reporte['barrio']),
-                            _buildDetailRow('Dirección', reporte['direccion']),
-                            _buildDetailRow('Descripción', reporte['descripcion']),
-                            _buildDetailRow(
-                              'Fecha de registro',
-                              reporte['timestamp'] != null
-                                  ? (reporte['timestamp'] as Timestamp).toDate().toString()
-                                  : 'Sin fecha',
-                            ),
-                          ],
+                    child: ExpansionTile(
+                      tilePadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      title: Text(
+                        reporte['categoria'] ?? 'Sin categoría',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[700],
                         ),
                       ),
-                    ],
+                      subtitle: Text(
+                        'Fecha del incidente: ${reporte['fecha_incidente'] ?? 'Sin fecha'}',
+                        style: TextStyle(color: Colors.blue[300]),
+                      ),
+                      iconColor: Colors.blue[700],
+                      collapsedIconColor: Colors.blue[700],
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDetailRow('Subcategoría', reporte['subcategoria']),
+                              _buildDetailRow('Zona', reporte['zona']),
+                              _buildDetailRow('Comuna del evento', reporte['comuna_evento']),
+                              _buildDetailRow('Barrio', reporte['barrio']),
+                              _buildDetailRow('Dirección', reporte['direccion']),
+                              _buildDetailRow('Descripción', reporte['descripcion']),
+                              _buildDetailRow(
+                                'Fecha de registro',
+                                reporte['timestamp'] != null
+                                    ? (reporte['timestamp'] as Timestamp).toDate().toString()
+                                    : 'Sin fecha',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

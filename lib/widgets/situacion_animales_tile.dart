@@ -6,27 +6,46 @@ class SituacionAnimalesTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: const Text(
-        'Situación en Animales',
-        style: TextStyle(fontSize: 18),
-      ),
+    return Column(
       children: [
-        _buildListTile(context, 'Mordidas y arañazos', Icons.pets,
-            () => _showMordidasDialog(context)),
-        _buildListTile(context, 'Envenenamiento o picadura', Icons.bug_report,
-            () => _showEnvenenamientoDialog(context)),
-        _buildListTile(context, 'Muerte Extraña', Icons.help,
-            () => _showMuerteDialog(context)),
+        _buildListTile(
+          context,
+          'Mordidas y arañazos',
+          Icons.pets,
+          () => _showMordidasDialog(context),
+        ),
+        _buildListTile(
+          context,
+          'Envenenamiento o picadura',
+          Icons.bug_report,
+          () => _showEnvenenamientoDialog(context),
+        ),
+        _buildListTile(
+          context,
+          'Muerte Extraña',
+          Icons.help,
+          () => _showMuerteDialog(context),
+        ),
       ],
     );
   }
 
   Widget _buildListTile(
-      BuildContext context, String title, IconData icon, Function onTap) {
+    BuildContext context,
+    String title,
+    IconData icon,
+    Function onTap,
+  ) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
+      leading: Icon(icon, color: Colors.blueAccent),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
       onTap: () => onTap(),
     );
   }
@@ -37,49 +56,53 @@ class SituacionAnimalesTile extends StatelessWidget {
       'Mordidas y arañazos',
       [
         _buildDialogListTile(
+          context,
+          'Mordedura Por Perro, Zorro O Zarigueya',
+          Icons.dangerous,
+          () => _navegarFormulario(
             context,
-            'Mordedura Por Perro, Zorro O Zarigueya',
-            Icons.dangerous,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Mordidas y arañazos',
-                  subcategoria: 'Mordeduras',
-                  subsubcategoria: 'Mordedura Por Perro, Zorro O Zarigueya',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Mordidas y arañazos',
+            subcategoria: 'Mordeduras',
+            subsubcategoria: 'Mordedura Por Perro, Zorro O Zarigueya',
+          ),
+        ),
         _buildDialogListTile(
+          context,
+          'Mordedura De Serpiente',
+          Icons.terrain,
+          () => _navegarFormulario(
             context,
-            'Mordedura De Serpiente',
-            Icons.terrain,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Mordidas y arañazos',
-                  subcategoria: 'Mordeduras',
-                  subsubcategoria: 'Mordedura De Serpiente',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Mordidas y arañazos',
+            subcategoria: 'Mordeduras',
+            subsubcategoria: 'Mordedura De Serpiente',
+          ),
+        ),
         _buildDialogListTile(
+          context,
+          'Mordeduras De Arañas',
+          Icons.bug_report,
+          () => _navegarFormulario(
             context,
-            'Mordeduras De Arañas',
-            Icons.bug_report,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Mordidas y arañazos',
-                  subcategoria: 'Mordeduras',
-                  subsubcategoria: 'Mordeduras De Arañas',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Mordidas y arañazos',
+            subcategoria: 'Mordeduras',
+            subsubcategoria: 'Mordeduras De Arañas',
+          ),
+        ),
         _buildDialogListTile(
+          context,
+          'Arañazos De Gatos',
+          Icons.pets,
+          () => _navegarFormulario(
             context,
-            'Arañazos De Gatos',
-            Icons.pets,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Mordidas y arañazos',
-                  subcategoria: 'Arañazos',
-                  subsubcategoria: 'Arañazos De Gatos',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Mordidas y arañazos',
+            subcategoria: 'Arañazos',
+            subsubcategoria: 'Arañazos De Gatos',
+          ),
+        ),
       ],
     );
   }
@@ -90,27 +113,29 @@ class SituacionAnimalesTile extends StatelessWidget {
       'Tipos De Envenenamiento o Picaduras',
       [
         _buildDialogListTile(
+          context,
+          'Picadura De Alacranes o Escorpiones',
+          Icons.bug_report,
+          () => _navegarFormulario(
             context,
-            'Picadura De Alacranes o Escorpiones',
-            Icons.bug_report,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Envenenamiento o picadura',
-                  subcategoria: 'Picaduras',
-                  subsubcategoria: 'Picadura De Alacranes o Escorpiones',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Envenenamiento o picadura',
+            subcategoria: 'Picaduras',
+            subsubcategoria: 'Picadura De Alacranes o Escorpiones',
+          ),
+        ),
         _buildDialogListTile(
+          context,
+          'Contacto Con Animales Ponzoñosos',
+          Icons.bug_report,
+          () => _navegarFormulario(
             context,
-            'Contacto Con Animales Ponzoñosos',
-            Icons.bug_report,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Envenenamiento o picadura',
-                  subcategoria: 'Contacto Ponzoñoso',
-                  subsubcategoria: 'Contacto Con Animales Ponzoñosos',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Envenenamiento o picadura',
+            subcategoria: 'Contacto Ponzoñoso',
+            subsubcategoria: 'Contacto Con Animales Ponzoñosos',
+          ),
+        ),
       ],
     );
   }
@@ -121,17 +146,17 @@ class SituacionAnimalesTile extends StatelessWidget {
       'Muerte Sin Razon',
       [
         _buildDialogListTile(
+          context,
+          'Contacto Con Un Animal Que Posteriormente Falleció Sin Razón Aparente',
+          Icons.report_problem,
+          () => _navegarFormulario(
             context,
-            'Contacto Con Un Animal Que Posteriormente Falleció Sin Razón Aparente',
-            Icons.report_problem,
-            () => _navegarFormulario(
-                  context,
-                  seccion: 'Situación en Animales',
-                  categoria: 'Muerte Extraña',
-                  subcategoria: 'Muerte Inesperada',
-                  subsubcategoria:
-                      'Contacto Con Un Animal Que Falleció Sin Razón Aparente',
-                )),
+            seccion: 'Situación en Animales',
+            categoria: 'Muerte Extraña',
+            subcategoria: 'Muerte Inesperada',
+            subsubcategoria: 'Contacto Con Un Animal Que Falleció Sin Razón Aparente',
+          ),
+        ),
       ],
     );
   }
@@ -141,7 +166,14 @@ class SituacionAnimalesTile extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+            ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -153,7 +185,10 @@ class SituacionAnimalesTile extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancelar'),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.redAccent),
+              ),
             ),
           ],
         );
@@ -162,16 +197,27 @@ class SituacionAnimalesTile extends StatelessWidget {
   }
 
   Widget _buildDialogListTile(
-      BuildContext context, String title, IconData icon, Function onTap) {
+    BuildContext context,
+    String title,
+    IconData icon,
+    Function onTap,
+  ) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.blueAccent),
         borderRadius: BorderRadius.circular(10),
       ),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
+        leading: Icon(icon, color: Colors.blueAccent),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
         onTap: () => onTap(),
       ),
     );

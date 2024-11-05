@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:intl/intl.dart'; // Para formatear la fecha
+import 'package:intl/intl.dart';
 
 class FormularioReporte extends StatefulWidget {
   final String seccion;
@@ -38,7 +38,6 @@ class _FormularioReporteState extends State<FormularioReporte> {
   String? _apellidos;
   String? _comuna;
 
-  final TextEditingController _personaController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _barrioManualController = TextEditingController();
@@ -67,8 +66,6 @@ class _FormularioReporteState extends State<FormularioReporte> {
             _apellidos = snapshot['apellidos'];
             _comuna = snapshot['comuna'];
           });
-        } else {
-          print("No se encontró el documento para el usuario con UID $userId");
         }
       }
     } catch (e) {
@@ -119,6 +116,30 @@ class _FormularioReporteState extends State<FormularioReporte> {
         _fechaIncidente = picked;
       });
     }
+  }
+
+  Future<void> _mostrarDialogoExito(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Reporte Enviado',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent),
+          ),
+          content: const Text('El reporte ha sido enviado exitosamente.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Aceptar', style: TextStyle(color: Colors.blueAccent)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -200,12 +221,9 @@ class _FormularioReporteState extends State<FormularioReporte> {
                   });
                 }),
               if (_zonaSeleccionada == 'Rural')
-                _buildTextField(
-                    'Barrio (entrada manual)', _barrioManualController),
+                _buildTextField('Barrio (entrada manual)', _barrioManualController),
               _buildTextField('Dirección del evento', _direccionController),
-              _buildTextField(
-                  'Descripción de lo sucedido', _descripcionController,
-                  maxLines: 3),
+              _buildTextField('Descripción de lo sucedido', _descripcionController, maxLines: 3),
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
@@ -216,8 +234,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
                         _fechaIncidente == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text(
-                                "Por favor, complete todos los campos requeridos")),
+                            content: Text("Por favor, complete todos los campos requeridos")),
                       );
                       return;
                     }
@@ -233,7 +250,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
                           'nombres': _nombres ?? '',
                           'apellidos': _apellidos ?? '',
                           'comuna': _comuna ?? '',
-                          'fecha_incidente': _fechaIncidente!.toIso8601String(),
+                          'fecha_incidente': DateFormat('yyyy-MM-dd').format(_fechaIncidente!), // solo fecha
                           'zona': _zonaSeleccionada,
                           'comuna_evento': _comunaSeleccionada,
                           'barrio': _zonaSeleccionada == 'Urbana'
@@ -242,18 +259,13 @@ class _FormularioReporteState extends State<FormularioReporte> {
                           'direccion': _direccionController.text,
                           'descripcion': _descripcionController.text,
                           'timestamp': FieldValue.serverTimestamp(),
-                          'userId': user.uid, // Guarda el UID del usuario
+                          'userId': user.uid, 
                           'estado': "Pendiente"
                         };
 
-                        await FirebaseFirestore.instance
-                            .collection('reportes')
-                            .add(reporte);
+                        await FirebaseFirestore.instance.collection('reportes').add(reporte);
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Reporte enviado exitosamente")),
-                        );
+                        _mostrarDialogoExito(context);
 
                         _direccionController.clear();
                         _descripcionController.clear();
@@ -265,46 +277,25 @@ class _FormularioReporteState extends State<FormularioReporte> {
                         });
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Error: Usuario no autenticado")),
+                          const SnackBar(content: Text("Error: Usuario no autenticado")),
                         );
                       }
                     } catch (e) {
                       print("Error al enviar el reporte: $e");
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Error al enviar el reporte")),
+                        const SnackBar(content: Text("Error al enviar el reporte")),
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text('Enviar Reporte'),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text('Volver'),
                 ),
               ),
             ],
@@ -324,8 +315,7 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {int maxLines = 1}) {
+  Widget _buildTextField(String label, TextEditingController controller, {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
@@ -346,13 +336,11 @@ class _FormularioReporteState extends State<FormularioReporte> {
     );
   }
 
-  Widget _buildDropdown(
-      String label, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _buildDropdown(String label, List<String> items, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: DropdownButtonFormField<String>(
-        value: items.contains(
-                label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado)
+        value: items.contains(label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado)
             ? (label == 'Comuna' ? _comunaSeleccionada : _barrioSeleccionado)
             : null,
         decoration: InputDecoration(

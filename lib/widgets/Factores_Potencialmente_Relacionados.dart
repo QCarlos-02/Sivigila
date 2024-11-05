@@ -6,11 +6,7 @@ class FactoresPotencialmenteRelacionados extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: const Text(
-        'Factores Potencialmente Relacionados',
-        style: TextStyle(fontSize: 18),
-      ),
+    return Column(
       children: [
         _buildListTile(
           context,
@@ -102,14 +98,16 @@ class FactoresPotencialmenteRelacionados extends StatelessWidget {
     required List<Widget> items,
   }) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
+      leading: Icon(icon, color: Colors.blueAccent),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       onTap: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(dialogTitle),
+              titleTextStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -121,7 +119,7 @@ class FactoresPotencialmenteRelacionados extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text('Cancelar', style: TextStyle(color: Colors.redAccent)),
                 ),
               ],
             );
@@ -142,12 +140,12 @@ class FactoresPotencialmenteRelacionados extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.blueAccent),
         borderRadius: BorderRadius.circular(10),
       ),
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
-        leading: Icon(icon),
+        leading: Icon(icon, color: Colors.blueAccent),
         title: Text(title),
         onTap: () {
           Navigator.of(context).pop(); // Cierra el diálogo
