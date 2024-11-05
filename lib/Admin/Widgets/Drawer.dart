@@ -10,97 +10,119 @@ import 'package:sivigila/Pagina/login_page.dart';
 
 Widget drawer(BuildContext context) {
   ControlUserAuth cua = Get.find();
+  final double screenWidth = MediaQuery.of(context).size.width;
+  final bool isMobile = screenWidth < 600;
+
   return Drawer(
     backgroundColor: const Color.fromARGB(255, 0, 44, 81),
-    child: Column(
+    child: ListView(
+      padding: EdgeInsets.zero,
       children: [
-        const Padding(padding: EdgeInsets.symmetric(vertical: 25)),
-        ListTile(
-          leading: const Icon(
-            Icons.pending_actions_outlined,
-            color: Colors.white,
+        DrawerHeader(
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 0, 44, 81),
           ),
-          title: const Text(
-            "Casos pendientes",
-            style: TextStyle(color: Colors.white),
+          child: Center(
+            child: Text(
+              'SIVIGILA',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isMobile ? 24 : 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
+        ),
+        _buildDrawerItem(
+          context,
+          icon: Icons.pending_actions_outlined,
+          text: "Casos pendientes",
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Casospendientes()));
+              context,
+              MaterialPageRoute(builder: (context) => const Casospendientes()),
+            );
           },
         ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-        ListTile(
-          leading: const Icon(
-            Icons.double_arrow_rounded,
-            color: Colors.white,
-          ),
-          title: const Text("Casos en proceso",
-              style: TextStyle(color: Colors.white)),
+        _buildDrawerItem(
+          context,
+          icon: Icons.double_arrow_rounded,
+          text: "Casos en proceso",
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Casosenproceso()));
+              context,
+              MaterialPageRoute(builder: (context) => const Casosenproceso()),
+            );
           },
         ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-        ListTile(
-          leading: const Icon(
-            Icons.check_circle_outline,
-            color: Colors.white,
-          ),
-          title: const Text("Casos exitosos",
-              style: TextStyle(color: Colors.white)),
+        _buildDrawerItem(
+          context,
+          icon: Icons.check_circle_outline,
+          text: "Casos exitosos",
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Casosexitosos()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Casosexitosos()),
+            );
           },
         ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-        ListTile(
-          leading: const Icon(
-            Icons.archive,
-            color: Colors.white,
-          ),
-          title: const Text("Casos fallidos",
-              style: TextStyle(color: Colors.white)),
+        _buildDrawerItem(
+          context,
+          icon: Icons.archive,
+          text: "Casos fallidos",
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Casosfallidos()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Casosfallidos()),
+            );
           },
         ),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-        ListTile(
-          leading: const Icon(
-            Icons.app_registration,
-            color: Colors.white,
-          ),
-          title: const Text("Registro de usuarios",
-              style: TextStyle(color: Colors.white)),
+        _buildDrawerItem(
+          context,
+          icon: Icons.app_registration,
+          text: "Registro de usuarios",
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Registro()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Registro()),
+            );
           },
         ),
-        const SizedBox(
-          height: 35,
-        ),
-        ListTile(
-          leading: const Icon(
-            Icons.exit_to_app,
-            color: Colors.white,
-          ),
-          title: const Text("Salir", style: TextStyle(color: Colors.white)),
+        const Divider(color: Colors.white54),
+        _buildDrawerItem(
+          context,
+          icon: Icons.exit_to_app,
+          text: "Salir",
           onTap: () {
             cua.cerrarSesion();
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
           },
         ),
       ],
+    ),
+  );
+}
+
+Widget _buildDrawerItem(BuildContext context,
+    {required IconData icon, required String text, required Function() onTap}) {
+  final double screenWidth = MediaQuery.of(context).size.width;
+  final bool isMobile = screenWidth < 600;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: ListTile(
+      leading: Icon(icon, color: Colors.white, size: isMobile ? 24 : 28),
+      title: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: isMobile ? 16 : 18,
+        ),
+      ),
+      onTap: onTap,
     ),
   );
 }
