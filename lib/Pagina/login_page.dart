@@ -5,40 +5,47 @@ import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
-import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/desicion.dart';
 import 'Inicio.dart';
 
 class GlobalVariables {
-  // Hacer esta clase singleton
   static final GlobalVariables _instance = GlobalVariables._internal();
-
-  factory GlobalVariables() {
-    return _instance;
-  }
-
+  factory GlobalVariables() => _instance;
   GlobalVariables._internal();
-
-  // Aquí almacenas la contraseña del admin
   String? adminPassword;
 }
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   Reportecontroller rp = Get.find();
   ControlUserAuth cu = Get.find();
   Controlperfil cp = Get.find();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   final _formKey = GlobalKey<FormState>();
   String? _errorMessage;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -48,15 +55,17 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
+      _animationController.forward();
       try {
-        // Intentar iniciar sesión con Firebase
+        // Crear el correo completo agregando "@gmail.com"
+        String email = "${_usernameController.text.trim()}@gmail.com";
+
         UserCredential userCredential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text,
+          email: email,
           password: _passwordController.text,
         );
 
-        // Navegar a la pantalla de decisión después de la autenticación
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Desicion()),
@@ -65,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _errorMessage = e.message;
         });
+        _animationController.reverse();
       }
     }
   }
@@ -72,96 +82,99 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double logoSize =
-        screenWidth * 0.15; // Ajuste responsivo para el tamaño de los logos
+    double logoSize = screenWidth * 0.15;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blue.shade300, // Azul más fuerte en la parte superior
-              Colors.blue.shade200, // Azul intermedio
-              Colors.blue.shade50, // Azul claro hacia el final
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.blue.shade900,
+                Colors.blue.shade600,
+                Colors.blue.shade400,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
+          child: Center(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Fila de logos en la parte superior
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Image.asset(
-                            'assets/logo_left.png',
-                            width: logoSize,
-                            height: logoSize,
+                  // Logos a la izquierda y derecha y logo "SIVIGILA" en el centro
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/logo_left.png',
+                        width: logoSize,
+                        height: logoSize,
+                      ),
+                      const SizedBox(width: 20),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(15.0),
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Text(
+                          'SIVIGILA',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Image.asset(
-                            'assets/logo_right.png',
-                            width: logoSize,
-                            height: logoSize,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 20),
+                      Image.asset(
+                        'assets/logo_right.png',
+                        width: logoSize,
+                        height: logoSize,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   const Text(
-                    '¡Bienvenido! SIVIGILA',
+                    '¡Bienvenido a SIVIGILA!',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   Form(
                     key: _formKey,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         TextFormField(
-                          controller: _emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Correo Electrónico',
-                            labelStyle: TextStyle(color: Colors.white),
+                          controller: _usernameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Usuario',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            prefixIcon: const Icon(Icons.person, color: Colors.white),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.2),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: const BorderSide(color: Colors.white),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: const BorderSide(color: Colors.white30),
                             ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa tu correo';
-                            } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                .hasMatch(value)) {
-                              return 'Ingresa un correo válido';
+                              return 'Por favor, ingresa tu usuario';
                             }
                             return null;
                           },
@@ -170,20 +183,24 @@ class _LoginPageState extends State<LoginPage> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
+                          style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
                             labelStyle: const TextStyle(color: Colors.white),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
+                            prefixIcon: const Icon(Icons.lock, color: Colors.white),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.2),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: const BorderSide(color: Colors.white),
                             ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: const BorderSide(color: Colors.white30),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                _obscurePassword ? Icons.visibility : Icons.visibility_off,
                                 color: Colors.white,
                               ),
                               onPressed: _togglePasswordVisibility,
@@ -203,23 +220,28 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               _errorMessage!,
                               style: const TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                        const SizedBox(height: 20),
+                        // Botón de "Ingresar"
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                          ),
-                          child: const Text(
-                            'Iniciar Sesión',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            child: const Text(
+                              'Ingresar',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
                           ),
                         ),
+                        const SizedBox(height: 30),
                       ],
                     ),
                   ),
