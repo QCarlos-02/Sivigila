@@ -34,124 +34,159 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 600;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Detalles del Reporte',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.blueGrey[900],
+        backgroundColor: Colors.blueAccent,
         elevation: 4,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueGrey.shade50, Colors.blueGrey.shade200],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        padding: EdgeInsets.all(isMobile ? 16.0 : 32.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionTitle('Información del Reporte'),
-              const SizedBox(height: 12),
-              _buildReadOnlyField('Nombres', widget.reporte.nombres),
-              _buildReadOnlyField('Apellidos', widget.reporte.apellidos),
-              _buildReadOnlyField('Barrio', widget.reporte.barrio),
-              _buildReadOnlyField('Comuna', widget.reporte.comuna),
-              _buildReadOnlyField('Categoría', widget.reporte.categoria),
-              _buildReadOnlyField('Descripción', widget.reporte.descripcion),
-              _buildReadOnlyField('Dirección', widget.reporte.direccion),
-              _buildReadOnlyField('Fecha Índice', widget.reporte.fecha),
-              _buildReadOnlyField('Sección', widget.reporte.seccion),
-              _buildReadOnlyField('Subcategoría', widget.reporte.subcategoria),
-              _buildReadOnlyField(
-                  'Sub-subcategoría', widget.reporte.subsubcategoria),
-              _buildReadOnlyField('Zona', widget.reporte.zona),
-              const SizedBox(height: 16),
-              _buildSectionTitle('Actualizar Estado'),
-              const SizedBox(height: 8),
-              _buildDropdownField('Estado', estadoSeleccionado),
-              const SizedBox(height: 16),
-              _buildSectionTitle('Observaciones'),
-              const SizedBox(height: 8),
-              _buildEditableField(observacionesController),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    actualizarReporte(context);
-                    rp.consultarReportesgeneral();
-                    if (widget.estado != null) {
-                      rp.consultarReportesPorEstado(widget.estado!);
-                    }
-                    Navigator.pop(context, true);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[900],
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 24 : 32,
-                      vertical: isMobile ? 12 : 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16.0), // Espacio lateral añadido
+        child: ListView(
+          // Cambiado a ListView para desplazamiento vertical
+          children: [
+            _buildSectionTitle('Información del Reporte'),
+            const SizedBox(height: 16), // Espacio entre título y contenido
+            Center(
+              // Centramos la sección
+              child: _buildPlainTextField('Sección', widget.reporte.seccion),
+            ),
+            const SizedBox(height: 8), // Espacio entre filas
+            _buildInformationRow(
+              'Nombres',
+              widget.reporte.nombres,
+              'Apellidos',
+              widget.reporte.apellidos,
+              'Fecha Índice',
+              widget.reporte.fecha,
+            ),
+            const SizedBox(height: 8), // Espacio entre filas
+            _buildInformationRow(
+              'Comuna',
+              widget.reporte.comuna,
+              'Barrio',
+              widget.reporte.barrio,
+              'Dirección',
+              widget.reporte.direccion,
+              'Zona',
+              widget.reporte.zona,
+            ),
+            const SizedBox(height: 8), // Espacio entre filas
+            _buildInformationRow(
+              'Categoría',
+              widget.reporte.categoria,
+              'Subcategoría',
+              widget.reporte.subcategoria,
+              'Sub-subcategoría',
+              widget.reporte.subsubcategoria,
+            ),
+            const SizedBox(height: 8), // Espacio entre filas
+            Center(
+              // Centramos la Descripción
+              child: _buildPlainTextField(
+                  'Descripción', widget.reporte.descripcion),
+            ),
+            const SizedBox(height: 16), // Espacio antes de la siguiente sección
+            _buildSectionTitle('Actualizar Estado'),
+            const SizedBox(height: 8),
+            _buildDropdownField('Estado', estadoSeleccionado),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Observaciones'),
+            const SizedBox(height: 8),
+            _buildEditableField(observacionesController),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  actualizarReporte(context);
+                  rp.consultarReportesgeneral();
+                  if (widget.estado != null) {
+                    rp.consultarReportesPorEstado(widget.estado!);
+                  }
+                  Navigator.pop(context, true);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[900],
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
                   ),
-                  child: const Text(
-                    'Guardar Cambios',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                child: const Text(
+                  'Guardar Cambios',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInformationRow(String label1, String value1,
+      [String? label2,
+      String? value2,
+      String? label3,
+      String? value3,
+      String? label4,
+      String? value4]) {
+    return Row(
+      mainAxisSize: MainAxisSize
+          .min, // Se asegura de que la fila no se expanda más de lo necesario
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(child: _buildPlainTextField(label1, value1)),
+        const SizedBox(width: 8), // Espacio reducido entre columnas
+        if (label2 != null && value2 != null)
+          Expanded(child: _buildPlainTextField(label2, value2)),
+        if (label3 != null && value3 != null)
+          const SizedBox(width: 8), // Espacio reducido entre columnas
+        if (label3 != null && value3 != null)
+          Expanded(child: _buildPlainTextField(label3, value3)),
+        if (label4 != null && value4 != null)
+          const SizedBox(width: 8), // Espacio reducido entre columnas
+        if (label4 != null && value4 != null)
+          Expanded(child: _buildPlainTextField(label4, value4)),
+      ],
     );
   }
 
   Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.blueGrey[800],
+    return Center(
+      // Centramos el título
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.blueGrey[800],
+        ),
       ),
     );
   }
 
-  Widget _buildReadOnlyField(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.blueGrey.withOpacity(0.2)),
-            ),
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildPlainTextField(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, color: Colors.black87),
+        ),
+      ],
     );
   }
 
@@ -160,7 +195,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
       value: value,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
@@ -172,7 +207,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
           value: estado,
           child: Text(
             estado,
-            style: const TextStyle(color: Colors.black87),
+            style: const TextStyle(color: Colors.black87, fontSize: 14),
           ),
         );
       }).toList(),
@@ -189,7 +224,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
       controller: controller,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey[100],
         hintText: 'Añadir observaciones',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
