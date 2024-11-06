@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
+import 'package:sivigila/Admin/controllers/storage_pass.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Pagina/desicion.dart';
 import 'Inicio.dart';
@@ -21,7 +22,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   Reportecontroller rp = Get.find();
   ControlUserAuth cu = Get.find();
   Controlperfil cp = Get.find();
@@ -65,6 +67,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           email: email,
           password: _passwordController.text,
         );
+        saveAdminPassword(_passwordController.text);
 
         Navigator.pushReplacement(
           context,
@@ -115,7 +118,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       ),
                       const SizedBox(width: 20),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           borderRadius: BorderRadius.circular(15.0),
@@ -160,7 +164,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           decoration: InputDecoration(
                             labelText: 'Usuario',
                             labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(Icons.person, color: Colors.white),
+                            prefixIcon:
+                                const Icon(Icons.person, color: Colors.white),
                             filled: true,
                             fillColor: Colors.white.withOpacity(0.2),
                             focusedBorder: OutlineInputBorder(
@@ -169,7 +174,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30.0),
-                              borderSide: const BorderSide(color: Colors.white30),
+                              borderSide:
+                                  const BorderSide(color: Colors.white30),
                             ),
                           ),
                           validator: (value) {
@@ -187,7 +193,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           decoration: InputDecoration(
                             labelText: 'Contraseña',
                             labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(Icons.lock, color: Colors.white),
+                            prefixIcon:
+                                const Icon(Icons.lock, color: Colors.white),
                             filled: true,
                             fillColor: Colors.white.withOpacity(0.2),
                             focusedBorder: OutlineInputBorder(
@@ -196,11 +203,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30.0),
-                              borderSide: const BorderSide(color: Colors.white30),
+                              borderSide:
+                                  const BorderSide(color: Colors.white30),
                             ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                                 color: Colors.white,
                               ),
                               onPressed: _togglePasswordVisibility,
@@ -230,14 +240,16 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             onPressed: _login,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blueAccent,
-                              padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 80, vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
                             child: const Text(
                               'Ingresar',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),

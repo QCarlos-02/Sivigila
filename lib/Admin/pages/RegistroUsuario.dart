@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/Widgets/listaDesplegable.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
+import 'package:sivigila/Admin/controllers/storage_pass.dart';
 import 'package:sivigila/Admin/data/services/peticionesPerfil.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 
@@ -408,8 +409,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
 
     if (password == confirmPassword) {
       try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
         var datos = {
           "nombres": nombres,
           "apellidos": apellidos,
@@ -423,6 +422,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "comuna": comuna,
           "barrio": barrio,
           "direccion": direccion,
+          "categoria": _selectedOption!,
+          "rol2": _selectRole!,
           "area de influencia": area,
           "nivel de poder": poder,
           "nivel de participacion": participacion,
@@ -431,8 +432,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "password": password
         };
 
-        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
-
+        createNewUser(email, password, datos);
+        print("correo final: ${_auth.currentUser!.email}");
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Líder creado exitosamente')));
       } catch (e) {
@@ -587,14 +588,13 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
 
 //
   Widget _buildStyledPasswordField(
-      TextEditingController controller, String label, IconData icon) {
+      TextEditingController controller, String label, IconData icon,
+      {bool oscuro = true}) {
     return StatefulBuilder(
       builder: (context, setState) {
-        bool _obscureText = true;
-
         return TextField(
           controller: controller,
-          obscureText: _obscureText,
+          obscureText: oscuro,
           decoration: InputDecoration(
             labelText: label,
             labelStyle: const TextStyle(color: Colors.blueAccent),
@@ -603,12 +603,12 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             prefixIcon: Icon(icon, color: Colors.blueAccent),
             suffixIcon: IconButton(
               icon: Icon(
-                _obscureText ? Icons.visibility_off : Icons.visibility,
+                oscuro ? Icons.visibility_off : Icons.visibility,
                 color: Colors.blueAccent,
               ),
               onPressed: () {
                 setState(() {
-                  _obscureText = !_obscureText;
+                  oscuro = !oscuro;
                 });
               },
             ),
