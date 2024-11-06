@@ -671,6 +671,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
               _selectedMunicipality = null;
             });
           },
+          context: context,
         ),
         const SizedBox(height: 15),
         if (_filteredMunicipalities.isNotEmpty)
@@ -684,6 +685,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 _selectedMunicipality = newValue;
               });
             },
+            context: context,
           ),
         const SizedBox(height: 15),
         _buildStyledDropdownField(
@@ -781,10 +783,31 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,
-          child: Text(item),
+          child: Text(
+            item,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }).toList(),
       onChanged: onChanged,
+      selectedItemBuilder: (BuildContext context) {
+        // Esta propiedad permite personalizar el valor seleccionado
+        return items.map((String item) {
+          return Container(
+            width: MediaQuery.of(context).size.width *
+                0.7, // Ajustar el ancho para el valor seleccionado
+            child: Text(
+              item,
+
+              overflow: TextOverflow
+                  .ellipsis, // Muestra "..." si el texto es muy largo
+              style: const TextStyle(
+                  color: Colors.black), // Estilo para el texto seleccionado
+            ),
+          );
+        }).toList();
+      },
     );
   }
 
@@ -794,7 +817,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     required Map<String, List<String>> items,
     required IconData icon,
     required ValueChanged<String?> onChanged,
+    required BuildContext context,
   }) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: labelText,
@@ -810,13 +836,30 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
       value: value,
+      isExpanded: true, // Hace que el DropdownButton ocupe el ancho completo
       items: items.keys.map((String key) {
         return DropdownMenuItem<String>(
           value: key,
-          child: Text(key),
+          child: Text(
+            key,
+            maxLines: 1,
+            overflow:
+                TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
+          ),
         );
       }).toList(),
       onChanged: onChanged,
+      selectedItemBuilder: (BuildContext context) {
+        // Personaliza cómo se muestra el valor seleccionado
+        return items.keys.map((String key) {
+          return Text(
+            key,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.black),
+          );
+        }).toList();
+      },
     );
   }
 
