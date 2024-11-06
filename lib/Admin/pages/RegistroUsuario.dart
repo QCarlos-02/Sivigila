@@ -268,9 +268,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     'PS'
   ];
 
-  String? _selectRole;
-  String? _selectedOption;
-
   final Map<String, List<String>> _rolesOptions = {
     'Vigía Comunitario': [
       'Miembros de colectivos sociales (juveniles, mujeres, adulto mayor, deporte, cultura, LGBTIQ+, entre otros).',
@@ -297,11 +294,25 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     ],
   };
 
+  String? _selectRole;
+  String? _selectedOption;
+  List<String> _rolesFiltrados = [];
+  List<String> obtenerRol() {
+    return _rolesOptions[_selectRole] ?? [];
+  }
+
   @override
   void initState() {
     super.initState();
     _loadComunasYBarrios();
     _loadDepartmentsAndMuncipalities();
+  }
+
+  void loadCategoriasRoles() {
+    setState(() {
+      _rolesOptions
+          .map((key, value) => MapEntry(key, List<String>.from(value)));
+    });
   }
 
   Future<void> _loadComunasYBarrios() async {
@@ -696,6 +707,25 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             _leaderAddressController, 'Dirección de residencia', Icons.map),
         const SizedBox(height: 20),
         _buildSectionTitle('Áreas de Influencia y Participación'),
+        //
+        const SizedBox(height: 15),
+        _buildStyledDropdownField(
+            "Categoria", _rolesOptions.keys.toList(), _selectedOption,
+            (String? value) {
+          setState(() {
+            _selectedOption = value;
+            _rolesFiltrados = _rolesOptions[_selectedOption] ?? [];
+            _selectRole = null;
+          });
+        }, Icons.category),
+        const SizedBox(height: 15),
+        _buildStyledDropdownField("Rol", _rolesFiltrados, _selectRole,
+            (String? value) {
+          setState(() {
+            _selectRole = value;
+          });
+        }, Icons.contact_emergency_rounded),
+        const SizedBox(height: 15),
         _buildStyledDropdownField(
             'Área de influencia', _areasOfInfluence, _selectedAreaOfInfluence,
             (String? value) {

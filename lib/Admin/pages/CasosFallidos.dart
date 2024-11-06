@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sivigila/Admin/Widgets/categorias.dart';
+import 'package:sivigila/Admin/Widgets/listaReportes.dart';
+import 'package:sivigila/Admin/controllers/reporteController.dart';
 
 class Casosfallidos extends StatefulWidget {
   const Casosfallidos({super.key});
@@ -9,6 +12,35 @@ class Casosfallidos extends StatefulWidget {
 }
 
 class _CasosfallidosState extends State<Casosfallidos> {
+  final Reportecontroller reporteController = Get.find();
+
+  String? categoriaSeleccionada;
+  String? subcategoriaSeleccionada;
+  String? subsubcategoriaSeleccionada;
+
+  @override
+  void initState() {
+    super.initState();
+    reporteController.consultarReportesPorEstado("Fallido");
+  }
+
+  void aplicarFiltros() {
+    reporteController.filtrarReportes(
+      categoria: categoriaSeleccionada,
+      subcategoria: subcategoriaSeleccionada,
+      subsubcategoria: subsubcategoriaSeleccionada,
+    );
+  }
+
+  void limpiarFiltros() {
+    setState(() {
+      categoriaSeleccionada = null;
+      subcategoriaSeleccionada = null;
+      subsubcategoriaSeleccionada = null;
+    });
+    reporteController.limpiarFiltros();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,33 +49,68 @@ class _CasosfallidosState extends State<Casosfallidos> {
           "Casos fallidos",
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt_off),
+            onPressed: limpiarFiltros,
+            tooltip: 'Limpiar filtros',
+          ),
+        ],
       ),
       body: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Tipos de casos"),
-            const SizedBox(
-              height: 20,
+            // Encabezado de filtro
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "Filtrar por tipo de caso",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey[800],
+                ),
+              ),
             ),
-            CategoriaSubcategoriaWidget(
-              onSelectionChanged: (String? categoria, String? subcategoria,
-                  String? subsubcategoria) {
-                if (categoria == null &&
-                    subcategoria == null &&
-                    subsubcategoria == null) {
-                  // Mostrar todos los casos
-                } else {
-                  // Filtrar los casos por categoría, subcategoría y sub-subcategoría
-                  print(categoria);
-                  print(subcategoria);
-                  print(subsubcategoria);
-                }
-              },
+
+            // Contenedor de Filtros
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey[50],
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(color: Colors.blueGrey[100]!),
+                ),
+                child: CategoriaSubcategoriaWidget(
+                  onSelectionChanged: (String? categoria, String? subcategoria,
+                      String? subsubcategoria) {
+                    setState(() {
+                      categoriaSeleccionada = categoria;
+                      subcategoriaSeleccionada = subcategoria;
+                      subsubcategoriaSeleccionada = subsubcategoria;
+                    });
+                    aplicarFiltros();
+                  },
+                ),
+              ),
             ),
-            const SizedBox(
-              height: 30,
+
+            // Espacio entre los filtros y la lista de reportes
+            const SizedBox(height: 20),
+
+            // Lista de reportes filtrados
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Reportes(
+                  estado: 'Fallido',
+                ),
+              ),
             ),
-            const Text("LISTA DE CASOS"),
           ],
         ),
       ),
