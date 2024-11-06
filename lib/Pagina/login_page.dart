@@ -7,7 +7,6 @@ import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/controllers/storage_pass.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Pagina/desicion.dart';
-import 'Inicio.dart';
 
 class GlobalVariables {
   static final GlobalVariables _instance = GlobalVariables._internal();
@@ -71,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Desicion()),
+          MaterialPageRoute(builder: (context) => const Desicion()),
         );
       } on FirebaseAuthException catch (e) {
         setState(() {

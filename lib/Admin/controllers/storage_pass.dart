@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:sivigila/Admin/pages/RegistroUsuario.dart';
 
 final _auth = FirebaseAuth.instance;
-final _storage = FlutterSecureStorage();
+const _storage = FlutterSecureStorage();
 
 // Guardar la contraseña del administrador
 Future<void> saveAdminPassword(String password) async {
@@ -28,16 +28,16 @@ Future<void> createNewUser(
 
   // Crear el nuevo usuario
   await _auth.createUserWithEmailAndPassword(email: email, password: password);
-  print("correo usuario creado: ${adminEmail}");
+  print("correo usuario creado: $adminEmail");
 
   // Guardar los datos adicionales del nuevo usuario
   await guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
 
   // Vuelve a iniciar sesión como administrador
-  if (adminEmail != null && adminPassword != null) {
+  if (adminPassword != null) {
     await _auth.signOut(); // Cierra la sesión del nuevo usuario
     await _auth.signInWithEmailAndPassword(
-        email: adminEmail, password: adminPassword);
+        email: adminEmail!, password: adminPassword);
   }
 }
 

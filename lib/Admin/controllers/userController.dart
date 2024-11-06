@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/data/services/userServices.dart';
-import 'package:sivigila/main.dart';
 
 class ControlUserAuth extends GetxController {
   final _response = Rxn();
@@ -58,7 +57,7 @@ class ControlUserAuth extends GetxController {
         if (userDoc.exists) break;
 
         // Si no existe, espera un momento antes de volver a intentar
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
         retries--;
       }
 

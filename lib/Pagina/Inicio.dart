@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../widgets/widgets.dart';
+import 'package:sivigila/widgets/Casos_Especificos.dart';
+import 'package:sivigila/widgets/Conglomerados.dart';
+import 'package:sivigila/widgets/Factores_Potencialmente_Relacionados.dart';
+import 'package:sivigila/widgets/Muertes_Comunidad.dart';
+import 'package:sivigila/widgets/Reportes_Enviados.dart';
+import 'package:sivigila/widgets/Sindromes.dart';
+import 'package:sivigila/widgets/situacion_animales_tile.dart';
 
 class LeftSection extends StatelessWidget {
   const LeftSection({super.key});
@@ -16,7 +21,8 @@ class LeftSection extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(), // Cerrar el diálogo
-              child: const Text('Cancelar', style: TextStyle(color: Colors.blueAccent)),
+              child: const Text('Cancelar',
+                  style: TextStyle(color: Colors.blueAccent)),
             ),
             TextButton(
               onPressed: () async {
@@ -24,7 +30,8 @@ class LeftSection extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacementNamed(context, '/');
               },
-              child: const Text('Cerrar sesión', style: TextStyle(color: Colors.redAccent)),
+              child: const Text('Cerrar sesión',
+                  style: TextStyle(color: Colors.redAccent)),
             ),
           ],
         );
@@ -150,7 +157,8 @@ class LeftSection extends StatelessWidget {
     );
   }
 
-  Widget _buildExpandableTile({required String title, required Widget content}) {
+  Widget _buildExpandableTile(
+      {required String title, required Widget content}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Card(
@@ -162,7 +170,7 @@ class LeftSection extends StatelessWidget {
         child: ExpansionTile(
           title: Row(
             children: [
-              Icon(Icons.chevron_right, color: Colors.blueAccent),
+              const Icon(Icons.chevron_right, color: Colors.blueAccent),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(

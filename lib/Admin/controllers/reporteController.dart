@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:sivigila/Models/reporte.dart';
 import 'package:sivigila/Admin/data/services/reportesServices.dart';
-import 'package:sivigila/main.dart';
 
 class Reportecontroller extends GetxController {
   final Rxn<List<Reporte>> _reporteFirestore = Rxn<List<Reporte>>([]);

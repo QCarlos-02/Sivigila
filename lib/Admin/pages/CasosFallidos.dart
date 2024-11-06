@@ -17,6 +17,10 @@ class _CasosfallidosState extends State<Casosfallidos> {
   String? categoriaSeleccionada;
   String? subcategoriaSeleccionada;
   String? subsubcategoriaSeleccionada;
+  bool showFilters = true;
+
+  List<String> subcategoriasDisponibles = [];
+  List<String> subsubcategoriasDisponibles = [];
 
   @override
   void initState() {
@@ -37,6 +41,8 @@ class _CasosfallidosState extends State<Casosfallidos> {
       categoriaSeleccionada = null;
       subcategoriaSeleccionada = null;
       subsubcategoriaSeleccionada = null;
+      subcategoriasDisponibles = [];
+      subsubcategoriasDisponibles = [];
     });
     reporteController.limpiarFiltros();
   }
@@ -57,53 +63,155 @@ class _CasosfallidosState extends State<Casosfallidos> {
           ),
         ],
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Encabezado de filtro
-            Padding(
+            // Título y botón de expandir/colapsar filtros
+            Container(
+              color: Colors.pinkAccent.withOpacity(0.1),
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text(
-                "Filtrar por tipo de caso",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey[800],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Filtrar por tipo de caso",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey[800],
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      showFilters ? Icons.expand_less : Icons.expand_more,
+                      color: Colors.blueGrey[800],
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showFilters = !showFilters;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
 
-            // Contenedor de Filtros
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey[50],
-                  borderRadius: BorderRadius.circular(12.0),
-                  border: Border.all(color: Colors.blueGrey[100]!),
-                ),
-                child: CategoriaSubcategoriaWidget(
-                  onSelectionChanged: (String? categoria, String? subcategoria,
-                      String? subsubcategoria) {
-                    setState(() {
-                      categoriaSeleccionada = categoria;
-                      subcategoriaSeleccionada = subcategoria;
-                      subsubcategoriaSeleccionada = subsubcategoria;
-                    });
-                    aplicarFiltros();
-                  },
+            // Panel de filtros con Dropdowns adaptativos
+            if (showFilters)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12.0),
+                    border: Border.all(color: Colors.blueGrey[100]!),
+                  ),
+                  child: Column(
+                    children: [
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Categoría',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        ),
+                        isExpanded: true,
+                        value: categoriaSeleccionada,
+                        items: Categorias.categorias.keys
+                            .map((String categoria) => DropdownMenuItem<String>(
+                                  value: categoria,
+                                  child: Text(
+                                    categoria,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            categoriaSeleccionada = value;
+                            subcategoriasDisponibles = value != null
+                                ? Categorias.categorias[value]!.keys.toList()
+                                : [];
+                            subcategoriaSeleccionada = null;
+                            subsubcategoriaSeleccionada = null;
+                            subsubcategoriasDisponibles = [];
+                          });
+                          aplicarFiltros();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Subcategoría',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        ),
+                        isExpanded: true,
+                        value: subcategoriaSeleccionada,
+                        items: subcategoriasDisponibles
+                            .map((String subcategoria) =>
+                                DropdownMenuItem<String>(
+                                  value: subcategoria,
+                                  child: Text(
+                                    subcategoria,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            subcategoriaSeleccionada = value;
+                            subsubcategoriasDisponibles = value != null
+                                ? Categorias
+                                    .categorias[categoriaSeleccionada]![value]!
+                                : [];
+                            subsubcategoriaSeleccionada = null;
+                          });
+                          aplicarFiltros();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Sub-Subcategoría',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        ),
+                        isExpanded: true,
+                        value: subsubcategoriaSeleccionada,
+                        items: subsubcategoriasDisponibles
+                            .map((String subsubcategoria) =>
+                                DropdownMenuItem<String>(
+                                  value: subsubcategoria,
+                                  child: Text(
+                                    subsubcategoria,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            subsubcategoriaSeleccionada = value;
+                          });
+                          aplicarFiltros();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Espacio entre los filtros y la lista de reportes
             const SizedBox(height: 20),
 
-            // Lista de reportes filtrados
-            Expanded(
+            // Lista de reportes
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Reportes(

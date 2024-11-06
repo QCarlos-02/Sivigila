@@ -9,7 +9,7 @@ Widget buildDropdown({
   return DropdownButtonFormField<String>(
     decoration: InputDecoration(
       labelText: labelText,
-      border: OutlineInputBorder(),
+      border: const OutlineInputBorder(),
     ),
     value: value,
     items: items.keys.map((String key) {

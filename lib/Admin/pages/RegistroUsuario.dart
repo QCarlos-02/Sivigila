@@ -5,11 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:sivigila/Admin/Widgets/listaDesplegable.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/storage_pass.dart';
-import 'package:sivigila/Admin/data/services/peticionesPerfil.dart';
-import 'package:sivigila/Pagina/login_page.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -28,7 +25,7 @@ class _RegistroState extends State<Registro> {
   //lo que sea
   @override
   Widget build(BuildContext context) {
-    return UsuarioListScreen();
+    return const UsuarioListScreen();
   }
 }
 
@@ -138,23 +135,23 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add, size: 30),
         backgroundColor: Colors.blueAccent,
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RegistroUsuarios(),
+              builder: (context) => const RegistroUsuarios(),
             ),
           );
         },
+        child: const Icon(Icons.add, size: 30),
       ),
     );
   }
 
   void _showUserOptions(BuildContext context, String usuario, String rol) {
     showModalBottomSheet(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       backgroundColor: Colors.grey[100],
@@ -248,7 +245,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   String? _selectedMunicipality;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _obscureText = true;
+  final bool _obscureText = true;
 
   final List<String> _areasOfInfluence = [
     'Cabecera municipal',
@@ -794,7 +791,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       selectedItemBuilder: (BuildContext context) {
         // Esta propiedad permite personalizar el valor seleccionado
         return items.map((String item) {
-          return Container(
+          return SizedBox(
             width: MediaQuery.of(context).size.width *
                 0.7, // Ajustar el ancho para el valor seleccionado
             child: Text(

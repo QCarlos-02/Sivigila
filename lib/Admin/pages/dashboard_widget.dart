@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 
 class DashboardWidget extends StatefulWidget {
-  DashboardWidget({super.key});
+  const DashboardWidget({super.key});
 
   @override
   State<DashboardWidget> createState() => _DashboardWidgetState();

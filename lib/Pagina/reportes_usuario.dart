@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ReportesUsuario extends StatelessWidget {
   final String uidUsuario;
 
-  const ReportesUsuario({Key? key, required this.uidUsuario}) : super(key: key);
+  const ReportesUsuario({super.key, required this.uidUsuario});
 
   Future<List<DocumentSnapshot>> obtenerReportesPorUID() async {
     QuerySnapshot reportes = await FirebaseFirestore.instance
@@ -53,16 +53,17 @@ class ReportesUsuario extends StatelessWidget {
               itemBuilder: (context, index) {
                 DocumentSnapshot reporte = snapshot.data![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black26,
                           blurRadius: 6,
-                          offset: const Offset(0, 3),
+                          offset: Offset(0, 3),
                         ),
                       ],
                     ),
@@ -84,20 +85,27 @@ class ReportesUsuario extends StatelessWidget {
                       collapsedIconColor: Colors.blue[700],
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildDetailRow('Subcategoría', reporte['subcategoria']),
+                              _buildDetailRow(
+                                  'Subcategoría', reporte['subcategoria']),
                               _buildDetailRow('Zona', reporte['zona']),
-                              _buildDetailRow('Comuna del evento', reporte['comuna_evento']),
+                              _buildDetailRow('Comuna del evento',
+                                  reporte['comuna_evento']),
                               _buildDetailRow('Barrio', reporte['barrio']),
-                              _buildDetailRow('Dirección', reporte['direccion']),
-                              _buildDetailRow('Descripción', reporte['descripcion']),
+                              _buildDetailRow(
+                                  'Dirección', reporte['direccion']),
+                              _buildDetailRow(
+                                  'Descripción', reporte['descripcion']),
                               _buildDetailRow(
                                 'Fecha de registro',
                                 reporte['timestamp'] != null
-                                    ? (reporte['timestamp'] as Timestamp).toDate().toString()
+                                    ? (reporte['timestamp'] as Timestamp)
+                                        .toDate()
+                                        .toString()
                                     : 'Sin fecha',
                               ),
                             ],

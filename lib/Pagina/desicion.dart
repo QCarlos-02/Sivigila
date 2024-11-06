@@ -5,6 +5,8 @@ import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/Inicio.dart';
 
 class Desicion extends StatelessWidget {
+  const Desicion({super.key});
+
   Future<String> getUserRole() async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -31,7 +33,7 @@ class Desicion extends StatelessWidget {
       future: getUserRole(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
                 child: CircularProgressIndicator()), // Indicador de carga
           );
@@ -48,17 +50,17 @@ class Desicion extends StatelessWidget {
           String role = snapshot.data!;
           // Redirige según el rol
           if (role == 'Admin') {
-            return Pagina02();
+            return const Pagina02();
           } else if (role == 'Lider') {
-            return LeftSection();
+            return const LeftSection();
           } else {
-            return Scaffold(
+            return const Scaffold(
               body: Center(child: Text("Rol no reconocido")),
             );
           }
         }
 
-        return Scaffold(
+        return const Scaffold(
           body: Center(child: Text("Cargando...")),
         );
       },

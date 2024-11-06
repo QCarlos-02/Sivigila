@@ -21,7 +21,8 @@ class _Pagina02State extends State<Pagina02> {
     super.initState();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     reportecontroller.consultarReportesgeneral();
-    print("Correo: ${_auth.currentUser!.email}, Uid: ${_auth.currentUser!.uid}");
+    print(
+        "Correo: ${_auth.currentUser!.email}, Uid: ${_auth.currentUser!.uid}");
   }
 
   @override
@@ -39,13 +40,13 @@ class _Pagina02State extends State<Pagina02> {
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          iconSize: isMobile ? 24 : 30, 
+          iconSize: isMobile ? 24 : 30,
         ),
         title: Row(
           children: [
             Image.asset(
               'assets/logo_left.png',
-              height: isMobile ? 24 : 30, 
+              height: isMobile ? 24 : 30,
             ),
             const SizedBox(width: 10),
             Text(
@@ -69,7 +70,8 @@ class _Pagina02State extends State<Pagina02> {
                 Navigator.pushReplacementNamed(context, '/');
               }
             },
-            iconSize: isMobile ? 24 : 30, // Tamaño del ícono de cierre de sesión
+            iconSize:
+                isMobile ? 24 : 30, // Tamaño del ícono de cierre de sesión
           ),
         ],
       ),
@@ -84,7 +86,7 @@ class _Pagina02State extends State<Pagina02> {
         ),
         child: Padding(
           padding: EdgeInsets.all(isMobile ? 12.0 : 24.0),
-          child: DashboardWidget(),
+          child: const DashboardWidget(),
         ),
       ),
     );
@@ -103,11 +105,13 @@ class _Pagina02State extends State<Pagina02> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+              child:
+                  const Text('Cancelar', style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Cerrar sesión', style: TextStyle(color: Colors.redAccent)),
+              child: const Text('Cerrar sesión',
+                  style: TextStyle(color: Colors.redAccent)),
             ),
           ],
         );

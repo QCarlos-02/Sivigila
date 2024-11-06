@@ -7,8 +7,7 @@ class DetallesReporteScreen extends StatefulWidget {
   final Reporte reporte;
   final String? estado;
 
-  const DetallesReporteScreen({required this.reporte, this.estado, Key? key})
-      : super(key: key);
+  const DetallesReporteScreen({required this.reporte, this.estado, super.key});
 
   @override
   _DetallesReporteScreenState createState() => _DetallesReporteScreenState();
@@ -22,7 +21,8 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
   @override
   void initState() {
     super.initState();
-    observacionesController = TextEditingController(text: widget.reporte.observaciones);
+    observacionesController =
+        TextEditingController(text: widget.reporte.observaciones);
     estadoSeleccionado = widget.reporte.estado;
   }
 
@@ -71,9 +71,9 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
               _buildReadOnlyField('Fecha Índice', widget.reporte.fecha),
               _buildReadOnlyField('Sección', widget.reporte.seccion),
               _buildReadOnlyField('Subcategoría', widget.reporte.subcategoria),
-              _buildReadOnlyField('Sub-subcategoría', widget.reporte.subsubcategoria),
+              _buildReadOnlyField(
+                  'Sub-subcategoría', widget.reporte.subsubcategoria),
               _buildReadOnlyField('Zona', widget.reporte.zona),
-
               const SizedBox(height: 16),
               _buildSectionTitle('Actualizar Estado'),
               const SizedBox(height: 8),
@@ -82,7 +82,6 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
               _buildSectionTitle('Observaciones'),
               const SizedBox(height: 8),
               _buildEditableField(observacionesController),
-
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
@@ -167,7 +166,8 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
           borderSide: BorderSide.none,
         ),
       ),
-      items: ['Pendiente', 'En Proceso', 'Exitoso', 'Fallido'].map((String estado) {
+      items: ['Pendiente', 'En Proceso', 'Exitoso', 'Fallido']
+          .map((String estado) {
         return DropdownMenuItem<String>(
           value: estado,
           child: Text(

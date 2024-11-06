@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
-import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/desicion.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 import 'package:get_storage/get_storage.dart';
@@ -66,7 +65,7 @@ class AuthenticationWrapper extends StatelessWidget {
           return const LoadingScreen();
         } else if (snapshot.hasData) {
           // Si el usuario está autenticado, redirigir a la página principal
-          return Desicion();
+          return const Desicion();
         } else {
           // Si no está autenticado, mostrar la pantalla de login
           return const LoginPage();
