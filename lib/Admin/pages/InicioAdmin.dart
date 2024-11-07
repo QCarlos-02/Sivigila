@@ -4,6 +4,7 @@ import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Admin/pages/dashboard_widget.dart';
 import 'package:sivigila/Admin/Widgets/Drawer.dart';
 
+
 class Pagina02 extends StatefulWidget {
   const Pagina02({super.key});
 

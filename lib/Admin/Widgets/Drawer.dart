@@ -9,7 +9,7 @@ import 'package:sivigila/Admin/pages/RegistroUsuario.dart';
 import 'package:sivigila/Pagina/login_page.dart';
 
 Widget drawer(BuildContext context) {
-  ControlUserAuth cua = Get.find();
+  final ControlUserAuth cua = Get.find(); // Obtén el controlador
   final double screenWidth = MediaQuery.of(context).size.width;
   final bool isMobile = screenWidth < 600;
 
@@ -22,15 +22,36 @@ Widget drawer(BuildContext context) {
           decoration: const BoxDecoration(
             color: Color.fromARGB(255, 0, 44, 81),
           ),
-          child: Center(
-            child: Text(
-              'SIVIGILA',
-              style: TextStyle(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.account_circle,
                 color: Colors.white,
-                fontSize: isMobile ? 24 : 28,
-                fontWeight: FontWeight.bold,
+                size: isMobile ? 50 : 60,
               ),
-            ),
+              const SizedBox(height: 10),
+              // Usa Obx para observar cambios en el nombre del administrador
+              Obx(() {
+                String nombre = cua.adminName;
+                return Text(
+                  nombre,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isMobile ? 18 : 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }),
+              const SizedBox(height: 5),
+              const Text(
+                'Panel de Administrador',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
         ),
         _buildDrawerItem(

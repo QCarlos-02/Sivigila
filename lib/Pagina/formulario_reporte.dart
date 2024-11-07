@@ -157,148 +157,150 @@ class _FormularioReporteState extends State<FormularioReporte> {
             end: Alignment.bottomRight,
           ),
         ),
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.blue[700]),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${_nombres ?? 'Cargando...'} ${_apellidos ?? ''}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+        child: SizedBox.expand(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Colors.blue[700]),
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_nombres ?? 'Cargando...'} ${_apellidos ?? ''}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        'Comuna: ${_comuna ?? 'Cargando...'}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
+                        const SizedBox(height: 5),
+                        Text(
+                          'Comuna: ${_comuna ?? 'Cargando...'}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _buildInfoText('Sección: ${widget.seccion}'),
-              _buildInfoText('Categoría: ${widget.categoria}'),
-              _buildInfoText('Subcategoría: ${widget.subcategoria}'),
-              _buildInfoText('Sub-Subcategoria: ${widget.subsubcategoria}'),
-              const SizedBox(height: 20),
-              _buildFechaIncidenteField(),
-              const SizedBox(height: 20),
-              _buildDropdown('Zona', _zonas, (value) {
-                setState(() {
-                  _zonaSeleccionada = value;
-                  _actualizarComunas();
-                });
-              }),
-              if (_zonaSeleccionada == 'Urbana' && _zonaSeleccionada != null)
-                _buildDropdown('Comuna', _comunasFiltradas, (value) {
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _buildInfoText('Sección: ${widget.seccion}'),
+                _buildInfoText('Categoría: ${widget.categoria}'),
+                _buildInfoText('Subcategoría: ${widget.subcategoria}'),
+                _buildInfoText('Sub-Subcategoria: ${widget.subsubcategoria}'),
+                const SizedBox(height: 20),
+                _buildFechaIncidenteField(),
+                const SizedBox(height: 20),
+                _buildDropdown('Zona', _zonas, (value) {
                   setState(() {
-                    _comunaSeleccionada = value;
-                    _actualizarBarrios(_comunaSeleccionada!);
+                    _zonaSeleccionada = value;
+                    _actualizarComunas();
                   });
                 }),
-              if (_zonaSeleccionada == 'Urbana' && _comunaSeleccionada != null)
-                _buildDropdown('Barrio', _barriosFiltrados, (value) {
-                  setState(() {
-                    _barrioSeleccionado = value;
-                  });
-                }),
-              if (_zonaSeleccionada == 'Rural')
-                _buildTextField('Barrio (entrada manual)', _barrioManualController),
-              _buildTextField('Dirección del evento', _direccionController),
-              _buildTextField('Descripción de lo sucedido', _descripcionController, maxLines: 3),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_zonaSeleccionada == null ||
-                        _direccionController.text.isEmpty ||
-                        _descripcionController.text.isEmpty ||
-                        _fechaIncidente == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Por favor, complete todos los campos requeridos")),
-                      );
-                      return;
-                    }
-
-                    try {
-                      User? user = FirebaseAuth.instance.currentUser;
-                      if (user != null) {
-                        final reporte = {
-                          'seccion': widget.seccion,
-                          'categoria': widget.categoria,
-                          'subcategoria': widget.subcategoria,
-                          'subsubcategoria': widget.subsubcategoria,
-                          'nombres': _nombres ?? '',
-                          'apellidos': _apellidos ?? '',
-                          'comuna': _comuna ?? '',
-                          'fecha_incidente': DateFormat('yyyy-MM-dd').format(_fechaIncidente!), // solo fecha
-                          'zona': _zonaSeleccionada,
-                          'comuna_evento': _comunaSeleccionada,
-                          'barrio': _zonaSeleccionada == 'Urbana'
-                              ? _barrioSeleccionado
-                              : _barrioManualController.text,
-                          'direccion': _direccionController.text,
-                          'descripcion': _descripcionController.text,
-                          'timestamp': FieldValue.serverTimestamp(),
-                          'userId': user.uid, 
-                          'estado': "Pendiente"
-                        };
-
-                        await FirebaseFirestore.instance.collection('reportes').add(reporte);
-
-                        _mostrarDialogoExito(context);
-
-                        _direccionController.clear();
-                        _descripcionController.clear();
-                        setState(() {
-                          _zonaSeleccionada = null;
-                          _comunaSeleccionada = null;
-                          _barrioSeleccionado = null;
-                          _fechaIncidente = null;
-                        });
-                      } else {
+                if (_zonaSeleccionada == 'Urbana' && _zonaSeleccionada != null)
+                  _buildDropdown('Comuna', _comunasFiltradas, (value) {
+                    setState(() {
+                      _comunaSeleccionada = value;
+                      _actualizarBarrios(_comunaSeleccionada!);
+                    });
+                  }),
+                if (_zonaSeleccionada == 'Urbana' && _comunaSeleccionada != null)
+                  _buildDropdown('Barrio', _barriosFiltrados, (value) {
+                    setState(() {
+                      _barrioSeleccionado = value;
+                    });
+                  }),
+                if (_zonaSeleccionada == 'Rural')
+                  _buildTextField('Barrio (entrada manual)', _barrioManualController),
+                _buildTextField('Dirección del evento', _direccionController),
+                _buildTextField('Descripción de lo sucedido', _descripcionController, maxLines: 3),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_zonaSeleccionada == null ||
+                          _direccionController.text.isEmpty ||
+                          _descripcionController.text.isEmpty ||
+                          _fechaIncidente == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Error: Usuario no autenticado")),
+                          const SnackBar(
+                              content: Text("Por favor, complete todos los campos requeridos")),
+                        );
+                        return;
+                      }
+
+                      try {
+                        User? user = FirebaseAuth.instance.currentUser;
+                        if (user != null) {
+                          final reporte = {
+                            'seccion': widget.seccion,
+                            'categoria': widget.categoria,
+                            'subcategoria': widget.subcategoria,
+                            'subsubcategoria': widget.subsubcategoria,
+                            'nombres': _nombres ?? '',
+                            'apellidos': _apellidos ?? '',
+                            'comuna': _comuna ?? '',
+                            'fecha_incidente': DateFormat('yyyy-MM-dd').format(_fechaIncidente!),
+                            'zona': _zonaSeleccionada,
+                            'comuna_evento': _comunaSeleccionada,
+                            'barrio': _zonaSeleccionada == 'Urbana'
+                                ? _barrioSeleccionado
+                                : _barrioManualController.text,
+                            'direccion': _direccionController.text,
+                            'descripcion': _descripcionController.text,
+                            'timestamp': FieldValue.serverTimestamp(),
+                            'userId': user.uid, 
+                            'estado': "Pendiente"
+                          };
+
+                          await FirebaseFirestore.instance.collection('reportes').add(reporte);
+
+                          _mostrarDialogoExito(context);
+
+                          _direccionController.clear();
+                          _descripcionController.clear();
+                          setState(() {
+                            _zonaSeleccionada = null;
+                            _comunaSeleccionada = null;
+                            _barrioSeleccionado = null;
+                            _fechaIncidente = null;
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Error: Usuario no autenticado")),
+                          );
+                        }
+                      } catch (e) {
+                        print("Error al enviar el reporte: $e");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Error al enviar el reporte")),
                         );
                       }
-                    } catch (e) {
-                      print("Error al enviar el reporte: $e");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Error al enviar el reporte")),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue[700],
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue[700],
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
+                    child: const Text('Enviar Reporte'),
                   ),
-                  child: const Text('Enviar Reporte'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

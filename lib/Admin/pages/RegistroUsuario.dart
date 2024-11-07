@@ -352,37 +352,50 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   void _registerAdmin() async {
-    String nombres = _adminNameController.text;
-    String email = _adminEmailController.text;
-    String password = _adminPasswordController.text;
-    String confirmPassword = _adminConfirmPasswordController.text;
+  String nombres = _adminNameController.text;
+  String email = _adminEmailController.text;
+  String password = _adminPasswordController.text;
+  String confirmPassword = _adminConfirmPasswordController.text;
 
-    if (password == confirmPassword) {
-      try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
+  if (password == confirmPassword) {
+    try {
+      // Crea el usuario con email y contraseña
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-        var datos = {
-          "correo": email,
-          "rol": "Admin",
-          "nombres": nombres,
-          "password": password,
-        };
+      // Obtiene el UID del usuario recién creado
+      String uid = userCredential.user!.uid;
 
-        guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+      // Datos adicionales para guardar en Firestore
+      var datos = {
+        "uid": uid, // Guarda el UID en los datos
+        "correo": email,
+        "rol": "Admin",
+        "nombres": nombres,
+        "password": password,
+      };
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Admin creado exitosamente')));
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al crear admin')));
-      }
-    } else {
+      // Llama a la función para guardar los datos adicionales en Firestore
+      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')));
+        const SnackBar(content: Text('Admin creado exitosamente')),
+      );
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al crear admin')),
+      );
     }
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Las contraseñas no coinciden')),
+    );
   }
+}
+
 
   void _registerLeader() async {
     String nombres = _leaderNameController.text;
@@ -816,7 +829,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     required ValueChanged<String?> onChanged,
     required BuildContext context,
   }) {
-    double screenWidth = MediaQuery.of(context).size.width;
 
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -833,7 +845,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
       value: value,
-      isExpanded: true, // Hace que el DropdownButton ocupe el ancho completo
+      isExpanded: true,    
       items: items.keys.map((String key) {
         return DropdownMenuItem<String>(
           value: key,
@@ -841,13 +853,12 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             key,
             maxLines: 1,
             overflow:
-                TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
+                TextOverflow.ellipsis,
           ),
         );
       }).toList(),
       onChanged: onChanged,
       selectedItemBuilder: (BuildContext context) {
-        // Personaliza cómo se muestra el valor seleccionado
         return items.keys.map((String key) {
           return Text(
             key,
