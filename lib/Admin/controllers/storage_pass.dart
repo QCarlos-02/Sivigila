@@ -28,7 +28,9 @@ Future<void> createNewUser(
 
   // Crear el nuevo usuario
   await _auth.createUserWithEmailAndPassword(email: email, password: password);
-  print("correo usuario creado: $adminEmail");
+  print("correo usuario creado: ${_auth.currentUser!.email}");
+
+  datos['uid'] = _auth.currentUser!.uid; //Registra el uid del usuario creado
 
   // Guardar los datos adicionales del nuevo usuario
   await guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);

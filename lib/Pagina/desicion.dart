@@ -53,6 +53,9 @@ class Desicion extends StatelessWidget {
             return const Pagina02();
           } else if (role == 'Lider') {
             return const LeftSection();
+          } else if (role == 'Referente') {
+            return Text(
+                "Aqui todo lo del referente"); //PONER LA VENTANA DEL USUARIO REFERENTE
           } else {
             return const Scaffold(
               body: Center(child: Text("Rol no reconocido")),

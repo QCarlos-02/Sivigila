@@ -38,6 +38,7 @@ class UsuarioListScreen extends StatefulWidget {
 class _UsuarioListScreenState extends State<UsuarioListScreen> {
   List<String> administradores = [];
   List<String> lideres = [];
+  List<String> referentes = [];
 
   @override
   void initState() {
@@ -54,6 +55,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
 
       List<String> adminList = [];
       List<String> leaderList = [];
+      List<String> referentList = [];
 
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>;
@@ -63,12 +65,15 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           adminList.add(nombre);
         } else if (data['rol'] == 'Lider') {
           leaderList.add(nombre);
+        } else {
+          referentList.add(nombre);
         }
       }
 
       setState(() {
         administradores = adminList;
         lideres = leaderList;
+        referentes = referentList;
       });
     } catch (e) {
       print("Error al obtener usuarios: $e");
@@ -132,6 +137,30 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
                     borderRadius: BorderRadius.circular(8.0)),
                 onTap: () => _showUserOptions(context, usuario, 'Lider'),
               )),
+          const SizedBox(
+            height: 20,
+          ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              "Referentes",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange),
+            ),
+          ),
+          ...referentes.map((usuario) => ListTile(
+                leading: const Icon(Icons.person, color: Colors.orange),
+                title: Text(
+                  usuario,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                tileColor: Colors.blue[50],
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                onTap: () => _showUserOptions(context, usuario, 'Referente'),
+              )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -183,8 +212,10 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
                   setState(() {
                     if (rol == 'Admin') {
                       administradores.remove(usuario);
-                    } else {
+                    } else if (rol == 'Lider') {
                       lideres.remove(usuario);
+                    } else {
+                      referentes.remove(usuario);
                     }
                   });
                 },
@@ -212,6 +243,11 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   final _adminEmailController = TextEditingController();
   final _adminPasswordController = TextEditingController();
   final _adminConfirmPasswordController = TextEditingController();
+
+  final _referenteNameController = TextEditingController();
+  final _referenteEmailController = TextEditingController();
+  final _referentePasswordController = TextEditingController();
+  final _referenteConfirmPasswordController = TextEditingController();
 
   final _leaderNameController = TextEditingController();
   final _leaderSurnameController = TextEditingController();
@@ -351,52 +387,89 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     });
   }
 
+//Registro de admin
   void _registerAdmin() async {
-  String nombres = _adminNameController.text;
-  String email = _adminEmailController.text;
-  String password = _adminPasswordController.text;
-  String confirmPassword = _adminConfirmPasswordController.text;
+    String nombres = _adminNameController.text;
+    String email = _adminEmailController.text;
+    String password = _adminPasswordController.text;
+    String confirmPassword = _adminConfirmPasswordController.text;
 
-  if (password == confirmPassword) {
-    try {
-      // Crea el usuario con email y contraseña
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    if (password == confirmPassword) {
+      try {
+        // Datos adicionales para guardar en Firestore
+        var datos = {
+          "correo": email,
+          "rol": "Admin",
+          "nombres": nombres,
+          "password": password,
+        };
+        createNewUser(email, password, datos);
+        print("correo final: ${_auth.currentUser!.email}");
 
-      // Obtiene el UID del usuario recién creado
-      String uid = userCredential.user!.uid;
-
-      // Datos adicionales para guardar en Firestore
-      var datos = {
-        "uid": uid, // Guarda el UID en los datos
-        "correo": email,
-        "rol": "Admin",
-        "nombres": nombres,
-        "password": password,
-      };
-
-      // Llama a la función para guardar los datos adicionales en Firestore
-      guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
-
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Admin creado exitosamente')),
+        );
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al crear admin')),
+        );
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Admin creado exitosamente')),
-      );
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al crear admin')),
+        const SnackBar(content: Text('Las contraseñas no coinciden')),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Las contraseñas no coinciden')),
-    );
   }
-}
 
+//Registro de Referente
+  void _registerReferen() async {
+    String nombres = _referenteNameController.text;
+    String email = _referenteEmailController.text;
+    String password = _referentePasswordController.text;
+    String confirmPassword = _referenteConfirmPasswordController.text;
 
+    if (password == confirmPassword) {
+      try {
+        // Obtiene el UID del usuario recién cread
+
+        // Datos adicionales para guardar en Firestore
+        var datos = {
+          // Guarda el UID en los datos
+          "correo": email,
+          "rol": "Referente",
+          "nombres": nombres,
+          "password": password,
+        };
+
+        createNewUser(email, password, datos);
+        print("correo final: ${_auth.currentUser!.email}");
+        // User? currentAdmin = _auth.currentUser;
+        // String? adminEmail = currentAdmin?.email;
+        // String? adminPassword = await getAdminPassword();
+        // if (adminPassword != null) {
+        //   await _auth.signOut(); // Cierra la sesión del nuevo usuario
+        //   await _auth.signInWithEmailAndPassword(
+        //       email: adminEmail!, password: adminPassword);
+        // }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Referente creado exitosamente')),
+        );
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al crear referente')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las contraseñas no coinciden')),
+      );
+    }
+  }
+
+//Registro de lider
   void _registerLeader() async {
     String nombres = _leaderNameController.text;
     String apellidos = _leaderSurnameController.text;
@@ -491,7 +564,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 underline: const SizedBox(), // Quita la línea inferior
                 borderRadius: BorderRadius.circular(15),
                 value: _selectedRole,
-                items: ['Líder', 'Admin'].map((String role) {
+                items: ['Líder', 'Admin', 'Referente'].map((String role) {
                   return DropdownMenuItem<String>(
                     value: role,
                     child: Text(
@@ -510,15 +583,27 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             const SizedBox(height: 20),
 
             // Formulario según el rol seleccionado
-            _selectedRole == 'Admin' ? _buildAdminForm() : _buildLeaderForm(),
+            if (_selectedRole == 'Admin')
+              _buildAdminForm()
+            else if (_selectedRole == 'Líder')
+              _buildLeaderForm()
+            else
+              _builReferenForm(),
             const SizedBox(height: 20),
 
             // Botón de Registro
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed:
-                    _selectedRole == 'Admin' ? _registerAdmin : _registerLeader,
+                onPressed: () {
+                  if (_selectedRole == 'Admin') {
+                    _registerAdmin();
+                  } else if (_selectedRole == 'Líder') {
+                    _registerLeader();
+                  } else {
+                    _registerReferen();
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -529,9 +614,10 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 child: Text(
                   'Registrar $_selectedRole',
                   style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -541,7 +627,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     );
   }
 
-//
+// Formulario de Admin
   Widget _buildAdminForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,68 +659,40 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     );
   }
 
-//
-  Widget _buildStyledTextField(
-      TextEditingController controller, String label, IconData icon,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.blueAccent),
-        filled: true,
-        fillColor: Colors.blue[50],
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-      ),
-    );
-  }
-
-//
-  Widget _buildStyledPasswordField(
-      TextEditingController controller, String label, IconData icon,
-      {bool oscuro = true}) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        return TextField(
-          controller: controller,
-          obscureText: oscuro,
-          decoration: InputDecoration(
-            labelText: label,
-            labelStyle: const TextStyle(color: Colors.blueAccent),
-            filled: true,
-            fillColor: Colors.blue[50],
-            prefixIcon: Icon(icon, color: Colors.blueAccent),
-            suffixIcon: IconButton(
-              icon: Icon(
-                oscuro ? Icons.visibility_off : Icons.visibility,
-                color: Colors.blueAccent,
-              ),
-              onPressed: () {
-                setState(() {
-                  oscuro = !oscuro;
-                });
-              },
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+// Formulario de Referente
+  Widget _builReferenForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          child: Text(
+            "Información del Referente",
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent),
           ),
-        );
-      },
+        ),
+        const SizedBox(height: 10),
+        _buildStyledTextField(
+            _referenteNameController, 'Nombres', Icons.person),
+        const SizedBox(height: 15),
+        _buildStyledTextField(_referenteEmailController, 'Correo', Icons.email),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(
+            _referentePasswordController, 'Contraseña', Icons.lock),
+        const SizedBox(height: 15),
+        _buildStyledPasswordField(
+          _referenteConfirmPasswordController,
+          'Confirmar Contraseña',
+          Icons.lock_outline,
+        ),
+      ],
     );
   }
 
-//
+//Formulario lider
   Widget _buildLeaderForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -773,6 +831,67 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
 //
+  Widget _buildStyledTextField(
+      TextEditingController controller, String label, IconData icon,
+      {TextInputType keyboardType = TextInputType.text}) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.blueAccent),
+        filled: true,
+        fillColor: Colors.blue[50],
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      ),
+    );
+  }
+
+//
+  Widget _buildStyledPasswordField(
+      TextEditingController controller, String label, IconData icon,
+      {bool oscuro = true}) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return TextField(
+          controller: controller,
+          obscureText: oscuro,
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(color: Colors.blueAccent),
+            filled: true,
+            fillColor: Colors.blue[50],
+            prefixIcon: Icon(icon, color: Colors.blueAccent),
+            suffixIcon: IconButton(
+              icon: Icon(
+                oscuro ? Icons.visibility_off : Icons.visibility,
+                color: Colors.blueAccent,
+              ),
+              onPressed: () {
+                setState(() {
+                  oscuro = !oscuro;
+                });
+              },
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          ),
+        );
+      },
+    );
+  }
+
+//
   Widget _buildStyledDropdownField(String label, List<String> items,
       String? selectedItem, ValueChanged<String?> onChanged, IconData icon) {
     return DropdownButtonFormField<String>(
@@ -829,7 +948,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     required ValueChanged<String?> onChanged,
     required BuildContext context,
   }) {
-
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: labelText,
@@ -845,15 +963,14 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       ),
       value: value,
-      isExpanded: true,    
+      isExpanded: true,
       items: items.keys.map((String key) {
         return DropdownMenuItem<String>(
           value: key,
           child: Text(
             key,
             maxLines: 1,
-            overflow:
-                TextOverflow.ellipsis,
+            overflow: TextOverflow.ellipsis,
           ),
         );
       }).toList(),
