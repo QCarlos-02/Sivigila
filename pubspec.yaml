@@ -68,15 +68,6 @@ flutter:
     - assets/Comunas_y_Barrios_Valledupar.json
     - assets/departamentos_municipios.json
 
-  fonts:
-    - family: Agenda
-      fonts:
-        - asset: assets/fonts/Agenda-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Agenda-BoldCondItalic.ttf
-          weight: 700
-          style: italic
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
