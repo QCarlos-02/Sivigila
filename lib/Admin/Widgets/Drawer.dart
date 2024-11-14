@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/userController.dart';
+import 'package:sivigila/Admin/pages/CasosDescartados.dart';
 import 'package:sivigila/Admin/pages/CasosEnProceso.dart';
 import 'package:sivigila/Admin/pages/CasosFallidos.dart';
 import 'package:sivigila/Admin/pages/Casosexitosos.dart';
@@ -57,7 +58,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.pending_actions_outlined,
-          text: "Casos pendientes",
+          text: "Reportes pendientes",
           onTap: () {
             Navigator.push(
               context,
@@ -68,7 +69,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.double_arrow_rounded,
-          text: "Casos en proceso",
+          text: "Reportes en proceso",
           onTap: () {
             Navigator.push(
               context,
@@ -79,7 +80,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.check_circle_outline,
-          text: "Casos exitosos",
+          text: "Reportes exitosos",
           onTap: () {
             Navigator.push(
               context,
@@ -90,13 +91,23 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.archive,
-          text: "Casos fallidos",
+          text: "Reportes fallidos",
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const Casosfallidos()),
             );
           },
+        ),
+        _buildDrawerItem(context,
+            icon: Icons.cancel, text: 'Reportes descartados', onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const CasosDescartados()));
+        }),
+        const SizedBox(
+          height: 20,
         ),
         _buildDrawerItem(
           context,

@@ -34,6 +34,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Reportecontroller rp = Get.find();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -85,10 +86,21 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
               widget.reporte.subsubcategoria,
             ),
             const SizedBox(height: 8), // Espacio entre filas
-            Center(
-              // Centramos la Descripción
-              child: _buildPlainTextField(
-                  'Descripción', widget.reporte.descripcion),
+            Row(
+              children: [
+                Center(
+                  // Centramos la Descripción
+                  child: _buildPlainTextField(
+                      'Descripción', widget.reporte.descripcion),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Center(
+                  child: _buildPlainTextField('Comentario Referente',
+                      widget.reporte.comentarioReferente),
+                )
+              ],
             ),
             const SizedBox(height: 16), // Espacio antes de la siguiente sección
             _buildSectionTitle('Actualizar Estado'),
@@ -102,7 +114,12 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  actualizarReporte(context);
+                  //actualizarReporte(context);
+                  var datos = {
+                    'estado': estadoSeleccionado,
+                    'observaciones': observacionesController.text
+                  };
+                  rp.actualizarReporte(widget.reporte.id, datos);
                   rp.consultarReportesgeneral();
                   if (widget.estado != null) {
                     rp.consultarReportesPorEstado(widget.estado!);
@@ -201,7 +218,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
           borderSide: BorderSide.none,
         ),
       ),
-      items: ['Pendiente', 'En Proceso', 'Exitoso', 'Fallido']
+      items: ['Pendiente', 'En Proceso', 'Exitoso', 'Fallido', 'Descartado']
           .map((String estado) {
         return DropdownMenuItem<String>(
           value: estado,

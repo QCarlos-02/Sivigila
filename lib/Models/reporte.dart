@@ -15,6 +15,7 @@ class Reporte {
   final String direccion;
   final String descripcion;
   final String observaciones;
+  final String comentarioReferente;
   final String estado;
 
   Reporte({
@@ -34,6 +35,7 @@ class Reporte {
     required this.direccion,
     required this.descripcion,
     required this.observaciones,
+    required this.comentarioReferente,
     required this.estado,
   });
 
@@ -55,6 +57,7 @@ class Reporte {
       direccion: json['direccion'] ?? '',
       descripcion: json['descripcion'] ?? '',
       observaciones: json['observaciones'] ?? '',
+      comentarioReferente: json['comentario'] ?? '',
       estado: json['estado'] ?? '',
     );
   }
