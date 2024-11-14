@@ -58,7 +58,6 @@ class _LoginPageState extends State<LoginPage>
     if (_formKey.currentState!.validate()) {
       _animationController.forward();
       try {
-        // Crear el correo completo agregando "@gmail.com"
         String email = "${_usernameController.text.trim()}@gmail.com";
 
         UserCredential userCredential =

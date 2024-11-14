@@ -11,10 +11,9 @@ import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GetStorage.init(); // Inicializa GetStorage
+  await GetStorage.init();
 
   try {
-    // Inicializa Firebase
     await Firebase.initializeApp(
       options: GetPlatform.isWeb
           ? const FirebaseOptions(
@@ -25,17 +24,15 @@ void main() async {
               messagingSenderId: "865111821241",
               appId: "1:865111821241:web:0e7c0d0fe48e1b16f48468",
             )
-          : null, // Inicializa Firebase para otras plataformas
+          : null,
     );
 
-    // Registro de controladores con GetX
     Get.put(Controlperfil());
     Get.put(ControlUserAuth());
     Get.put(Reportecontroller());
 
     runApp(const MyApp());
   } catch (e) {
-    // Maneja cualquier error que ocurra durante la inicialización
     print("Error al inicializar Firebase: $e");
   }
 }
@@ -66,16 +63,12 @@ class AuthenticationWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Muestra pantalla de carga mientras se verifica el estado
           return const LoadingScreen();
         } else if (snapshot.hasError) {
-          // Muestra un mensaje de error si ocurre un problema
           return const ErrorScreen();
         } else if (snapshot.hasData) {
-          // Si el usuario está autenticado, redirigir a la página principal
           return const Desicion();
         } else {
-          // Si no está autenticado, mostrar la pantalla de login
           return const LoginPage();
         }
       },
@@ -83,7 +76,6 @@ class AuthenticationWrapper extends StatelessWidget {
   }
 }
 
-// Pantalla de carga
 class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
@@ -107,7 +99,6 @@ class LoadingScreen extends StatelessWidget {
   }
 }
 
-// Pantalla de error
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({super.key});
 
