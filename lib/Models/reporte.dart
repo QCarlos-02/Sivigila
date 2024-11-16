@@ -14,7 +14,8 @@ class Reporte {
   final String descripcion;
   final String estado;
   final List<String>? comentRef;
-  final bool tieneComentario;  // Nuevo campo
+  final bool tieneComentario; // Nuevo campo
+  final String observaciones;
 
   Reporte({
     required this.id,
@@ -33,6 +34,7 @@ class Reporte {
     required this.estado,
     this.comentRef,
     required this.tieneComentario, // Aseguramos que el campo esté presente al crear el reporte
+    required this.observaciones,
   });
 
   // Método de fábrica para crear un objeto Reporte desde un documento de Firestore
@@ -52,11 +54,14 @@ class Reporte {
       subsubcategoria: data['subsubcategoria'] ?? '',
       descripcion: data['descripcion'] ?? '',
       estado: data['estado'] ?? '',
+      observaciones: data['observaciones'] ?? '',
       comentRef: data['ComentRef'] != null
           ? List<String>.from(data['ComentRef'])
           : null, // Convierte a List<String> si no es nulo
       // Si ComentRef tiene algún valor, entonces tieneComentario será true
-      tieneComentario: data['ComentRef'] != null && (data['ComentRef'] as List).isNotEmpty,  // Verifica si tiene comentario
+      tieneComentario: data['ComentRef'] != null &&
+          (data['ComentRef'] as List)
+              .isNotEmpty, // Verifica si tiene comentario
     );
   }
 }

@@ -20,12 +20,15 @@ class DetallesReporteScreen extends StatefulWidget {
 
 class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
   final Reportecontroller rp = Get.find();
+  late TextEditingController observacionesController;
   String? estadoSeleccionado;
 
   @override
   void initState() {
     super.initState();
     estadoSeleccionado = widget.reporte.estado;
+    observacionesController =
+        TextEditingController(text: widget.reporte.observaciones);
   }
 
   @override
@@ -113,11 +116,16 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
                   const SizedBox(height: 8),
                   _buildDropdownField('Estado', estadoSeleccionado),
                   const SizedBox(height: 20),
+                  _buildSectionTitle('Observaciones', Colors.orange[800]),
+                  const SizedBox(height: 8),
+                  _buildEditableField(observacionesController),
+                  const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
                         var datos = {
                           'estado': estadoSeleccionado,
+                          'observaciones': observacionesController.text
                         };
                         rp.actualizarReporte(widget.reporte.id, datos);
                         rp.consultarReportesgeneral();
@@ -237,6 +245,22 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
         fontWeight: FontWeight.bold,
         color: color,
       ),
+    );
+  }
+
+  Widget _buildEditableField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[100],
+        hintText: 'Añadir observaciones',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      maxLines: 3,
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
 import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/Inicio.dart';
 import 'package:sivigila/Referente/InicioRef.dart';
@@ -30,6 +32,7 @@ class Desicion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ControlUserAuth cp = Get.find();
     return FutureBuilder<String>(
       future: getUserRole(),
       builder: (context, snapshot) {
@@ -51,13 +54,13 @@ class Desicion extends StatelessWidget {
           String role = snapshot.data!;
           // Redirige según el rol
           if (role == 'Admin') {
+            cp.consultarUsuarios();
             return const Pagina02();
           } else if (role == 'Lider') {
             return const LeftSection();
           } else if (role == 'Referente') {
             return const InicioRef();
-          } 
-            else {
+          } else {
             return const Scaffold(
               body: Center(child: Text("Rol no reconocido")),
             );

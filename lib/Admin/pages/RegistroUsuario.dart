@@ -7,6 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/storage_pass.dart';
+import 'package:sivigila/Admin/controllers/userController.dart';
+import 'package:sivigila/Admin/data/services/userServices.dart';
+import 'package:sivigila/Models/user.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -36,37 +39,37 @@ class UsuarioListScreen extends StatefulWidget {
 }
 
 class _UsuarioListScreenState extends State<UsuarioListScreen> {
-  List<String> administradores = [];
-  List<String> lideres = [];
-  List<String> referentes = [];
+  List<Usuarios> administradores = [];
+  List<Leader> lideres = [];
+  List<Usuarios> referentes = [];
+  ControlUserAuth cp = Get.find();
 
   @override
   void initState() {
     super.initState();
+    cp.consultarUsuarios();
     _fetchUsuarios();
+    print(cp.listaUsuarios);
   }
 
   Future<void> _fetchUsuarios() async {
-    final CollectionReference perfilesCollection =
-        FirebaseFirestore.instance.collection('perfiles');
-
     try {
-      final QuerySnapshot snapshot = await perfilesCollection.get();
+      // Usa la lista de usuarios desde ControlUserAuth
+      cp.consultarUsuarios();
+      List<dynamic> usuarios = cp.listaUsuarios!;
 
-      List<String> adminList = [];
-      List<String> leaderList = [];
-      List<String> referentList = [];
+      List<Usuarios> adminList = [];
+      List<Leader> leaderList = [];
+      List<Usuarios> referentList = [];
 
-      for (var doc in snapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        final nombre = data['nombres'] ?? 'Sin Nombre';
-
-        if (data['rol'] == 'Admin') {
-          adminList.add(nombre);
-        } else if (data['rol'] == 'Lider') {
-          leaderList.add(nombre);
+      for (var usuario in usuarios) {
+        if (usuario.rol == 'Admin') {
+          adminList.add(usuario);
+        } else if (usuario.rol == 'Lider' && usuario is Leader) {
+          // Asegúrate de que el usuario es del tipo Leader
+          leaderList.add(usuario);
         } else {
-          referentList.add(nombre);
+          referentList.add(usuario);
         }
       }
 
@@ -107,7 +110,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           ...administradores.map((usuario) => ListTile(
                 leading: const Icon(Icons.person, color: Colors.blueAccent),
                 title: Text(
-                  usuario,
+                  usuario.nombre,
                   style: const TextStyle(fontSize: 16),
                 ),
                 tileColor: Colors.blue[50],
@@ -129,7 +132,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           ...lideres.map((usuario) => ListTile(
                 leading: const Icon(Icons.group, color: Colors.green),
                 title: Text(
-                  usuario,
+                  usuario.nombre,
                   style: const TextStyle(fontSize: 16),
                 ),
                 tileColor: Colors.green[50],
@@ -153,7 +156,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           ...referentes.map((usuario) => ListTile(
                 leading: const Icon(Icons.person, color: Colors.orange),
                 title: Text(
-                  usuario,
+                  usuario.nombre,
                   style: const TextStyle(fontSize: 16),
                 ),
                 tileColor: Colors.blue[50],
@@ -178,7 +181,23 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
     );
   }
 
-  void _showUserOptions(BuildContext context, String usuario, String rol) {
+  void _navigateToRegistroUsuarios(dynamic usuario, String rol) async {
+    // Espera el resultado de la navegación
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RegistroUsuarios(usuario: usuario, rol: rol),
+      ),
+    );
+
+    // Si se realizó un cambio, refresca la lista de usuarios
+    if (result == true) {
+      _fetchUsuarios();
+      cp.consultarUsuarios();
+    }
+  }
+
+  void _showUserOptions(BuildContext context, Usuarios usuario, String rol) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -192,11 +211,23 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Opciones para $usuario ($rol)",
+                "Opciones para ${usuario.nombre} ($rol)",
                 style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87),
+              ),
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.blue),
+                title: const Text("Editar Usuario"),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (usuario is Leader) {
+                    _navigateToRegistroUsuarios(usuario, rol);
+                  } else {
+                    _navigateToRegistroUsuarios(usuario, rol);
+                  }
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.redAccent),
@@ -229,15 +260,19 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
 }
 
 class RegistroUsuarios extends StatefulWidget {
-  const RegistroUsuarios({super.key});
+  final Usuarios? usuario;
+  final String? rol;
+  const RegistroUsuarios({super.key, this.usuario, this.rol});
 
   @override
   _RegistroUsuariosState createState() => _RegistroUsuariosState();
 }
 
 class _RegistroUsuariosState extends State<RegistroUsuarios> {
-  String _selectedRole = 'Líder';
-  Controlperfil cp = Get.find();
+  // Lista de roles disponibles
+  final List<String> roles = ['Lider', 'Admin', 'Referente'];
+  String _selectedRole = 'Lider';
+  ControlUserAuth cp = Get.find();
 
   final _adminNameController = TextEditingController();
   final _adminEmailController = TextEditingController();
@@ -338,8 +373,100 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   @override
   void initState() {
     super.initState();
+    if (widget.rol != null && roles.contains(widget.rol)) {
+      _selectedRole = widget.rol!;
+    }
     _loadComunasYBarrios();
-    _loadDepartmentsAndMuncipalities();
+    _loadDepartmentsAndMunicipalities();
+
+    if (widget.usuario != null) {
+      _initializeUserData();
+    }
+  }
+
+  void _initializeUserData() async {
+    final user = widget.usuario!;
+    _selectedRole = widget.rol ?? 'Líder';
+
+    if (user.rol == 'Admin') {
+      _adminNameController.text = user.nombre;
+      _adminEmailController.text = user.correo;
+      _adminPasswordController.text = user.password;
+      _adminConfirmPasswordController.text = user.password;
+    }
+
+    if (user.rol == 'Referente') {
+      _referenteNameController.text = user.nombre;
+      _referenteEmailController.text = user.correo;
+      _referentePasswordController.text = user.password;
+      _referenteConfirmPasswordController.text = user.password;
+    }
+
+    if (user is Leader) {
+      _leaderNameController.text = user.nombre;
+      _leaderSurnameController.text = user.apellidos;
+      _leaderDocumentTypeController.text = user.tipoDocumento;
+      _leaderDocumentNumberController.text = user.numeroDocumento;
+      _leaderNationalityController.text = user.nacionalidad;
+      _leaderAgeController.text = user.edad;
+      _leaderPhoneController.text = user.telefono;
+      _leaderEmailController.text = user.correo;
+      _leaderPasswordController.text = user.password;
+      _leaderAddressController.text = user.direccion;
+      _leaderConfirmPasswordController.text = user.password;
+
+      await _loadComunasYBarrios();
+      await _loadDepartmentsAndMunicipalities();
+
+      // Usa setState para actualizar las listas dependientes
+      setState(() {
+        // Departamento y Municipio
+        _selectedDepartment = user.departamento;
+
+        if (_departmentsAndMunicipalities.containsKey(_selectedDepartment)) {
+          _filteredMunicipalities =
+              _departmentsAndMunicipalities[_selectedDepartment]!;
+        } else {
+          _filteredMunicipalities = [];
+          _selectedDepartment = null;
+        }
+        _selectedMunicipality = _filteredMunicipalities.contains(user.municipio)
+            ? user.municipio
+            : null;
+
+        // Comuna y Barrio
+        _selectedComuna = user.comuna;
+        if (_comunasYBarrios.containsKey(_selectedComuna)) {
+          _barriosFiltrados = _comunasYBarrios[_selectedComuna]!;
+        } else {
+          _barriosFiltrados = [];
+          _selectedComuna = null;
+        }
+        _selectedBarrio =
+            _barriosFiltrados.contains(user.barrio) ? user.barrio : null;
+
+        // Categoría y Rol2
+        _selectedOption = user.categoria;
+        if (_rolesOptions.containsKey(_selectedOption)) {
+          _rolesFiltrados = _rolesOptions[_selectedOption]!;
+        } else {
+          _rolesFiltrados = [];
+          _selectedOption = null;
+        }
+        _selectRole = _rolesFiltrados.contains(user.rol2) ? user.rol2 : null;
+      });
+    }
+  }
+
+  Future<void> _guardarOactualizar() async {
+    if (_selectedRole == 'Admin') {
+      _registerAdmin();
+    } else if (_selectedRole == 'Lider') {
+      _registerLeader();
+    } else {
+      _registerReferen();
+    }
+    Navigator.pop(context, true);
   }
 
   void loadCategoriasRoles() {
@@ -360,7 +487,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     });
   }
 
-  Future<void> _loadDepartmentsAndMuncipalities() async {
+  Future<void> _loadDepartmentsAndMunicipalities() async {
     final String jsonString =
         await rootBundle.loadString('assets/departamentos_municipios.json');
     final List<dynamic> jsonList = json.decode(jsonString);
@@ -369,21 +496,21 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     for (var item in jsonList) {
       String department = item['departamento'];
       String municipality = item['municipio'];
-      if (!departmentsAndMunicipalities.containsKey(department)) {
-        departmentsAndMunicipalities[department] = [];
+
+      // Filtrar solo el departamento del Cesar
+      if (department == 'Cesar') {
+        if (!departmentsAndMunicipalities.containsKey(department)) {
+          departmentsAndMunicipalities[department] = [];
+        }
+        departmentsAndMunicipalities[department]!.add(municipality);
       }
-      departmentsAndMunicipalities[department]!.add(municipality);
     }
     departmentsAndMunicipalities.forEach((key, value) {
       value.sort();
     });
 
-    final sortedDepartments = Map.fromEntries(
-        departmentsAndMunicipalities.entries.toList()
-          ..sort((a, b) => a.key.compareTo(b.key)));
-
     setState(() {
-      _departmentsAndMunicipalities = sortedDepartments;
+      _departmentsAndMunicipalities = departmentsAndMunicipalities;
     });
   }
 
@@ -403,12 +530,21 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "nombres": nombres,
           "password": password,
         };
-        createNewUser(email, password, datos);
+        if (widget.usuario == null) {
+          createNewUser(email, password, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Admin creado exitosamente')),
+          );
+        } else {
+          Userservices.actualizarPerfil(widget.usuario!.id, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Admin editado exitosamente')),
+          );
+          Navigator.pop(context, true);
+        }
         print("correo final: ${_auth.currentUser!.email}");
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Admin creado exitosamente')),
-        );
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -431,8 +567,6 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
 
     if (password == confirmPassword) {
       try {
-        // Obtiene el UID del usuario recién cread
-
         // Datos adicionales para guardar en Firestore
         var datos = {
           // Guarda el UID en los datos
@@ -442,20 +576,21 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "password": password,
         };
 
-        createNewUser(email, password, datos);
+        if (widget.usuario == null) {
+          createNewUser(email, password, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Referente creado exitosamente')),
+          );
+        } else {
+          Userservices.actualizarPerfil(widget.usuario!.id, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Referente editado exitosamente')),
+          );
+          Navigator.pop(context, true);
+        }
         print("correo final: ${_auth.currentUser!.email}");
-        // User? currentAdmin = _auth.currentUser;
-        // String? adminEmail = currentAdmin?.email;
-        // String? adminPassword = await getAdminPassword();
-        // if (adminPassword != null) {
-        //   await _auth.signOut(); // Cierra la sesión del nuevo usuario
-        //   await _auth.signInWithEmailAndPassword(
-        //       email: adminEmail!, password: adminPassword);
-        // }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Referente creado exitosamente')),
-        );
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -478,8 +613,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     String nacionalidad = _leaderNationalityController.text;
     String edad = _leaderAgeController.text;
     String telefono = _leaderPhoneController.text;
-    String departamento = _leaderDepartmentController.text;
-    String municipio = _leaderMunicipalityController.text;
+    String departamento = _selectedDepartment ?? '';
+    String municipio = _selectedMunicipality ?? '';
     String comuna = _selectedComuna ?? '';
     String barrio = _selectedBarrio ?? '';
     String direccion = _leaderAddressController.text;
@@ -489,6 +624,26 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     String email = _leaderEmailController.text;
     String password = _leaderPasswordController.text;
     String confirmPassword = _leaderConfirmPasswordController.text;
+
+    // Verificar campos nulos o vacíos
+    if (nombres.isEmpty ||
+        apellidos.isEmpty ||
+        numeroDocumento.isEmpty ||
+        nacionalidad.isEmpty ||
+        edad.isEmpty ||
+        telefono.isEmpty ||
+        departamento.isEmpty ||
+        municipio.isEmpty ||
+        direccion.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        _selectedOption == null ||
+        _selectRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, complete todos los campos')),
+      );
+      return; // Detener el proceso si hay campos vacíos
+    }
 
     if (password == confirmPassword) {
       try {
@@ -515,10 +670,21 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           "password": password
         };
 
-        createNewUser(email, password, datos);
+        if (widget.usuario == null) {
+          createNewUser(email, password, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Lider creado exitosamente')),
+          );
+        } else {
+          Userservices.actualizarPerfil(widget.usuario!.id, datos);
+          cp.consultarUsuarios();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Lider editado exitosamente')),
+          );
+          Navigator.pop(context, true);
+        }
         print("correo final: ${_auth.currentUser!.email}");
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Líder creado exitosamente')));
       } catch (e) {
         print(e);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -534,9 +700,9 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Crear Usuario",
-          style: TextStyle(
+        title: Text(
+          widget.usuario != null ? 'Editar Usuario' : 'Crear Usuario',
+          style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
             color: Colors.blueAccent,
@@ -564,7 +730,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 underline: const SizedBox(), // Quita la línea inferior
                 borderRadius: BorderRadius.circular(15),
                 value: _selectedRole,
-                items: ['Líder', 'Admin', 'Referente'].map((String role) {
+                items: roles.map((String role) {
                   return DropdownMenuItem<String>(
                     value: role,
                     child: Text(
@@ -573,11 +739,13 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                     ),
                   );
                 }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRole = value!;
-                  });
-                },
+                onChanged: widget.usuario == null
+                    ? (value) {
+                        setState(() {
+                          _selectedRole = value!;
+                        });
+                      }
+                    : null,
               ),
             ),
             const SizedBox(height: 20),
@@ -585,7 +753,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             // Formulario según el rol seleccionado
             if (_selectedRole == 'Admin')
               _buildAdminForm()
-            else if (_selectedRole == 'Líder')
+            else if (_selectedRole == 'Lider')
               _buildLeaderForm()
             else
               _builReferenForm(),
@@ -595,15 +763,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  if (_selectedRole == 'Admin') {
-                    _registerAdmin();
-                  } else if (_selectedRole == 'Líder') {
-                    _registerLeader();
-                  } else {
-                    _registerReferen();
-                  }
-                },
+                onPressed: _guardarOactualizar,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -612,7 +772,9 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                   ),
                 ),
                 child: Text(
-                  'Registrar $_selectedRole',
+                  widget.usuario != null
+                      ? 'Guardar cambios'
+                      : 'Registrar $_selectedRole',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -742,19 +904,18 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           context: context,
         ),
         const SizedBox(height: 15),
-        if (_filteredMunicipalities.isNotEmpty)
-          buildStyledDropdown(
-            labelText: "Municipio",
-            value: _selectedMunicipality,
-            items: {for (var i in _filteredMunicipalities) i: []},
-            icon: Icons.location_on,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedMunicipality = newValue;
-              });
-            },
-            context: context,
-          ),
+        buildStyledDropdown(
+          labelText: "Municipio",
+          value: _selectedMunicipality,
+          items: {for (var i in _filteredMunicipalities) i: []},
+          icon: Icons.location_on,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedMunicipality = newValue;
+            });
+          },
+          context: context,
+        ),
         const SizedBox(height: 15),
         _buildStyledDropdownField(
             'Comuna', _comunasYBarrios.keys.toList(), _selectedComuna,

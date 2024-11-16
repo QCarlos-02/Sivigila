@@ -145,6 +145,7 @@ Widget drawer(BuildContext context) {
           icon: Icons.app_registration,
           text: "Registro de usuarios",
           onTap: () {
+            cua.consultarUsuarios();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const Registro()),

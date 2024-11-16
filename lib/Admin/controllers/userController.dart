@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:sivigila/Models/user.dart';
 
 import '../data/services/userServices.dart';
 
@@ -8,11 +9,20 @@ class ControlUserAuth extends GetxController {
   final _response = Rxn();
   final _mensaje = "".obs;
   final Rxn<String> _rol = Rxn<String>();
-  final Rxn<String> _adminName = Rxn<String>(); // Para almacenar el nombre del administrador
+  final Rxn<String> _adminName =
+      Rxn<String>(); // Para almacenar el nombre del administrador
   String? _uid;
   String? rolUser;
 
   final Rxn<UserCredential> _usuario = Rxn<UserCredential>();
+  final Rxn<List<Usuarios>> _reporte = Rxn<List<Usuarios>>([]);
+
+  List<Usuarios>? get listaUsuarios => _reporte.value;
+
+  Future<void> consultarUsuarios() async {
+    _reporte.value = await Userservices().listaUsuarios();
+    print('total usuarios cargados: ${_reporte.value?.length}');
+  }
 
   Future<void> crearUsuario(String email, String pass) async {
     _response.value = await Userservices.crearRegistroUsuario(email, pass);
@@ -42,31 +52,30 @@ class ControlUserAuth extends GetxController {
 
   // Método para cargar datos del usuario usando la uid
   Future<void> cargarDatosUsuarioPorUid() async {
-  try {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      _uid = user.uid;
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        _uid = user.uid;
 
-      // Consulta a Firestore para obtener el perfil del usuario por uid
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('perfiles')
-          .doc(_uid)
-          .get();
+        // Consulta a Firestore para obtener el perfil del usuario por uid
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('perfiles')
+            .doc(_uid)
+            .get();
 
-      if (userDoc.exists) {
-        var data = userDoc.data() as Map<String, dynamic>;
+        if (userDoc.exists) {
+          var data = userDoc.data() as Map<String, dynamic>;
 
-        // Actualiza el rol y el nombre del administrador
-        rolUser = data['rol'];
-        _rol.value = data['rol'];
-        _adminName.value = data['nombres'];
+          // Actualiza el rol y el nombre del administrador
+          rolUser = data['rol'];
+          _rol.value = data['rol'];
+          _adminName.value = data['nombres'];
+        }
       }
+    } catch (e) {
+      // Manejar errores si es necesario
     }
-  } catch (e) {
-    // Manejar errores si es necesario
   }
-}
-
 
   dynamic get estadoUser => _response.value;
 
