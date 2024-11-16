@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sivigila/Admin/pages/InicioAdmin.dart';
 import 'package:sivigila/Pagina/Inicio.dart';
+import 'package:sivigila/Referente/InicioRef.dart';
 
 class Desicion extends StatelessWidget {
   const Desicion({super.key});
@@ -54,9 +55,9 @@ class Desicion extends StatelessWidget {
           } else if (role == 'Lider') {
             return const LeftSection();
           } else if (role == 'Referente') {
-            return Text(
-                "Aqui todo lo del referente"); //PONER LA VENTANA DEL USUARIO REFERENTE
-          } else {
+            return const InicioRef();
+          } 
+            else {
             return const Scaffold(
               body: Center(child: Text("Rol no reconocido")),
             );

@@ -21,7 +21,11 @@ Widget drawer(BuildContext context) {
       children: [
         DrawerHeader(
           decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 0, 44, 81),
+            gradient: LinearGradient(
+              colors: [Color.fromARGB(255, 0, 44, 81), Colors.blueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,9 +36,9 @@ Widget drawer(BuildContext context) {
                 size: isMobile ? 50 : 60,
               ),
               const SizedBox(height: 10),
-              // Usa Obx para observar cambios en el nombre del administrador
+              // Usa Obx para observar cambios en el nombre del usuario logueado
               Obx(() {
-                String nombre = cua.adminName;
+                String nombre = cua.adminName; // Usar la propiedad adminName del controlador
                 return Text(
                   nombre,
                   style: TextStyle(
@@ -46,13 +50,25 @@ Widget drawer(BuildContext context) {
               }),
               const SizedBox(height: 5),
               const Text(
-                'Panel de Administrador',
+                'Panel de Usuario',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
                 ),
               ),
             ],
+          ),
+        ),
+        // Sección de reportes
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Reportes',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         _buildDrawerItem(
@@ -99,15 +115,29 @@ Widget drawer(BuildContext context) {
             );
           },
         ),
-        _buildDrawerItem(context,
-            icon: Icons.cancel, text: 'Reportes descartados', onTap: () {
-          Navigator.push(
+        _buildDrawerItem(
+          context,
+          icon: Icons.cancel,
+          text: 'Reportes descartados',
+          onTap: () {
+            Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const CasosDescartados()));
-        }),
-        const SizedBox(
-          height: 20,
+              MaterialPageRoute(builder: (context) => const CasosDescartados()),
+            );
+          },
+        ),
+        const Divider(color: Colors.white54, thickness: 1),
+        // Sección de administración
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Administración',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         _buildDrawerItem(
           context,
@@ -120,7 +150,8 @@ Widget drawer(BuildContext context) {
             );
           },
         ),
-        const Divider(color: Colors.white54),
+        const Divider(color: Colors.white54, thickness: 1),
+        // Sección de salida
         _buildDrawerItem(
           context,
           icon: Icons.exit_to_app,

@@ -29,7 +29,11 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           const SizedBox(height: 18),
           const Text(
             "Bienvenido, Administrador",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+            ),
           ),
           const SizedBox(height: 20),
           Obx(() {
@@ -60,7 +64,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                           MediaQuery.of(context).size.width > 600 ? 4 : 2,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
@@ -91,31 +95,39 @@ class _DashboardWidgetState extends State<DashboardWidget> {
 
   Widget _buildInfoCard(String title, int count, Color color) {
     return Container(
-      width: 80, // Ancho específico para hacer la tarjeta más pequeña
-      height: 60, // Altura de la tarjeta
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
               style: TextStyle(
-                  fontSize: 12, fontWeight: FontWeight.bold, color: color),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 8),
             Text(
               count.toString(),
               style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold, color: color),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -127,34 +139,38 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   Widget _buildBarChart(int pendingCount, int successfulCount,
       int inProcessCount, int failedCount) {
     return Container(
-      height: 200, // Altura del gráfico de barras
+      height: 200,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: BarChart(
         BarChartData(
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
+              sideTitles: SideTitles(showTitles: true, reservedSize: 28),
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 38,
+                reservedSize: 28,
                 getTitlesWidget: (value, meta) {
                   switch (value.toInt()) {
                     case 0:
-                      return const Text('Pendientes');
+                      return const Text('Pend.');
                     case 1:
-                      return const Text('Exitosos');
+                      return const Text('Éxito');
                     case 2:
-                      return const Text('En Proceso');
+                      return const Text('Proc.');
                     case 3:
-                      return const Text('Fallidos');
+                      return const Text('Fall.');
                     default:
                       return const Text('');
                   }
@@ -166,18 +182,27 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           barGroups: [
             BarChartGroupData(x: 0, barRods: [
               BarChartRodData(
-                  toY: pendingCount.toDouble(), color: Colors.orange)
+                toY: pendingCount.toDouble(),
+                color: Colors.orange,
+              )
             ]),
             BarChartGroupData(x: 1, barRods: [
               BarChartRodData(
-                  toY: successfulCount.toDouble(), color: Colors.green)
+                toY: successfulCount.toDouble(),
+                color: Colors.green,
+              )
             ]),
             BarChartGroupData(x: 2, barRods: [
               BarChartRodData(
-                  toY: inProcessCount.toDouble(), color: Colors.blue)
+                toY: inProcessCount.toDouble(),
+                color: Colors.blue,
+              )
             ]),
             BarChartGroupData(x: 3, barRods: [
-              BarChartRodData(toY: failedCount.toDouble(), color: Colors.red)
+              BarChartRodData(
+                toY: failedCount.toDouble(),
+                color: Colors.red,
+              )
             ]),
           ],
           gridData: FlGridData(show: false),
@@ -190,12 +215,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   Widget _buildPieChart(int pendingCount, int successfulCount,
       int inProcessCount, int failedCount) {
     return Container(
-      height: 200, // Altura del gráfico circular
+      height: 200,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
         ],
       ),
       child: PieChart(
@@ -204,30 +233,30 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             PieChartSectionData(
               value: pendingCount.toDouble(),
               color: Colors.orange,
-              title: '${pendingCount}', // Mostrar valor real
-              radius: 40,
+              title: '$pendingCount',
+              radius: 50,
             ),
             PieChartSectionData(
               value: successfulCount.toDouble(),
               color: Colors.green,
-              title: '${successfulCount}', // Mostrar valor real
-              radius: 40,
+              title: '$successfulCount',
+              radius: 50,
             ),
             PieChartSectionData(
               value: inProcessCount.toDouble(),
               color: Colors.blue,
-              title: '${inProcessCount}', // Mostrar valor real
-              radius: 40,
+              title: '$inProcessCount',
+              radius: 50,
             ),
             PieChartSectionData(
               value: failedCount.toDouble(),
               color: Colors.red,
-              title: '${failedCount}', // Mostrar valor real
-              radius: 40,
+              title: '$failedCount',
+              radius: 50,
             ),
           ],
           borderData: FlBorderData(show: false),
-          centerSpaceRadius: 0,
+          centerSpaceRadius: 40,
         ),
       ),
     );

@@ -51,16 +51,15 @@ class _CasosexitososState extends State<Casosexitosos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Casos exitosos",
-        ),
+        title: const Text("Casos Exitosos"),
         centerTitle: true,
+        backgroundColor: Colors.green,
         actions: [
           IconButton(
             onPressed: limpiarFiltros,
-            icon: const Icon(Icons.filter_alt_off),
+            icon: const Icon(Icons.filter_alt_off, color: Colors.white),
             tooltip: 'Limpiar filtros',
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -69,24 +68,29 @@ class _CasosexitososState extends State<Casosexitosos> {
           children: [
             // Título y botón de expandir/colapsar filtros
             Container(
-              color: Colors.pinkAccent.withOpacity(0.1),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              color: Colors.lightGreen.withOpacity(0.2),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Filtrar por tipo de caso",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey[800],
-                    ),
+                  Row(
+                    children: [
+                      Icon(Icons.filter_list, color: Colors.green[800]),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Filtrar por tipo de caso",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green[800],
+                        ),
+                      ),
+                    ],
                   ),
                   IconButton(
                     icon: Icon(
                       showFilters ? Icons.expand_less : Icons.expand_more,
-                      color: Colors.blueGrey[800],
+                      color: Colors.green[800],
                     ),
                     onPressed: () {
                       setState(() {
@@ -101,20 +105,26 @@ class _CasosexitososState extends State<Casosexitosos> {
             // Panel de filtros con Dropdowns adaptativos
             if (showFilters)
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(color: Colors.blueGrey[100]!),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Categoría',
+                          prefixIcon: Icon(Icons.category, color: Colors.green),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
@@ -126,7 +136,7 @@ class _CasosexitososState extends State<Casosexitosos> {
                                   child: Text(
                                     categoria,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ))
                             .toList(),
@@ -147,19 +157,19 @@ class _CasosexitososState extends State<Casosexitosos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Subcategoría',
+                          prefixIcon: Icon(Icons.subdirectory_arrow_right, color: Colors.green),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subcategoriaSeleccionada,
                         items: subcategoriasDisponibles
-                            .map((String subcategoria) =>
-                                DropdownMenuItem<String>(
+                            .map((String subcategoria) => DropdownMenuItem<String>(
                                   value: subcategoria,
                                   child: Text(
                                     subcategoria,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ))
                             .toList(),
@@ -167,8 +177,7 @@ class _CasosexitososState extends State<Casosexitosos> {
                           setState(() {
                             subcategoriaSeleccionada = value;
                             subsubcategoriasDisponibles = value != null
-                                ? Categorias
-                                    .categorias[categoriaSeleccionada]![value]!
+                                ? Categorias.categorias[categoriaSeleccionada]![value]!
                                 : [];
                             subsubcategoriaSeleccionada = null;
                           });
@@ -179,19 +188,19 @@ class _CasosexitososState extends State<Casosexitosos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Sub-Subcategoría',
+                          prefixIcon: Icon(Icons.subdirectory_arrow_right_outlined, color: Colors.green),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subsubcategoriaSeleccionada,
                         items: subsubcategoriasDisponibles
-                            .map((String subsubcategoria) =>
-                                DropdownMenuItem<String>(
+                            .map((String subsubcategoria) => DropdownMenuItem<String>(
                                   value: subsubcategoria,
                                   child: Text(
                                     subsubcategoria,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ))
                             .toList(),

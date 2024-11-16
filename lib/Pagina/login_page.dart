@@ -273,6 +273,5 @@ Future<String> validarUser(String correo) async {
       .get();
 
   var validar = querySnapshot.docs.first['rol'];
-  print(validar);
   return validar;
 }

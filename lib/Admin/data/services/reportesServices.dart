@@ -8,6 +8,7 @@ class Reportesservices {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
   ControlUserAuth controlUserAuth = Get.find();
 
+  // Método para guardar un nuevo reporte en Firestore
   Future<String> guardarReporte(
     String seccion,
     String categoria,
@@ -23,53 +24,69 @@ class Reportesservices {
     String descripcion,
     String estado,
   ) async {
-    var reference = _db.collection("reportes");
-    var result = await reference.add({
-      'seccion': seccion,
-      'categoria': categoria,
-      'subcategoria': subcategoria,
-      'subsubcategoria': subsubcategoria,
-      'evento': evento,
-      'fecha': fecha,
-      'persona': persona,
-      'zona': zona,
-      'comuna': comuna,
-      'barrio': barrio,
-      'direccion': direccion,
-      'descripcion': descripcion,
-      'estado': estado
-    });
+    try {
+      var reference = _db.collection("reportes");
+      var result = await reference.add({
+        'seccion': seccion,
+        'categoria': categoria,
+        'subcategoria': subcategoria,
+        'subsubcategoria': subsubcategoria,
+        'evento': evento,
+        'fecha': fecha,
+        'persona': persona,
+        'zona': zona,
+        'comuna': comuna,
+        'barrio': barrio,
+        'direccion': direccion,
+        'descripcion': descripcion,
+        'estado': estado,
+      });
 
-    return result.id;
+      return result.id;
+    } catch (e) {
+      print('Error al guardar el reporte: $e');
+      rethrow; // Lanza el error para que pueda ser manejado externamente
+    }
   }
 
   // Método para obtener la lista de reportes desde Firestore
   Future<List<Reporte>> listaReportes() async {
-    var snapshot = await _db.collection("reportes").get();
-    return snapshot.docs
-        .map((doc) => Reporte.desdeDoc(doc.id, doc.data()))
-        .toList();
-  }
-
-  Future<List<Reporte>> listaReportesPorRol(String estado) async {
-    QuerySnapshot snapshot = await _db
-        .collection('reportes')
-        .where("estado", isEqualTo: estado)
-        .get();
-
-    List<Reporte> list = [];
-
-    for (var i in snapshot.docs) {
-      Map<String, dynamic> data = i.data() as Map<String, dynamic>;
-      list.add(Reporte.desdeDoc(i.id, data));
+    try {
+      var snapshot = await _db.collection("reportes").get();
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>; // Conversión explícita
+        return Reporte.desdeDoc(doc.id, data);
+      }).toList();
+    } catch (e) {
+      print('Error al obtener la lista de reportes: $e');
+      return []; // Devuelve una lista vacía si hay un error
     }
-
-    return list;
   }
 
+  // Método para obtener reportes filtrados por estado
+  Future<List<Reporte>> listaReportesPorRol(String estado) async {
+    try {
+      QuerySnapshot snapshot = await _db
+          .collection('reportes')
+          .where("estado", isEqualTo: estado)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>; // Conversión explícita
+        return Reporte.desdeDoc(doc.id, data);
+      }).toList();
+    } catch (e) {
+      print('Error al obtener reportes por estado: $e');
+      return []; // Devuelve una lista vacía si hay un error
+    }
+  }
+
+  // Método para actualizar un reporte en Firestore
   Future<void> actualizarReporte(String id, Map<String, dynamic> datos) async {
-    await _db.collection('reportes').doc(id).update(datos).catchError((e) {
-      print('Error al actualizar reporte');
-    });
+    try {
+      await _db.collection('reportes').doc(id).update(datos);
+    } catch (e) {
+      print('Error al actualizar el reporte: $e');
+    }
   }
 }

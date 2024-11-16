@@ -1,64 +1,62 @@
 class Reporte {
   final String id;
+  final String seccion;
   final String nombres;
   final String apellidos;
-  final String seccion;
-  final String categoria;
-  final String subcategoria;
-  final String subsubcategoria;
-  final String evento;
   final String fecha;
-  final String persona;
-  final String zona;
   final String comuna;
   final String barrio;
   final String direccion;
+  final String zona;
+  final String categoria;
+  final String subcategoria;
+  final String subsubcategoria;
   final String descripcion;
-  final String observaciones;
-  final String comentarioReferente;
   final String estado;
+  final List<String>? comentRef;
+  final bool tieneComentario;  // Nuevo campo
 
   Reporte({
     required this.id,
+    required this.seccion,
     required this.nombres,
     required this.apellidos,
-    required this.seccion, // Asegúrate de que este campo esté definido
-    required this.categoria,
-    required this.subcategoria,
-    required this.subsubcategoria,
-    required this.evento,
     required this.fecha,
-    required this.persona,
-    required this.zona,
     required this.comuna,
     required this.barrio,
     required this.direccion,
+    required this.zona,
+    required this.categoria,
+    required this.subcategoria,
+    required this.subsubcategoria,
     required this.descripcion,
-    required this.observaciones,
-    required this.comentarioReferente,
     required this.estado,
+    this.comentRef,
+    required this.tieneComentario, // Aseguramos que el campo esté presente al crear el reporte
   });
 
-  factory Reporte.desdeDoc(String id, Map<String, dynamic> json) {
+  // Método de fábrica para crear un objeto Reporte desde un documento de Firestore
+  factory Reporte.desdeDoc(String id, Map<String, dynamic> data) {
     return Reporte(
       id: id,
-      nombres: json['nombres'] ?? '',
-      apellidos: json['apellidos'] ?? '',
-      seccion: json['seccion'] ?? '',
-      categoria: json['categoria'] ?? '',
-      subcategoria: json['subcategoria'] ?? '',
-      subsubcategoria: json['subsubcategoria'] ?? '',
-      evento: json['evento'] ?? '',
-      fecha: json['fecha_incidente'] ?? '',
-      persona: json['persona'] ?? '',
-      zona: json['zona'] ?? '',
-      comuna: json['comuna'] ?? '',
-      barrio: json['barrio'] ?? '',
-      direccion: json['direccion'] ?? '',
-      descripcion: json['descripcion'] ?? '',
-      observaciones: json['observaciones'] ?? '',
-      comentarioReferente: json['comentario'] ?? '',
-      estado: json['estado'] ?? '',
+      seccion: data['seccion'] ?? '',
+      nombres: data['nombres'] ?? '',
+      apellidos: data['apellidos'] ?? '',
+      fecha: data['fecha'] ?? '',
+      comuna: data['comuna'] ?? '',
+      barrio: data['barrio'] ?? '',
+      direccion: data['direccion'] ?? '',
+      zona: data['zona'] ?? '',
+      categoria: data['categoria'] ?? '',
+      subcategoria: data['subcategoria'] ?? '',
+      subsubcategoria: data['subsubcategoria'] ?? '',
+      descripcion: data['descripcion'] ?? '',
+      estado: data['estado'] ?? '',
+      comentRef: data['ComentRef'] != null
+          ? List<String>.from(data['ComentRef'])
+          : null, // Convierte a List<String> si no es nulo
+      // Si ComentRef tiene algún valor, entonces tieneComentario será true
+      tieneComentario: data['ComentRef'] != null && (data['ComentRef'] as List).isNotEmpty,  // Verifica si tiene comentario
     );
   }
 }
