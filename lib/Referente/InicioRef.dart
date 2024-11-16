@@ -72,7 +72,7 @@ class InicioRef extends StatelessWidget {
   Widget _buildDrawer(BuildContext context) {
     // Aquí se obtiene el nombre del usuario actual
     final User? user = FirebaseAuth.instance.currentUser;
-    final String? userName = user?.displayName ?? 'Referente';
+    final String userName = user?.displayName ?? 'Referente';
 
     return Drawer(
       child: ListView(
@@ -116,7 +116,8 @@ class InicioRef extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar', style: TextStyle(color: Colors.blueAccent)),
+              child: const Text('Cancelar',
+                  style: TextStyle(color: Colors.blueAccent)),
             ),
             TextButton(
               onPressed: () async {
@@ -124,7 +125,8 @@ class InicioRef extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacementNamed(context, '/');
               },
-              child: const Text('Cerrar sesión', style: TextStyle(color: Colors.redAccent)),
+              child: const Text('Cerrar sesión',
+                  style: TextStyle(color: Colors.redAccent)),
             ),
           ],
         );
@@ -175,7 +177,8 @@ class InicioRef extends StatelessWidget {
             return Card(
               color: color,
               elevation: 3,
-              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -194,7 +197,8 @@ class InicioRef extends StatelessWidget {
                   ],
                 ),
                 trailing: IconButton(
-                  icon: const Icon(Icons.arrow_forward, color: Colors.blueAccent),
+                  icon:
+                      const Icon(Icons.arrow_forward, color: Colors.blueAccent),
                   onPressed: () {
                     Navigator.push(
                       context,

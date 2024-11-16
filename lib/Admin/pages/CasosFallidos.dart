@@ -52,7 +52,7 @@ class _CasosfallidosState extends State<Casosfallidos> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Casos Fallidos",
+          "Situaciones Fallidas",
         ),
         centerTitle: true,
         backgroundColor: Colors.redAccent,
@@ -71,7 +71,8 @@ class _CasosfallidosState extends State<Casosfallidos> {
             // Título y botón de expandir/colapsar filtros
             Container(
               color: Colors.red.withOpacity(0.2),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -107,7 +108,8 @@ class _CasosfallidosState extends State<Casosfallidos> {
             // Panel de filtros con Dropdowns adaptativos
             if (showFilters)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -126,7 +128,8 @@ class _CasosfallidosState extends State<Casosfallidos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Categoría',
-                          prefixIcon: Icon(Icons.category, color: Colors.redAccent),
+                          prefixIcon:
+                              Icon(Icons.category, color: Colors.redAccent),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
@@ -159,14 +162,16 @@ class _CasosfallidosState extends State<Casosfallidos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Subcategoría',
-                          prefixIcon: Icon(Icons.subdirectory_arrow_right, color: Colors.redAccent),
+                          prefixIcon: Icon(Icons.subdirectory_arrow_right,
+                              color: Colors.redAccent),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subcategoriaSeleccionada,
                         items: subcategoriasDisponibles
-                            .map((String subcategoria) => DropdownMenuItem<String>(
+                            .map((String subcategoria) =>
+                                DropdownMenuItem<String>(
                                   value: subcategoria,
                                   child: Text(
                                     subcategoria,
@@ -179,7 +184,8 @@ class _CasosfallidosState extends State<Casosfallidos> {
                           setState(() {
                             subcategoriaSeleccionada = value;
                             subsubcategoriasDisponibles = value != null
-                                ? Categorias.categorias[categoriaSeleccionada]![value]!
+                                ? Categorias
+                                    .categorias[categoriaSeleccionada]![value]!
                                 : [];
                             subsubcategoriaSeleccionada = null;
                           });
@@ -190,14 +196,17 @@ class _CasosfallidosState extends State<Casosfallidos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Sub-Subcategoría',
-                          prefixIcon: Icon(Icons.subdirectory_arrow_right_outlined, color: Colors.redAccent),
+                          prefixIcon: Icon(
+                              Icons.subdirectory_arrow_right_outlined,
+                              color: Colors.redAccent),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subsubcategoriaSeleccionada,
                         items: subsubcategoriasDisponibles
-                            .map((String subsubcategoria) => DropdownMenuItem<String>(
+                            .map((String subsubcategoria) =>
+                                DropdownMenuItem<String>(
                                   value: subsubcategoria,
                                   child: Text(
                                     subsubcategoria,

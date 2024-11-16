@@ -44,6 +44,8 @@ dependencies:
   get: ^4.6.6
   flutter_secure_storage: ^9.2.2
   fl_chart: ^0.69.0
+  syncfusion_flutter_xlsio: ^27.2.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
     - assets/logo_right.png
     - assets/Comunas_y_Barrios_Valledupar.json
     - assets/departamentos_municipios.json
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

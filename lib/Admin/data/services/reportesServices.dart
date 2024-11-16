@@ -54,7 +54,7 @@ class Reportesservices {
     try {
       var snapshot = await _db.collection("reportes").get();
       return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>; // Conversión explícita
+        final data = doc.data(); // Conversión explícita
         return Reporte.desdeDoc(doc.id, data);
       }).toList();
     } catch (e) {

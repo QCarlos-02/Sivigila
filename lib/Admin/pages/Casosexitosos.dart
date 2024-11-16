@@ -51,7 +51,7 @@ class _CasosexitososState extends State<Casosexitosos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Casos Exitosos"),
+        title: const Text("Situaciones Exitosas"),
         centerTitle: true,
         backgroundColor: Colors.green,
         actions: [
@@ -69,7 +69,8 @@ class _CasosexitososState extends State<Casosexitosos> {
             // Título y botón de expandir/colapsar filtros
             Container(
               color: Colors.lightGreen.withOpacity(0.2),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -105,7 +106,8 @@ class _CasosexitososState extends State<Casosexitosos> {
             // Panel de filtros con Dropdowns adaptativos
             if (showFilters)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
@@ -157,14 +159,16 @@ class _CasosexitososState extends State<Casosexitosos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Subcategoría',
-                          prefixIcon: Icon(Icons.subdirectory_arrow_right, color: Colors.green),
+                          prefixIcon: Icon(Icons.subdirectory_arrow_right,
+                              color: Colors.green),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subcategoriaSeleccionada,
                         items: subcategoriasDisponibles
-                            .map((String subcategoria) => DropdownMenuItem<String>(
+                            .map((String subcategoria) =>
+                                DropdownMenuItem<String>(
                                   value: subcategoria,
                                   child: Text(
                                     subcategoria,
@@ -177,7 +181,8 @@ class _CasosexitososState extends State<Casosexitosos> {
                           setState(() {
                             subcategoriaSeleccionada = value;
                             subsubcategoriasDisponibles = value != null
-                                ? Categorias.categorias[categoriaSeleccionada]![value]!
+                                ? Categorias
+                                    .categorias[categoriaSeleccionada]![value]!
                                 : [];
                             subsubcategoriaSeleccionada = null;
                           });
@@ -188,14 +193,17 @@ class _CasosexitososState extends State<Casosexitosos> {
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(
                           labelText: 'Sub-Subcategoría',
-                          prefixIcon: Icon(Icons.subdirectory_arrow_right_outlined, color: Colors.green),
+                          prefixIcon: Icon(
+                              Icons.subdirectory_arrow_right_outlined,
+                              color: Colors.green),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
                         ),
                         isExpanded: true,
                         value: subsubcategoriaSeleccionada,
                         items: subsubcategoriasDisponibles
-                            .map((String subsubcategoria) => DropdownMenuItem<String>(
+                            .map((String subsubcategoria) =>
+                                DropdownMenuItem<String>(
                                   value: subsubcategoria,
                                   child: Text(
                                     subsubcategoria,

@@ -37,16 +37,19 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           ),
           const SizedBox(height: 20),
           Obx(() {
-            final pendientes = reporteController.listgeneral!
+            // Usamos los datos observables del Reportecontroller
+            final datosOriginales = reporteController.listgeneral ?? [];
+
+            final pendientes = datosOriginales
                 .where((reporte) => reporte.estado == 'Pendiente')
                 .toList();
-            final exitosos = reporteController.listgeneral!
+            final exitosos = datosOriginales
                 .where((reporte) => reporte.estado == 'Exitoso')
                 .toList();
-            final enProceso = reporteController.listgeneral!
+            final enProceso = datosOriginales
                 .where((reporte) => reporte.estado == 'En Proceso')
                 .toList();
-            final fallidos = reporteController.listgeneral!
+            final fallidos = datosOriginales
                 .where((reporte) => reporte.estado == 'Fallido')
                 .toList();
 

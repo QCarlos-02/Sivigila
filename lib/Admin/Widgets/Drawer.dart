@@ -38,7 +38,8 @@ Widget drawer(BuildContext context) {
               const SizedBox(height: 10),
               // Usa Obx para observar cambios en el nombre del usuario logueado
               Obx(() {
-                String nombre = cua.adminName; // Usar la propiedad adminName del controlador
+                String nombre = cua
+                    .adminName; // Usar la propiedad adminName del controlador
                 return Text(
                   nombre,
                   style: TextStyle(
@@ -74,7 +75,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.pending_actions_outlined,
-          text: "Reportes pendientes",
+          text: "Situaciones pendientes",
           onTap: () {
             Navigator.push(
               context,
@@ -85,7 +86,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.double_arrow_rounded,
-          text: "Reportes en proceso",
+          text: "Situaciones en proceso",
           onTap: () {
             Navigator.push(
               context,
@@ -96,7 +97,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.check_circle_outline,
-          text: "Reportes exitosos",
+          text: "Situaciones exitosos",
           onTap: () {
             Navigator.push(
               context,
@@ -107,7 +108,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.archive,
-          text: "Reportes fallidos",
+          text: "Situaciones fallidos",
           onTap: () {
             Navigator.push(
               context,
@@ -118,7 +119,7 @@ Widget drawer(BuildContext context) {
         _buildDrawerItem(
           context,
           icon: Icons.cancel,
-          text: 'Reportes descartados',
+          text: 'Situaciones descartados',
           onTap: () {
             Navigator.push(
               context,

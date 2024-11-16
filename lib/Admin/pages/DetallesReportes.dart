@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
+import 'dart:html' as html; // Solo para la web
 import 'package:sivigila/Admin/controllers/reporteController.dart';
 import 'package:sivigila/Models/reporte.dart';
 
@@ -33,49 +38,66 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
         ),
         backgroundColor: Colors.blueAccent,
         elevation: 4,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.download),
+            onPressed: exportarAExcel, // Botón para exportar a Excel
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: [
             _buildCard(
-              backgroundColor: Colors.lightBlue[50], // Fondo de la tarjeta
+              backgroundColor: Colors.lightBlue[50],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle('Información General', Colors.blueGrey[800]),
+                  _buildSectionTitle(
+                      'Información General', Colors.blueGrey[800]),
                   const SizedBox(height: 16),
-                  _buildInformationRow(Icons.person, 'Nombres', widget.reporte.nombres),
+                  _buildInformationRow(
+                      Icons.person, 'Nombres', widget.reporte.nombres),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.person_outline, 'Apellidos', widget.reporte.apellidos),
+                  _buildInformationRow(Icons.person_outline, 'Apellidos',
+                      widget.reporte.apellidos),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.date_range, 'Fecha Índice', widget.reporte.fecha),
+                  _buildInformationRow(
+                      Icons.date_range, 'Fecha Índice', widget.reporte.fecha),
                   const SizedBox(height: 16),
                   _buildSectionTitle('Ubicación', Colors.blueGrey[800]),
                   const SizedBox(height: 16),
-                  _buildInformationRow(Icons.location_city, 'Comuna', widget.reporte.comuna),
+                  _buildInformationRow(
+                      Icons.location_city, 'Comuna', widget.reporte.comuna),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.home, 'Barrio', widget.reporte.barrio),
+                  _buildInformationRow(
+                      Icons.home, 'Barrio', widget.reporte.barrio),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.map, 'Dirección', widget.reporte.direccion),
+                  _buildInformationRow(
+                      Icons.map, 'Dirección', widget.reporte.direccion),
                   const SizedBox(height: 16),
                   _buildSectionTitle('Detalles', Colors.blueGrey[800]),
                   const SizedBox(height: 16),
-                  _buildInformationRow(Icons.category, 'Categoría', widget.reporte.categoria),
+                  _buildInformationRow(
+                      Icons.category, 'Categoría', widget.reporte.categoria),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.label, 'Subcategoría', widget.reporte.subcategoria),
+                  _buildInformationRow(
+                      Icons.label, 'Subcategoría', widget.reporte.subcategoria),
                   const SizedBox(height: 8),
-                  _buildInformationRow(Icons.description, 'Descripción', widget.reporte.descripcion),
+                  _buildInformationRow(Icons.description, 'Descripción',
+                      widget.reporte.descripcion),
                 ],
               ),
             ),
             const SizedBox(height: 16),
             _buildCard(
-              backgroundColor: Colors.lightGreen[50], // Fondo de la tarjeta
+              backgroundColor: Colors.lightGreen[50],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSectionTitle('Comentarios del Referente', Colors.green[800]),
+                  _buildSectionTitle(
+                      'Comentarios del Referente', Colors.green[800]),
                   const SizedBox(height: 8),
                   _buildComentRefSection(widget.reporte.comentRef),
                 ],
@@ -83,7 +105,7 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
             ),
             const SizedBox(height: 16),
             _buildCard(
-              backgroundColor: Colors.orange[50], // Fondo de la tarjeta
+              backgroundColor: Colors.orange[50],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -106,7 +128,8 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueGrey[900],
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -124,6 +147,72 @@ class _DetallesReporteScreenState extends State<DetallesReporteScreen> {
         ),
       ),
     );
+  }
+
+  // Función para exportar a Excel
+  void exportarAExcel() async {
+    final workbook = xlsio.Workbook();
+    final sheet = workbook.worksheets[0];
+
+    // Encabezados
+    List<String> headers = [
+      'Nombres',
+      'Apellidos',
+      'Fecha Índice',
+      'Comuna',
+      'Barrio',
+      'Dirección',
+      'Categoría',
+      'Subcategoría',
+      'Descripción',
+      'Comentario Referente',
+      'Estado'
+    ];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+    }
+
+    // Datos del reporte
+    List<String> data = [
+      widget.reporte.nombres ?? '',
+      widget.reporte.apellidos ?? '',
+      widget.reporte.fecha ?? '',
+      widget.reporte.comuna ?? '',
+      widget.reporte.barrio ?? '',
+      widget.reporte.direccion ?? '',
+      widget.reporte.categoria ?? '',
+      widget.reporte.subcategoria ?? '',
+      widget.reporte.descripcion ?? '',
+      widget.reporte.comentRef?.join(', ') ??
+          'Sin comentarios', // Comentarios del referente
+      estadoSeleccionado ?? ''
+    ];
+    for (int i = 0; i < data.length; i++) {
+      sheet.getRangeByIndex(2, i + 1).setText(data[i]);
+    }
+
+    // Guardar el archivo
+    final List<int> bytes = workbook.saveAsStream();
+    workbook.dispose();
+
+    if (kIsWeb) {
+      final blob = html.Blob([bytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..style.display = 'none'
+        ..download = 'reporte.xlsx';
+      html.document.body!.children.add(anchor);
+      anchor.click();
+      html.document.body!.children.remove(anchor);
+      html.Url.revokeObjectUrl(url);
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/reporte.xlsx');
+      await file.writeAsBytes(bytes, flush: true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Archivo Excel guardado en: ${file.path}')),
+      );
+    }
   }
 
   Widget _buildCard({required Widget child, Color? backgroundColor}) {

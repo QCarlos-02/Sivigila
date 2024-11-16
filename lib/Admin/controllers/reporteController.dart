@@ -3,27 +3,32 @@ import 'package:sivigila/Models/reporte.dart';
 import 'package:sivigila/Admin/data/services/reportesServices.dart';
 
 class Reportecontroller extends GetxController {
-  final Rxn<List<Reporte>> _reporteFirestore = Rxn<List<Reporte>>([]);
+  // Datos originales y versión filtrada
+  final Rxn<List<Reporte>> _reporteOriginal = Rxn<List<Reporte>>([]);
   final Rxn<List<Reporte>> _reporteFiltrado = Rxn<List<Reporte>>([]);
 
-  List<Reporte>? get listgeneral =>
-      _reporteFiltrado.value ?? _reporteFirestore.value;
+  // Getter para obtener siempre los datos originales
+  List<Reporte>? get listgeneral => _reporteOriginal.value;
 
-  List<Reporte>? get listReportes =>
-      _reporteFiltrado.value ?? _reporteFirestore.value;
+  // Getter para reportes filtrados
+  List<Reporte>? get listReportes => _reporteFiltrado.value;
 
   Future<void> consultarReportesgeneral() async {
-    _reporteFirestore.value = await Reportesservices().listaReportes();
-    _reporteFiltrado.value = _reporteFirestore.value;
+    // Cargar los datos originales
+    _reporteOriginal.value = await Reportesservices().listaReportes();
+    _reporteFiltrado.value = List.from(_reporteOriginal.value!);
 
-    // Verificar si los datos se están cargando correctamente
-    print('Total de reportes cargados: ${_reporteFirestore.value?.length}');
+    print('Total de reportes cargados: ${_reporteOriginal.value?.length}');
   }
 
   Future<void> consultarReportesPorEstado(String estado) async {
-    _reporteFirestore.value =
-        await Reportesservices().listaReportesPorRol(estado);
-    _reporteFiltrado.value = _reporteFirestore.value;
+    // Filtrar los datos originales en lugar de sobreescribirlos
+    _reporteFiltrado.value = _reporteOriginal.value
+        ?.where((reporte) => reporte.estado == estado)
+        .toList();
+
+    print(
+        'Total de reportes con estado "$estado": ${_reporteFiltrado.value?.length}');
   }
 
   Future<void> actualizarReporte(String id, Map<String, dynamic> datos) async {
@@ -32,9 +37,9 @@ class Reportecontroller extends GetxController {
 
   void filtrarReportes(
       {String? categoria, String? subcategoria, String? subsubcategoria}) {
-    if (_reporteFirestore.value == null) return;
+    if (_reporteOriginal.value == null) return;
 
-    _reporteFiltrado.value = _reporteFirestore.value!.where((reporte) {
+    _reporteFiltrado.value = _reporteOriginal.value!.where((reporte) {
       final categoriaCoincide = categoria == null ||
           reporte.seccion.toLowerCase() == categoria.toLowerCase();
       final subcategoriaCoincide = subcategoria == null ||
@@ -42,13 +47,6 @@ class Reportecontroller extends GetxController {
       final subsubcategoriaCoincide = subsubcategoria == null ||
           reporte.subsubcategoria.toLowerCase() ==
               subsubcategoria.toLowerCase();
-
-      print(
-          'Reporte: ${reporte.seccion}, ${reporte.categoria}, ${reporte.subsubcategoria}');
-      print(
-          'Filtros aplicados: categoria=$categoria, subcategoria=$subcategoria, subsubcategoria=$subsubcategoria');
-      print(
-          'Coincide: ${categoriaCoincide && subcategoriaCoincide && subsubcategoriaCoincide}');
 
       return categoriaCoincide &&
           subcategoriaCoincide &&
@@ -60,7 +58,7 @@ class Reportecontroller extends GetxController {
   }
 
   void limpiarFiltros() {
-    _reporteFiltrado.value = _reporteFirestore.value;
+    _reporteFiltrado.value = List.from(_reporteOriginal.value!);
     update(); // Asegúrate de actualizar la vista
   }
 }
