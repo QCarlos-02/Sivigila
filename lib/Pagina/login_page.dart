@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage>
                           border: Border.all(color: Colors.white, width: 2),
                         ),
                         child: const Text(
-                          'SIVIGILA',
+                          'VIGILAPP',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                   const SizedBox(height: 40),
                   const Text(
-                    '¡Bienvenido a SIVIGILA!',
+                    '¡Bienvenido a VIGILAPP!',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
