@@ -44,7 +44,7 @@ class Reporte {
       seccion: data['seccion'] ?? '',
       nombres: data['nombres'] ?? '',
       apellidos: data['apellidos'] ?? '',
-      fecha: data['fecha'] ?? '',
+      fecha: data['fecha_incidente'] ?? '',
       comuna: data['comuna'] ?? '',
       barrio: data['barrio'] ?? '',
       direccion: data['direccion'] ?? '',

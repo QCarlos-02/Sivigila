@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/controllers/controlPerfil.dart';
 import 'package:sivigila/Admin/controllers/storage_pass.dart';
@@ -64,6 +65,9 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
 
       for (var usuario in usuarios) {
         if (usuario.rol == 'Admin') {
+          if (FirebaseAuth.instance.currentUser!.email == usuario.correo) {
+            usuario.nombre += " (YO)";
+          }
           adminList.add(usuario);
         } else if (usuario.rol == 'Lider' && usuario is Leader) {
           // Asegúrate de que el usuario es del tipo Leader
@@ -197,6 +201,111 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
     }
   }
 
+  void _xd2(Usuarios usuario, String rol) async {
+    Navigator.pop(context);
+    FirebaseAuth auth = FirebaseAuth.instance;
+    const _storage = FlutterSecureStorage();
+    String emailAdmin = auth.currentUser!.email!;
+    String? passAdmin = await _storage.read(key: 'adminPassword');
+    try {
+      auth.signOut();
+      await auth.signInWithEmailAndPassword(
+          email: usuario.correo, password: usuario.password);
+
+      User? currentUser = auth.currentUser;
+      if (currentUser != null) {
+        await currentUser.delete();
+      }
+      await Userservices.eliminarPerfil(usuario.id);
+      await auth.signInWithEmailAndPassword(
+          email: emailAdmin, password: passAdmin!);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${usuario.nombre} eliminado"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      setState(() {
+        if (rol == 'Admin') {
+          administradores.remove(usuario);
+        } else if (rol == 'Lider') {
+          lideres.remove(usuario);
+        } else {
+          referentes.remove(usuario);
+        }
+      });
+
+      print("EMAIL ADMIN : ${emailAdmin} CONTRA ADMIN: ${passAdmin}");
+    } catch (e) {
+      print("Error al eliminar usuario: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Error al eliminar usuario"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+
+      try {
+        await auth.signInWithEmailAndPassword(
+            email: emailAdmin, password: passAdmin!);
+      } catch (e) {
+        print("Error al volver a iniciar sesión como administrador: $e");
+      }
+    }
+  }
+
+  Future<bool> mostrarMensajeAdvertencia(
+      BuildContext context, String nombreUsuario) async {
+    return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              title: const Text(
+                "Confirmación de Eliminación",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
+              ),
+              content: Text(
+                "¿Estás seguro de que deseas eliminar a $nombreUsuario? Esta acción no se puede deshacer.",
+                style: const TextStyle(fontSize: 16),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false); // Retorna "No"
+                  },
+                  child: const Text(
+                    "Cancelar",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, true); // Retorna "Sí"
+                  },
+                  child: const Text(
+                    "Eliminar",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Devuelve "false" si el cuadro de diálogo se cierra de alguna otra manera
+  }
+
   void _showUserOptions(BuildContext context, Usuarios usuario, String rol) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -232,23 +341,17 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.redAccent),
                 title: const Text("Eliminar Usuario"),
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("$usuario eliminado"),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                  setState(() {
-                    if (rol == 'Admin') {
-                      administradores.remove(usuario);
-                    } else if (rol == 'Lider') {
-                      lideres.remove(usuario);
+                onTap: () async {
+                  bool confirmacion =
+                      await mostrarMensajeAdvertencia(context, usuario.nombre);
+                  // ignore: unrelated_type_equality_checks
+                  if (confirmacion) {
+                    if (usuario is Leader) {
+                      _xd2(usuario, rol);
                     } else {
-                      referentes.remove(usuario);
+                      _xd2(usuario, rol);
                     }
-                  });
+                  }
                 },
               ),
             ],

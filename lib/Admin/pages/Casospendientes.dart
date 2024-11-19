@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:sivigila/Admin/Widgets/listaReportes.dart';
 import 'package:sivigila/Admin/controllers/reporteController.dart';
@@ -26,6 +27,12 @@ class _CasospendientesState extends State<Casospendientes> {
   void initState() {
     super.initState();
     reporteController.consultarReportesPorEstado("Pendiente");
+    xd();
+  }
+
+  void xd() async {
+    const _storage = FlutterSecureStorage();
+    print("Contraseña admin ${await _storage.read(key: 'adminPassword')}");
   }
 
   void aplicarFiltros() {

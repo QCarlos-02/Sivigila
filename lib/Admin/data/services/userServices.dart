@@ -69,4 +69,10 @@ class Userservices {
       print(e);
     });
   }
+
+  static Future<void> eliminarPerfil(String id) async {
+    await _db.collection('perfiles').doc(id).delete().catchError((e) {
+      print(e);
+    });
+  }
 }
