@@ -1,14 +1,13 @@
+// ignore: file_names
 import 'package:excel/excel.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:universal_html/html.dart' as html;
-import 'dart:io' show Directory, File, Platform;
+import 'dart:io' show Directory, File;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:sivigila/Models/reporte.dart';
 
-Future<void> exportReportesToExcel(List<Reporte> reportes) async {
+Future<void> exportReportesToExcel(
+    BuildContext context, List<Reporte> reportes) async {
   // Crear un nuevo archivo de Excel
   var excel = Excel.createExcel();
 
@@ -58,42 +57,45 @@ Future<void> exportReportesToExcel(List<Reporte> reportes) async {
     ]);
   }
 
-// Convertir a bytes
+  // Convertir a bytes
   var bytes = excel.encode();
   if (bytes == null) {
     print('Error al codificar el archivo Excel');
     return;
   }
-  if (kIsWeb) {
-    // Descargar el archivo en la web
-    final blob = html.Blob([Uint8List.fromList(bytes)]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute("download", "reportes.xlsx")
-      ..click();
-    html.Url.revokeObjectUrl(url);
-  } else {
-    // Guardar el archivo en dispositivos móviles o de escritorio
-    var status = await Permission.storage.request();
-    if (status.isDenied || status.isPermanentlyDenied) {
-      print('Permiso de almacenamiento denegado');
-      return;
-    }
 
-    Directory? directory = await getDownloadsDirectory();
-    if (directory == null) {
-      print('No se pudo acceder al directorio de almacenamiento externo');
-      return;
-    }
-    String filePath = '${directory.path}/reportes.xlsx';
-    // Escribir el archivo
-    try {
-      File(filePath)
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(excel.encode()!);
-      print('Archivo Excel guardado en: $filePath');
-    } catch (e) {
-      print('Error al guardar el archivo Excel: $e');
-    }
+  // Solicitar permisos de almacenamiento
+  var status = await Permission.storage.request();
+  if (!status.isGranted) {
+    print('Permiso de almacenamiento denegado');
+    return;
+  }
+
+  // Guardar el archivo en la carpeta de descargas pública del dispositivo
+  Directory? directory = await getExternalStorageDirectory();
+  if (directory != null) {
+    String newPath = directory.path.split("Android")[0] + "Documents";
+    directory = Directory(newPath);
+  }
+
+  String filePath = '${directory?.path}/reportes.xlsx';
+
+  // Escribir el archivo
+  try {
+    File(filePath)
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(bytes);
+    print('Archivo Excel guardado en: $filePath');
+
+    // Mostrar mensaje al usuario
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Reporte guardado con éxito en: $filePath'),
+        duration: Duration(seconds: 8),
+      ),
+    );
+    //Navigator.pop(context);
+  } catch (e) {
+    print('Error al guardar el archivo Excel: $e');
   }
 }

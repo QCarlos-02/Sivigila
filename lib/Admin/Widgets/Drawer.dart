@@ -302,7 +302,8 @@ void mostrarDialogoExportarReportes(
                       .where((reporte) =>
                           estadosSeleccionados.contains(reporte.estado))
                       .toList();
-                  exportReportesToExcel(reportesFiltrados);
+                  exportReportesToExcel(context, reportesFiltrados);
+                  Navigator.pop(context);
                 },
               ),
             ],
