@@ -72,13 +72,14 @@ Future<void> exportReportesToExcel(
   }
 
   // Guardar el archivo en la carpeta de descargas pública del dispositivo
-  Directory? directory = await getExternalStorageDirectory();
-  if (directory != null) {
-    String newPath = directory.path.split("Android")[0] + "Documents";
-    directory = Directory(newPath);
-  }
-
+  Directory? directory = await getApplicationDocumentsDirectory();
   String filePath = '${directory?.path}/reportes.xlsx';
+
+  // Verificar si el archivo ya existe
+  if (File(filePath).existsSync()) {
+    // Si el archivo existe, sobrescribirlo
+    File(filePath).deleteSync(); // Eliminar el archivo existente
+  }
 
   // Escribir el archivo
   try {
@@ -87,13 +88,15 @@ Future<void> exportReportesToExcel(
       ..writeAsBytesSync(bytes);
     print('Archivo Excel guardado en: $filePath');
 
-    // Mostrar mensaje al usuario
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Reporte guardado con éxito en: $filePath'),
-        duration: Duration(seconds: 8),
-      ),
-    );
+    // Verificar si el widget aún está montado antes de mostrar el SnackBar
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Reporte guardado con éxito en: $filePath'),
+          duration: Duration(seconds: 8),
+        ),
+      );
+    }
     //Navigator.pop(context);
   } catch (e) {
     print('Error al guardar el archivo Excel: $e');
