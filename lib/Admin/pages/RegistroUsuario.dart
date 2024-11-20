@@ -1185,18 +1185,17 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       }).toList(),
       onChanged: onChanged,
       selectedItemBuilder: (BuildContext context) {
-        // Esta propiedad permite personalizar el valor seleccionado
         return items.map((String item) {
           return SizedBox(
             width: MediaQuery.of(context).size.width *
-                0.7, // Ajustar el ancho para el valor seleccionado
+                0.7, 
             child: Text(
               item,
 
               overflow: TextOverflow
-                  .ellipsis, // Muestra "..." si el texto es muy largo
+                  .ellipsis, 
               style: const TextStyle(
-                  color: Colors.black), // Estilo para el texto seleccionado
+                  color: Colors.black), 
             ),
           );
         }).toList();

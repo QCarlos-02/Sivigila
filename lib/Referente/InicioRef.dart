@@ -10,7 +10,6 @@ class InicioRef extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Fondo con gradiente
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

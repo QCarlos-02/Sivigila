@@ -20,13 +20,13 @@ class LeftSection extends StatelessWidget {
           content: const Text('¿Está seguro de que desea cerrar sesión?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Cerrar el diálogo
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancelar',
                   style: TextStyle(color: Colors.blueAccent)),
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // Cerrar el diálogo
+                Navigator.of(context).pop();
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacementNamed(context, '/');
               },
@@ -41,30 +41,23 @@ class LeftSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Detectar si es dispositivo móvil
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isMobile = screenWidth < 600;
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logo_left.png',
-              height: isMobile ? 24 : 30,
+        // Fondo con gradiente
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.lightBlue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(width: 10),
-            const Text(
-              'Inicio',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-          ],
+          ),
         ),
+        title: const Text(
+          'Inicio',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        elevation: 4.0,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
@@ -73,6 +66,7 @@ class LeftSection extends StatelessWidget {
           ),
         ],
       ),
+      drawer: _buildDrawer(context),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -129,6 +123,50 @@ class LeftSection extends StatelessWidget {
     );
   }
 
+  Widget _buildDrawer(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String userName = user?.displayName ?? 'Usuario';
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blueAccent, Colors.lightBlue],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            accountName: Text(
+              userName,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            accountEmail: Text(user?.email ?? 'Correo no disponible'),
+            currentAccountPicture: const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, color: Colors.blueAccent, size: 40),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home, color: Colors.blueAccent),
+            title: const Text('Inicio'),
+            onTap: () {
+              Navigator.pop(context); // Cerrar el Drawer
+              // Acción para "Inicio"
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.redAccent),
+            title: const Text('Cerrar sesión'),
+            onTap: () => _confirmLogout(context),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -165,8 +203,10 @@ class LeftSection extends StatelessWidget {
     );
   }
 
-  Widget _buildExpandableTile(
-      {required String title, required Widget content}) {
+  Widget _buildExpandableTile({
+    required String title,
+    required Widget content,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Card(
@@ -195,7 +235,7 @@ class LeftSection extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: content, // Aquí se despliega el contenido del widget
+              child: content,
             ),
           ],
         ),
