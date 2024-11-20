@@ -118,6 +118,32 @@ class _FormularioReporteState extends State<FormularioReporte> {
     }
   }
 
+  Future<int> _obtenerYActualizarUltimoId() async {
+    final DocumentReference metadataDoc =
+        FirebaseFirestore.instance.collection('metadata').doc('reporteId');
+
+    try {
+      final int nuevoId = await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final DocumentSnapshot snapshot = await transaction.get(metadataDoc);
+
+        int lastId = 0;
+        if (snapshot.exists && snapshot.data() != null) {
+          lastId = snapshot['lastReportId'] ?? 0;
+        }
+
+        final int siguienteId = lastId + 1;
+
+        transaction.set(metadataDoc, {'lastReportId': siguienteId});
+        return siguienteId;
+      });
+
+      return nuevoId;
+    } catch (e) {
+      print("Error al obtener o actualizar el último ID: $e");
+      throw Exception("No se pudo generar un ID para el reporte.");
+    }
+  }
+
   Future<void> _mostrarDialogoExito(BuildContext context) async {
     showDialog(
       context: context,
@@ -243,7 +269,9 @@ class _FormularioReporteState extends State<FormularioReporte> {
                       try {
                         User? user = FirebaseAuth.instance.currentUser;
                         if (user != null) {
+                          final int nuevoId = await _obtenerYActualizarUltimoId();
                           final reporte = {
+                            'id': nuevoId,
                             'seccion': widget.seccion,
                             'categoria': widget.categoria,
                             'subcategoria': widget.subcategoria,
@@ -264,7 +292,10 @@ class _FormularioReporteState extends State<FormularioReporte> {
                             'estado': "Pendiente"
                           };
 
-                          await FirebaseFirestore.instance.collection('reportes').add(reporte);
+                          await FirebaseFirestore.instance
+                              .collection('reportes')
+                              .doc(nuevoId.toString())
+                              .set(reporte);
 
                           _mostrarDialogoExito(context);
 

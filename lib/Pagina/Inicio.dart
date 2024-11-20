@@ -41,22 +41,30 @@ class LeftSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Detectar si es dispositivo móvil
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 600;
+
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
         title: Row(
           children: [
             Image.asset(
               'assets/logo_left.png',
-              height: 30,
+              height: isMobile ? 24 : 30,
             ),
             const SizedBox(width: 10),
             const Text(
               'Inicio',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
-        backgroundColor: Colors.blueAccent,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
@@ -143,7 +151,7 @@ class LeftSection extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Reportes de SIVIGILA',
+                'Reportes de VigilApp',
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,

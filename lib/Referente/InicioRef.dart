@@ -48,7 +48,7 @@ class InicioRef extends StatelessWidget {
         ],
         elevation: 4.0,
       ),
-      drawer: _buildDrawer(context), // Agregar el Drawer aquí
+      drawer: _buildDrawer(context), // Drawer actualizado
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,7 @@ class InicioRef extends StatelessWidget {
   }
 
   Widget _buildDrawer(BuildContext context) {
-    // Aquí se obtiene el nombre del usuario actual
+    // Obtener datos del usuario actual
     final User? user = FirebaseAuth.instance.currentUser;
     final String userName = user?.displayName ?? 'Referente';
 
@@ -87,7 +87,7 @@ class InicioRef extends StatelessWidget {
               ),
             ),
             accountName: Text(
-              userName!,
+              userName,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             accountEmail: Text(user?.email ?? 'Correo no disponible'),
@@ -95,6 +95,22 @@ class InicioRef extends StatelessWidget {
               backgroundColor: Colors.white,
               child: Icon(Icons.person, color: Colors.blueAccent, size: 40),
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dashboard, color: Colors.blueAccent),
+            title: const Text('Inicio'),
+            onTap: () {
+              Navigator.pop(context); // Cerrar el Drawer
+              // Navegar a Inicio si es necesario
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.pending_actions, color: Colors.orange),
+            title: const Text('Casos Pendientes'),
+            onTap: () {
+              Navigator.pop(context); // Cerrar el Drawer
+              // Acción específica para Casos Pendientes
+            },
           ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
