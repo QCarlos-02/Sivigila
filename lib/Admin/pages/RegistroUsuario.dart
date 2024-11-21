@@ -65,9 +65,6 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
 
       for (var usuario in usuarios) {
         if (usuario.rol == 'Admin') {
-          if (FirebaseAuth.instance.currentUser!.email == usuario.correo) {
-            usuario.nombre += " (YO)";
-          }
           adminList.add(usuario);
         } else if (usuario.rol == 'Lider' && usuario is Leader) {
           // Asegúrate de que el usuario es del tipo Leader
@@ -114,7 +111,9 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
           ...administradores.map((usuario) => ListTile(
                 leading: const Icon(Icons.person, color: Colors.blueAccent),
                 title: Text(
-                  usuario.nombre,
+                  FirebaseAuth.instance.currentUser!.email == usuario.correo
+                      ? "${usuario.nombre} (YO)"
+                      : usuario.nombre,
                   style: const TextStyle(fontSize: 16),
                 ),
                 tileColor: Colors.blue[50],
@@ -1187,15 +1186,11 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       selectedItemBuilder: (BuildContext context) {
         return items.map((String item) {
           return SizedBox(
-            width: MediaQuery.of(context).size.width *
-                0.7, 
+            width: MediaQuery.of(context).size.width * 0.7,
             child: Text(
               item,
-
-              overflow: TextOverflow
-                  .ellipsis, 
-              style: const TextStyle(
-                  color: Colors.black), 
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.black),
             ),
           );
         }).toList();
