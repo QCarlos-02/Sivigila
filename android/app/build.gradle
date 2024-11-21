@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.company.sivigila"
+    namespace = "com.example.sivigila"
     compileSdk = 34 // Ajuste a la última versión de SDK
 
     compileOptions {
