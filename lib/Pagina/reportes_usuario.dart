@@ -196,8 +196,16 @@ class ReportesUsuario extends StatelessWidget {
                                               _buildDetailRow('Descripción',
                                                   reporte['descripcion']),
                                               _buildDetailRow(
-                                                  'Observaciones',
-                                                  reporte['observaciones']),
+                                                'Observaciones',
+                                                (reporte.data()
+                                                                as Map<String, dynamic>)
+                                                            .containsKey(
+                                                                'observaciones') &&
+                                                        reporte['observaciones'] !=
+                                                            null
+                                                    ? reporte['observaciones']
+                                                    : 'Sin observaciones',
+                                              ),
                                               _buildDetailRow(
                                                 'Fecha de registro',
                                                 reporte['timestamp'] != null
