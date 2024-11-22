@@ -21,30 +21,60 @@ Future<void> createNewUser(
   String password,
   Map<String, dynamic> datos,
 ) async {
-  // Guarda las credenciales del administrador
-  User? currentAdmin = _auth.currentUser;
-  String? adminEmail = currentAdmin?.email;
-  String? adminPassword = await getAdminPassword();
+  try {
+    // Verifica si el administrador está autenticado
+    User? currentAdmin = _auth.currentUser;
+    String? adminEmail = currentAdmin?.email;
+    String? adminPassword = await getAdminPassword();
 
-  // Crear el nuevo usuario
-  await _auth.createUserWithEmailAndPassword(email: email, password: password);
-  print("correo usuario creado: ${_auth.currentUser!.email}");
+    if (adminEmail == null || adminPassword == null) {
+      throw Exception("No se encontraron credenciales del administrador.");
+    }
 
-  datos['uid'] = _auth.currentUser!.uid; //Registra el uid del usuario creado
+    // Reautenticar al administrador si es necesario
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: adminEmail,
+      password: adminPassword,
+    );
+    await currentAdmin!.reauthenticateWithCredential(credential);
 
-  // Guardar los datos adicionales del nuevo usuario
-  await guardarDatosAdicionales(FirebaseAuth.instance.currentUser!, datos);
+    // Crear el nuevo usuario
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    print("Usuario creado: ${userCredential.user!.email}");
 
-  // Vuelve a iniciar sesión como administrador
-  if (adminPassword != null) {
+    // Agregar UID al mapa de datos
+    datos['uid'] = userCredential.user!.uid;
+
+    // Guardar los datos adicionales en Firestore
+    await guardarDatosAdicionales(userCredential.user!, datos);
+
+    // Restaurar la sesión del administrador
     await _auth.signOut(); // Cierra la sesión del nuevo usuario
     await _auth.signInWithEmailAndPassword(
-        email: adminEmail!, password: adminPassword);
+      email: adminEmail,
+      password: adminPassword,
+    );
+    print("Sesión del administrador restaurada con éxito.");
+  } catch (e) {
+    print("Error al crear usuario: $e");
+    rethrow; // Lanza el error nuevamente si necesitas manejarlo externamente.
   }
 }
 
 // Llamar a esta función cuando el administrador inicie sesión por primera vez
 Future<void> adminLogin(String email, String password) async {
-  await _auth.signInWithEmailAndPassword(email: email, password: password);
-  await saveAdminPassword(password);
+  try {
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    print("Administrador autenticado: ${userCredential.user!.email}");
+    await saveAdminPassword(password);
+  } catch (e) {
+    print("Error en el inicio de sesión del administrador: $e");
+    rethrow;
+  }
 }

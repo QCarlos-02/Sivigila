@@ -372,6 +372,28 @@ class RegistroUsuarios extends StatefulWidget {
 
 class _RegistroUsuariosState extends State<RegistroUsuarios> {
   // Lista de roles disponibles
+
+  bool _nameError = false;
+  bool _surnameError = false;
+  bool _documentTypeError = false;
+  bool _documentNumberError = false;
+  bool _nationalityError = false;
+  bool _ageError = false;
+  bool _phoneError = false;
+  bool _departmentError = false;
+  bool _municipalityError = false;
+  bool _comunaError = false;
+  bool _barrioError = false;
+  bool _addressError = false;
+  bool _categoryError = false;
+  bool _roleError = false;
+  bool _influenceAreaError = false;
+  bool _powerLevelError = false;
+  bool _participationLevelError = false;
+  bool _emailError = false;
+  bool _passwordError = false;
+  bool _confirmPasswordError = false;
+
   final List<String> roles = ['Lider', 'Admin', 'Referente'];
   String _selectedRole = 'Lider';
   ControlUserAuth cp = Get.find();
@@ -561,15 +583,15 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
   Future<void> _guardarOactualizar() async {
-    if (_selectedRole == 'Admin') {
-      _registerAdmin();
-    } else if (_selectedRole == 'Lider') {
-      _registerLeader();
-    } else {
-      _registerReferen();
-    }
-    Navigator.pop(context, true);
+  if (_selectedRole == 'Admin') {
+    _registerAdmin();
+  } else if (_selectedRole == 'Lider') {
+    _registerLeader();
+  } else {
+    _registerReferen();
   }
+}
+
 
   void loadCategoriasRoles() {
     setState(() {
@@ -615,188 +637,391 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
       _departmentsAndMunicipalities = departmentsAndMunicipalities;
     });
   }
+void _showErrorDialog(String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Error de Validación'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cerrar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+void _highlightField(TextEditingController controller) {
+  setState(() {
+    controller.text = controller.text; // Refresca el estado del campo
+  });
+}
 
 //Registro de admin
   void _registerAdmin() async {
-    String nombres = _adminNameController.text;
-    String email = _adminEmailController.text;
-    String password = _adminPasswordController.text;
-    String confirmPassword = _adminConfirmPasswordController.text;
+  String nombres = _adminNameController.text.trim();
+  String email = _adminEmailController.text.trim();
+  String password = _adminPasswordController.text;
+  String confirmPassword = _adminConfirmPasswordController.text;
 
-    if (password == confirmPassword) {
-      try {
-        // Datos adicionales para guardar en Firestore
-        var datos = {
-          "correo": email,
-          "rol": "Admin",
-          "nombres": nombres,
-          "password": password,
-        };
-        if (widget.usuario == null) {
-          createNewUser(email, password, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Admin creado exitosamente')),
-          );
-        } else {
-          Userservices.actualizarPerfil(widget.usuario!.id, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Admin editado exitosamente')),
-          );
-          Navigator.pop(context, true);
-        }
-        print("correo final: ${_auth.currentUser!.email}");
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al crear admin')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')),
-      );
-    }
+  setState(() {
+    _nameError = false;
+    _emailError = false;
+    _passwordError = false;
+    _confirmPasswordError = false;
+  });
+
+  String errorMessage = '';
+
+  // Validación de nombres
+  if (nombres.isEmpty || nombres.length < 1 || nombres.length > 50) {
+    setState(() {
+      _nameError = true;
+    });
+    errorMessage += 'El nombre debe tener entre 1 y 50 caracteres.\n';
   }
+
+  // Validación de correo
+  RegExp emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  if (!emailRegex.hasMatch(email)) {
+    setState(() {
+      _emailError = true;
+    });
+    errorMessage += 'El correo debe tener un formato válido.\n';
+  }
+
+  // Validación de contraseña
+  if (password.isEmpty || password.length < 4 || password.length > 8) {
+    setState(() {
+      _passwordError = true;
+    });
+    errorMessage += 'La contraseña debe tener entre 4 y 8 caracteres.\n';
+  }
+
+  // Validación de confirmación de contraseña
+  if (password != confirmPassword) {
+    setState(() {
+      _confirmPasswordError = true;
+    });
+    errorMessage += 'Las contraseñas no coinciden.\n';
+  }
+
+  // Mostrar errores si existen
+  if (errorMessage.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage.trim())),
+    );
+    return;
+  }
+
+  // Si todo es válido, realiza el registro o actualización
+  try {
+    var datos = {
+      "correo": email,
+      "rol": "Admin",
+      "nombres": nombres,
+      "password": password,
+    };
+
+    if (widget.usuario == null) {
+      createNewUser(email, password, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Admin creado exitosamente')),
+      );
+    } else {
+      Userservices.actualizarPerfil(widget.usuario!.id, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Admin editado exitosamente')),
+      );
+      Navigator.pop(context, true);
+    }
+  } catch (e) {
+    print(e);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error al crear admin')),
+    );
+  }
+}
+
+
 
 //Registro de Referente
   void _registerReferen() async {
-    String nombres = _referenteNameController.text;
-    String email = _referenteEmailController.text;
-    String password = _referentePasswordController.text;
-    String confirmPassword = _referenteConfirmPasswordController.text;
+  String nombres = _referenteNameController.text.trim();
+  String email = _referenteEmailController.text.trim();
+  String password = _referentePasswordController.text;
+  String confirmPassword = _referenteConfirmPasswordController.text;
 
-    if (password == confirmPassword) {
-      try {
-        // Datos adicionales para guardar en Firestore
-        var datos = {
-          // Guarda el UID en los datos
-          "correo": email,
-          "rol": "Referente",
-          "nombres": nombres,
-          "password": password,
-        };
+  setState(() {
+    // Reiniciar los errores
+    _nameError = false;
+    _emailError = false;
+    _passwordError = false;
+    _confirmPasswordError = false;
+  });
 
-        if (widget.usuario == null) {
-          createNewUser(email, password, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Referente creado exitosamente')),
-          );
-        } else {
-          Userservices.actualizarPerfil(widget.usuario!.id, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Referente editado exitosamente')),
-          );
-          Navigator.pop(context, true);
-        }
-        print("correo final: ${_auth.currentUser!.email}");
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al crear referente')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')),
-      );
-    }
+  // Validación de nombres
+  if (nombres.isEmpty || nombres.length < 1 || nombres.length > 50) {
+    setState(() {
+      _nameError = true;
+    });
+    _showErrorDialog('El nombre debe tener entre 1 y 50 caracteres');
+    return;
   }
+
+  // Validación de correo
+  RegExp emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  if (!emailRegex.hasMatch(email)) {
+    setState(() {
+      _emailError = true;
+    });
+    _showErrorDialog('El correo debe tener un formato válido');
+    return;
+  }
+
+  // Validación de contraseña
+  if (password.isEmpty || password.length < 4 || password.length > 8) {
+    setState(() {
+      _passwordError = true;
+    });
+    _showErrorDialog('La contraseña debe tener entre 4 y 8 caracteres');
+    return;
+  }
+
+  // Validación de confirmación de contraseña
+  if (password != confirmPassword) {
+    setState(() {
+      _confirmPasswordError = true;
+    });
+    _showErrorDialog('Las contraseñas no coinciden');
+    return;
+  }
+
+  // Si todas las validaciones pasan, realizar el registro o actualización
+  try {
+    var datos = {
+      "correo": email,
+      "rol": "Referente",
+      "nombres": nombres,
+      "password": password,
+    };
+
+    if (widget.usuario == null) {
+      createNewUser(email, password, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Referente creado exitosamente')),
+      );
+    } else {
+      Userservices.actualizarPerfil(widget.usuario!.id, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Referente editado exitosamente')),
+      );
+      Navigator.pop(context, true);
+    }
+    print("correo final: ${_auth.currentUser!.email}");
+  } catch (e) {
+    print(e);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error al crear referente')),
+    );
+  }
+}
+
 
 //Registro de lider
   void _registerLeader() async {
-    String nombres = _leaderNameController.text;
-    String apellidos = _leaderSurnameController.text;
-    String tipoDocumento = _selectedDocumentType.toString();
-    String numeroDocumento = _leaderDocumentNumberController.text;
-    String nacionalidad = _leaderNationalityController.text;
-    String edad = _leaderAgeController.text;
-    String telefono = _leaderPhoneController.text;
-    String departamento = _selectedDepartment ?? '';
-    String municipio = _selectedMunicipality ?? '';
-    String comuna = _selectedComuna ?? '';
-    String barrio = _selectedBarrio ?? '';
-    String direccion = _leaderAddressController.text;
-    String area = _selectedAreaOfInfluence.toString();
-    String poder = _selectedPowerLevel.toString();
-    String participacion = _selectedParticipationLevel.toString();
-    String email = _leaderEmailController.text;
-    String password = _leaderPasswordController.text;
-    String confirmPassword = _leaderConfirmPasswordController.text;
+  String nombres = _leaderNameController.text.trim();
+  String apellidos = _leaderSurnameController.text.trim();
+  String tipoDocumento = _selectedDocumentType ?? '';
+  String numeroDocumento = _leaderDocumentNumberController.text.trim();
+  String nacionalidad = _leaderNationalityController.text.trim();
+  String edad = _leaderAgeController.text.trim();
+  String telefono = _leaderPhoneController.text.trim();
+  String departamento = _selectedDepartment ?? '';
+  String municipio = _selectedMunicipality ?? '';
+  String comuna = _selectedComuna ?? '';
+  String barrio = _selectedBarrio ?? '';
+  String direccion = _leaderAddressController.text.trim();
+  String area = _selectedAreaOfInfluence ?? '';
+  String poder = _selectedPowerLevel ?? '';
+  String participacion = _selectedParticipationLevel ?? '';
+  String email = _leaderEmailController.text.trim();
+  String password = _leaderPasswordController.text;
+  String confirmPassword = _leaderConfirmPasswordController.text;
 
-    // Verificar campos nulos o vacíos
-    if (nombres.isEmpty ||
-        apellidos.isEmpty ||
-        numeroDocumento.isEmpty ||
-        nacionalidad.isEmpty ||
-        edad.isEmpty ||
-        telefono.isEmpty ||
-        departamento.isEmpty ||
-        municipio.isEmpty ||
-        direccion.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        _selectedOption == null ||
-        _selectRole == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, complete todos los campos')),
-      );
-      return; // Detener el proceso si hay campos vacíos
-    }
+  // Reset de errores
+  ScaffoldMessenger.of(context).clearSnackBars();
 
-    if (password == confirmPassword) {
-      try {
-        var datos = {
-          "nombres": nombres,
-          "apellidos": apellidos,
-          "tipo documento": tipoDocumento,
-          "numero documento": numeroDocumento,
-          "nacionalidad": nacionalidad,
-          "edad": edad,
-          "telefono": telefono,
-          "departamento": departamento,
-          "municipio": municipio,
-          "comuna": comuna,
-          "barrio": barrio,
-          "direccion": direccion,
-          "categoria": _selectedOption!,
-          "rol2": _selectRole!,
-          "area de influencia": area,
-          "nivel de poder": poder,
-          "nivel de participacion": participacion,
-          "correo": email,
-          "rol": "Lider",
-          "password": password
-        };
-
-        if (widget.usuario == null) {
-          createNewUser(email, password, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lider creado exitosamente')),
-          );
-        } else {
-          Userservices.actualizarPerfil(widget.usuario!.id, datos);
-          cp.consultarUsuarios();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lider editado exitosamente')),
-          );
-          Navigator.pop(context, true);
-        }
-        print("correo final: ${_auth.currentUser!.email}");
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al crear líder')));
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')));
-    }
+  // Validaciones específicas
+  if (nombres.isEmpty || nombres.length < 1 || nombres.length > 50) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('El nombre debe tener entre 1 y 50 caracteres')),
+    );
+    return;
   }
+
+  if (apellidos.isEmpty || apellidos.length < 1 || apellidos.length > 50) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('El apellido debe tener entre 1 y 50 caracteres')),
+    );
+    return;
+  }
+
+  if (tipoDocumento.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un tipo de documento')),
+    );
+    return;
+  }
+
+  if (numeroDocumento.isEmpty || numeroDocumento.length < 5 || numeroDocumento.length > 20) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('El número de documento debe tener entre 5 y 20 caracteres')),
+    );
+    return;
+  }
+
+  if (nacionalidad.isEmpty || nacionalidad.length < 3 || nacionalidad.length > 30) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('La nacionalidad debe tener entre 3 y 30 caracteres')),
+    );
+    return;
+  }
+
+  if (edad.isEmpty || int.tryParse(edad) == null || int.parse(edad) < 18 || int.parse(edad) > 100) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('La edad debe ser un número entre 18 y 100')),
+    );
+    return;
+  }
+
+  if (telefono.isEmpty || telefono.length < 7 || telefono.length > 15) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('El teléfono debe tener entre 7 y 15 caracteres')),
+    );
+    return;
+  }
+
+  if (departamento.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un departamento')),
+    );
+    return;
+  }
+
+  if (municipio.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un municipio')),
+    );
+    return;
+  }
+
+  if (direccion.isEmpty || direccion.length < 5 || direccion.length > 100) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('La dirección debe tener entre 5 y 100 caracteres')),
+    );
+    return;
+  }
+
+  if (area.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un área de influencia')),
+    );
+    return;
+  }
+
+  if (poder.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un nivel de poder')),
+    );
+    return;
+  }
+
+  if (participacion.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe seleccionar un nivel de participación')),
+    );
+    return;
+  }
+
+  RegExp emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+  if (email.isEmpty || !emailRegex.hasMatch(email)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Debe proporcionar un correo válido')),
+    );
+    return;
+  }
+
+  if (password.isEmpty || password.length < 4 || password.length > 8) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('La contraseña debe tener entre 4 y 8 caracteres')),
+    );
+    return;
+  }
+
+  if (password != confirmPassword) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Las contraseñas no coinciden')),
+    );
+    return;
+  }
+
+  // Si todo es válido, realiza el registro o actualización
+  try {
+    var datos = {
+      "nombres": nombres,
+      "apellidos": apellidos,
+      "tipo documento": tipoDocumento,
+      "numero documento": numeroDocumento,
+      "nacionalidad": nacionalidad,
+      "edad": edad,
+      "telefono": telefono,
+      "departamento": departamento,
+      "municipio": municipio,
+      "comuna": comuna,
+      "barrio": barrio,
+      "direccion": direccion,
+      "categoria": _selectedOption!,
+      "rol2": _selectRole!,
+      "area de influencia": area,
+      "nivel de poder": poder,
+      "nivel de participacion": participacion,
+      "correo": email,
+      "rol": "Lider",
+      "password": password,
+    };
+
+    if (widget.usuario == null) {
+      await createNewUser(email, password, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Líder creado exitosamente')),
+      );
+    } else {
+      await Userservices.actualizarPerfil(widget.usuario!.id, datos);
+      cp.consultarUsuarios();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Líder editado exitosamente')),
+      );
+      Navigator.pop(context, true);
+    }
+  } catch (e) {
+    print(e);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error al crear líder')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -892,311 +1117,464 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
   }
 
 // Formulario de Admin
-  Widget _buildAdminForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0),
-          child: Text(
-            "Información del Administrador",
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent),
-          ),
+Widget _buildAdminForm() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          "Información del Administrador",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent),
         ),
-        const SizedBox(height: 10),
-        _buildStyledTextField(_adminNameController, 'Nombres', Icons.person),
-        const SizedBox(height: 15),
-        _buildStyledTextField(_adminEmailController, 'Correo', Icons.email),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(
-            _adminPasswordController, 'Contraseña', Icons.lock),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(
-          _adminConfirmPasswordController,
-          'Confirmar Contraseña',
-          Icons.lock_outline,
-        ),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 10),
+
+      // Campo de Nombres
+      _buildStyledTextField(
+        _adminNameController, 
+        'Nombres', 
+        Icons.person, 
+        _nameError, // Variable de error para nombres
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Correo
+      _buildStyledTextField(
+        _adminEmailController, 
+        'Correo', 
+        Icons.email, 
+        _emailError, // Variable de error para correo
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Contraseña
+      _buildStyledPasswordField(
+        _adminPasswordController, 
+        'Contraseña', 
+        Icons.lock, 
+        hasError: _passwordError, // Variable de error para contraseña
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Confirmación de Contraseña
+      _buildStyledPasswordField(
+        _adminConfirmPasswordController, 
+        'Confirmar Contraseña', 
+        Icons.lock_outline, 
+        hasError: _confirmPasswordError, // Variable de error para confirmación
+      ),
+    ],
+  );
+}
+
 
 // Formulario de Referente
   Widget _builReferenForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.0),
-          child: Text(
-            "Información del Referente",
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent),
-          ),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: Text(
+          "Información del Referente",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent),
         ),
-        const SizedBox(height: 10),
-        _buildStyledTextField(
-            _referenteNameController, 'Nombres', Icons.person),
-        const SizedBox(height: 15),
-        _buildStyledTextField(_referenteEmailController, 'Correo', Icons.email),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(
-            _referentePasswordController, 'Contraseña', Icons.lock),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(
-          _referenteConfirmPasswordController,
-          'Confirmar Contraseña',
-          Icons.lock_outline,
-        ),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 10),
+
+      // Campo de Nombres
+      _buildStyledTextField(
+        _referenteNameController, 
+        'Nombres', 
+        Icons.person, 
+        _nameError,
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Correo
+      _buildStyledTextField(
+        _referenteEmailController, 
+        'Correo', 
+        Icons.email, 
+        _emailError,
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Contraseña
+      _buildStyledPasswordField(
+        _referentePasswordController, 
+        'Contraseña', 
+        Icons.lock, 
+        hasError: _passwordError,
+      ),
+
+      const SizedBox(height: 15),
+
+      // Campo de Confirmación de Contraseña
+      _buildStyledPasswordField(
+        _referenteConfirmPasswordController, 
+        'Confirmar Contraseña', 
+        Icons.lock_outline, 
+        hasError: _confirmPasswordError,
+      ),
+    ],
+  );
+}
+
 
 //Formulario lider
-  Widget _buildLeaderForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Información Personal'),
-        _buildStyledTextField(_leaderNameController, 'Nombres', Icons.person),
-        const SizedBox(height: 15),
-        _buildStyledTextField(
-            _leaderSurnameController, 'Apellidos', Icons.person_outline),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField(
-            'Tipo de documento', _documentTypes, _selectedDocumentType,
-            (String? value) {
+ Widget _buildLeaderForm() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildSectionTitle('Información Personal'),
+      _buildStyledTextField(
+        _leaderNameController, 
+        'Nombres', 
+        Icons.person, 
+        _nameError, // Maneja el error de nombre
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderSurnameController, 
+        'Apellidos', 
+        Icons.person_outline, 
+        _surnameError, // Maneja el error de apellido
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Tipo de documento',
+        _documentTypes,
+        _selectedDocumentType,
+        (String? value) {
           setState(() {
             _selectedDocumentType = value!;
           });
-        }, Icons.article),
-        const SizedBox(height: 15),
-        _buildStyledTextField(_leaderDocumentNumberController,
-            'Número de documento', Icons.badge),
-        const SizedBox(height: 15),
-        _buildStyledTextField(
-            _leaderNationalityController, 'Nacionalidad', Icons.public),
-        const SizedBox(height: 15),
-        _buildStyledTextField(
-            _leaderAgeController, 'Edad', Icons.calendar_today,
-            keyboardType: TextInputType.number),
-        const SizedBox(height: 15),
-        _buildStyledTextField(_leaderPhoneController, 'Teléfono', Icons.phone,
-            keyboardType: TextInputType.phone),
-        const SizedBox(height: 20),
-        _buildSectionTitle('Información de Residencia'),
-        const SizedBox(height: 10),
-        buildStyledDropdown(
-          labelText: "Departamento",
-          value: _selectedDepartment,
-          items: _departmentsAndMunicipalities,
-          icon: Icons.location_city,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedDepartment = newValue;
-              _filteredMunicipalities =
-                  _departmentsAndMunicipalities[_selectedDepartment] ?? [];
-              _selectedMunicipality = null;
-            });
-          },
-          context: context,
-        ),
-        const SizedBox(height: 15),
-        buildStyledDropdown(
-          labelText: "Municipio",
-          value: _selectedMunicipality,
-          items: {for (var i in _filteredMunicipalities) i: []},
-          icon: Icons.location_on,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedMunicipality = newValue;
-            });
-          },
-          context: context,
-        ),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField(
-            'Comuna', _comunasYBarrios.keys.toList(), _selectedComuna,
-            (String? newValue) {
+        },
+        _documentTypeError, // Maneja el error de tipo de documento
+        Icons.article,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderDocumentNumberController,
+        'Número de documento',
+        Icons.badge,
+        _documentNumberError, // Maneja el error de número de documento
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderNationalityController, 
+        'Nacionalidad', 
+        Icons.public, 
+        _nationalityError, // Maneja el error de nacionalidad
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderAgeController, 
+        'Edad', 
+        Icons.calendar_today, 
+        _ageError, // Maneja el error de edad
+        keyboardType: TextInputType.number,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderPhoneController, 
+        'Teléfono', 
+        Icons.phone, 
+        _phoneError, // Maneja el error de teléfono
+        keyboardType: TextInputType.phone,
+      ),
+      const SizedBox(height: 20),
+      _buildSectionTitle('Información de Residencia'),
+      const SizedBox(height: 10),
+      _buildStyledDropdownField(
+        'Departamento',
+        _departmentsAndMunicipalities.keys.toList(),
+        _selectedDepartment,
+        (String? newValue) {
+          setState(() {
+            _selectedDepartment = newValue;
+            _filteredMunicipalities =
+                _departmentsAndMunicipalities[_selectedDepartment] ?? [];
+            _selectedMunicipality = null;
+          });
+        },
+        _departmentError, // Maneja el error de departamento
+        Icons.location_city,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Municipio',
+        _filteredMunicipalities,
+        _selectedMunicipality,
+        (String? newValue) {
+          setState(() {
+            _selectedMunicipality = newValue;
+          });
+        },
+        _municipalityError, // Maneja el error de municipio
+        Icons.location_on,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Comuna',
+        _comunasYBarrios.keys.toList(),
+        _selectedComuna,
+        (String? newValue) {
           setState(() {
             _selectedComuna = newValue;
             _barriosFiltrados = _comunasYBarrios[_selectedComuna] ?? [];
             _selectedBarrio = null;
           });
-        }, Icons.home),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField('Barrio', _barriosFiltrados, _selectedBarrio,
-            (String? newValue) {
+        },
+        _comunaError, // Maneja el error de comuna
+        Icons.home,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Barrio',
+        _barriosFiltrados,
+        _selectedBarrio,
+        (String? newValue) {
           setState(() {
             _selectedBarrio = newValue;
           });
-        }, Icons.home_outlined),
-        const SizedBox(height: 15),
-        _buildStyledTextField(
-            _leaderAddressController, 'Dirección de residencia', Icons.map),
-        const SizedBox(height: 20),
-        _buildSectionTitle('Áreas de Influencia y Participación'),
-        //
-        const SizedBox(height: 15),
-        _buildStyledDropdownField(
-            "Categoria", _rolesOptions.keys.toList(), _selectedOption,
-            (String? value) {
+        },
+        _barrioError, // Maneja el error de barrio
+        Icons.home_outlined,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledTextField(
+        _leaderAddressController, 
+        'Dirección de residencia', 
+        Icons.map, 
+        _addressError, // Maneja el error de dirección
+      ),
+      const SizedBox(height: 20),
+      _buildSectionTitle('Áreas de Influencia y Participación'),
+      //
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Categoria',
+        _rolesOptions.keys.toList(),
+        _selectedOption,
+        (String? value) {
           setState(() {
             _selectedOption = value;
             _rolesFiltrados = _rolesOptions[_selectedOption] ?? [];
             _selectRole = null;
           });
-        }, Icons.category),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField("Rol", _rolesFiltrados, _selectRole,
-            (String? value) {
+        },
+        _categoryError, // Maneja el error de categoría
+        Icons.category,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Rol',
+        _rolesFiltrados,
+        _selectRole,
+        (String? value) {
           setState(() {
             _selectRole = value;
           });
-        }, Icons.contact_emergency_rounded),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField(
-            'Área de influencia', _areasOfInfluence, _selectedAreaOfInfluence,
-            (String? value) {
+        },
+        _roleError, // Maneja el error de rol
+        Icons.contact_emergency_rounded,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Área de influencia',
+        _areasOfInfluence,
+        _selectedAreaOfInfluence,
+        (String? value) {
           setState(() {
             _selectedAreaOfInfluence = value!;
           });
-        }, Icons.info),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField(
-            'Nivel de poder', _powerLevels, _selectedPowerLevel,
-            (String? value) {
+        },
+        _influenceAreaError, // Maneja el error de área de influencia
+        Icons.info,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Nivel de poder',
+        _powerLevels,
+        _selectedPowerLevel,
+        (String? value) {
           setState(() {
             _selectedPowerLevel = value!;
           });
-        }, Icons.leaderboard),
-        const SizedBox(height: 15),
-        _buildStyledDropdownField('Nivel de participación',
-            _participationLevels, _selectedParticipationLevel, (String? value) {
+        },
+        _powerLevelError, // Maneja el error de nivel de poder
+        Icons.leaderboard,
+      ),
+      const SizedBox(height: 15),
+      _buildStyledDropdownField(
+        'Nivel de participación',
+        _participationLevels,
+        _selectedParticipationLevel,
+        (String? value) {
           setState(() {
             _selectedParticipationLevel = value!;
           });
-        }, Icons.group),
-        _buildSectionTitle("Datos de Ingreso"),
-        _buildStyledTextField(_leaderEmailController, 'Correo', Icons.email),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(
-            _leaderPasswordController, 'Contraseña', Icons.lock),
-        const SizedBox(height: 15),
-        _buildStyledPasswordField(_leaderConfirmPasswordController,
-            'Confirmar contraseña', Icons.lock_outline),
-      ],
-    );
-  }
+        },
+        _participationLevelError, // Maneja el error de nivel de participación
+        Icons.group,
+      ),
+      _buildSectionTitle('Datos de Ingreso'),
+      _buildStyledTextField(
+        _leaderEmailController, 
+        'Correo', 
+        Icons.email, 
+        _emailError, // Maneja el error de correo
+      ),
+      const SizedBox(height: 15),
+      _buildStyledPasswordField(
+        _leaderPasswordController, 
+        'Contraseña', 
+        Icons.lock, 
+        hasError: _passwordError, // Maneja el error de contraseña
+      ),
+      const SizedBox(height: 15),
+      _buildStyledPasswordField(
+        _leaderConfirmPasswordController,
+        'Confirmar contraseña',
+        Icons.lock_outline,
+        hasError: _confirmPasswordError, // Maneja el error de confirmación de contraseña
+      ),
+    ],
+  );
+}
 
 //
   Widget _buildStyledTextField(
-      TextEditingController controller, String label, IconData icon,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.blueAccent),
-        filled: true,
-        fillColor: Colors.blue[50],
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+  TextEditingController controller,
+  String label,
+  IconData icon,
+  bool hasError, // Parámetro obligatorio para validar errores
+  {TextInputType keyboardType = TextInputType.text}) {
+  return TextField(
+    controller: controller,
+    keyboardType: keyboardType,
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.blueAccent),
+      filled: true,
+      fillColor: Colors.blue[50],
+      prefixIcon: Icon(icon, color: Colors.blueAccent),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
       ),
-    );
-  }
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: hasError ? Colors.red : Colors.blueAccent,
+          width: 2.0,
+        ),
+      ),
+      errorText: hasError ? 'Campo inválido' : null,
+    ),
+  );
+}
+
+
+
 
 //
   Widget _buildStyledPasswordField(
-      TextEditingController controller, String label, IconData icon,
-      {bool oscuro = true}) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        return TextField(
-          controller: controller,
-          obscureText: oscuro,
-          decoration: InputDecoration(
-            labelText: label,
-            labelStyle: const TextStyle(color: Colors.blueAccent),
-            filled: true,
-            fillColor: Colors.blue[50],
-            prefixIcon: Icon(icon, color: Colors.blueAccent),
-            suffixIcon: IconButton(
-              icon: Icon(
-                oscuro ? Icons.visibility_off : Icons.visibility,
-                color: Colors.blueAccent,
-              ),
-              onPressed: () {
-                setState(() {
-                  oscuro = !oscuro;
-                });
-              },
+  TextEditingController controller,
+  String label,
+  IconData icon, {
+  bool hasError = false, // Parámetro opcional con valor predeterminado
+  bool oscuro = true,
+}) {
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return TextField(
+        controller: controller,
+        obscureText: oscuro,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.blueAccent),
+          filled: true,
+          fillColor: Colors.blue[50],
+          prefixIcon: Icon(icon, color: Colors.blueAccent),
+          suffixIcon: IconButton(
+            icon: Icon(
+              oscuro ? Icons.visibility_off : Icons.visibility,
+              color: Colors.blueAccent,
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+            onPressed: () {
+              setState(() {
+                oscuro = !oscuro;
+              });
+            },
           ),
-        );
-      },
-    );
-  }
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: hasError ? Colors.red : Colors.blueAccent,
+              width: 2.0,
+            ),
+          ),
+          errorText: hasError ? 'Campo inválido' : null,
+        ),
+      );
+    },
+  );
+}
 
 //
-  Widget _buildStyledDropdownField(String label, List<String> items,
-      String? selectedItem, ValueChanged<String?> onChanged, IconData icon) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.blueAccent),
-        filled: true,
-        fillColor: Colors.blue[50],
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+  Widget _buildStyledDropdownField(
+    String label, List<String> items, String? selectedItem, ValueChanged<String?> onChanged, bool hasError, IconData icon) {
+  return DropdownButtonFormField<String>(
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.blueAccent),
+      filled: true,
+      fillColor: Colors.blue[50],
+      prefixIcon: Icon(icon, color: Colors.blueAccent),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
       ),
-      value: selectedItem,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(
-            item,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      selectedItemBuilder: (BuildContext context) {
-        return items.map((String item) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: Text(
-              item,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.black),
-            ),
-          );
-        }).toList();
-      },
-    );
-  }
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: hasError ? Colors.red : Colors.blueAccent,
+          width: 2.0,
+        ),
+      ),
+    ),
+    value: selectedItem,
+    items: items.map((String item) {
+      return DropdownMenuItem<String>(
+        value: item,
+        child: Text(
+          item,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      );
+    }).toList(),
+    onChanged: onChanged,
+  );
+}
+
+
 
   Widget buildStyledDropdown({
     required String labelText,
