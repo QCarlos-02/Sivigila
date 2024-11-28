@@ -83,12 +83,11 @@ class _LoginPageState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double logoSize = screenWidth * 0.15;
+    double logoSize = screenWidth > 600 ? 150 : 100; // Ajuste para pantallas
 
     return Scaffold(
       body: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -105,154 +104,147 @@ class _LoginPageState extends State<LoginPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logos a la izquierda y derecha y logo "SIVIGILA" en el centro
+                  // Logos a la izquierda, en el centro y a la derecha
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/logo_left.png',
+                        'assets/logo_left.png', // Logo izquierdo
                         width: logoSize,
                         height: logoSize,
                       ),
-                      const SizedBox(width: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(15.0),
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Text(
-                          'VIGILAPP',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
+                      
+                      const SizedBox(width: 10),
                       Image.asset(
-                        'assets/logo_right.png',
+                        'assets/logo_right.png', // Logo derecho
                         width: logoSize,
                         height: logoSize,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
-                  const Text(
-                    '¡Bienvenido a VIGILAPP!',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  const SizedBox(height: 30),
+                  // Tarjeta de inicio de sesión
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: screenWidth > 600 ? 400 : screenWidth * 0.9,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextFormField(
-                          controller: _usernameController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Usuario',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon:
-                                const Icon(Icons.person, color: Colors.white),
-                            filled: true,
-                            fillColor: Colors.white.withOpacity(0.2),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide:
-                                  const BorderSide(color: Colors.white30),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa tu usuario';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Contraseña',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon:
-                                const Icon(Icons.lock, color: Colors.white),
-                            filled: true,
-                            fillColor: Colors.white.withOpacity(0.2),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: const BorderSide(color: Colors.white),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide:
-                                  const BorderSide(color: Colors.white30),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.white,
+                    child: Card(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text(
+                              '¡Bienvenido a VIGILAPP!',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent,
                               ),
-                              onPressed: _togglePasswordVisibility,
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Por favor, ingresa tu contraseña';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        if (_errorMessage != null)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              _errorMessage!,
-                              style: const TextStyle(color: Colors.red),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                        const SizedBox(height: 20),
-                        // Botón de "Ingresar"
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: _login,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 80, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                            const SizedBox(height: 20),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    controller: _usernameController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Usuario',
+                                      prefixIcon: const Icon(Icons.person),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor, ingresa tu usuario';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 15),
+                                  TextFormField(
+                                    controller: _passwordController,
+                                    obscureText: _obscurePassword,
+                                    decoration: InputDecoration(
+                                      labelText: 'Contraseña',
+                                      prefixIcon: const Icon(Icons.lock),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscurePassword
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
+                                        ),
+                                        onPressed: _togglePasswordVisibility,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Por favor, ingresa tu contraseña';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 15),
+                                  if (_errorMessage != null)
+                                    Text(
+                                      _errorMessage!,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  const SizedBox(height: 20),
+                                  ElevatedButton(
+                                  onPressed: _login,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 80),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                  ),
+                                  child: Ink(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Colors.blue.shade400, Colors.blue.shade800], 
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 200,
+                                        minHeight: 50,
+                                      ), // Tamaño fijo del botón
+                                      child: const Text(
+                                        'Ingresar',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                ],
                               ),
                             ),
-                            child: const Text(
-                              'Ingresar',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 30),
-                      ],
+                      ),
                     ),
                   ),
                 ],
